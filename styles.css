@@ -747,11 +747,11 @@ button, input, select { font: inherit; }
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns:
-    minmax(170px, 1.2fr)
-    minmax(135px, 1fr)
+    minmax(150px, .85fr)
+    minmax(185px, 1fr)
     54px
-    repeat(2, minmax(135px, 1fr))
-    minmax(210px, 1.5fr);
+    repeat(2, minmax(185px, 1fr))
+    minmax(270px, 1.35fr);
   gap: 12px;
 }
 
@@ -801,7 +801,7 @@ button, input, select { font: inherit; }
 
 .panel-color-control {
   display: grid;
-  grid-template-columns: 88px 46px minmax(0, 1fr);
+  grid-template-columns: 96px 46px minmax(110px, 1fr);
   gap: 9px;
 }
 

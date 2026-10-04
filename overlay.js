@@ -2,12 +2,12 @@ const defaults = {
   edition: "JBS 第　回",
   title: "日本選手権",
   game: "バックギャモン",
-  round: "（未選択）",
+  round: "",
   editionEn: "",
   titleEn: "",
   roundEn: "",
-  topName: "（未入力）",
-  bottomName: "（未入力）",
+  topName: "",
+  bottomName: "",
   topNameEn: "",
   bottomNameEn: "",
   english: false,
@@ -818,8 +818,9 @@ function loadSharedState() {
       );
       if (savedState?.edition === "JBS 第54回") savedState.edition = defaults.edition;
       if (savedState?.round === "準決勝") savedState.round = defaults.round;
-      if (savedState?.topName === "") savedState.topName = defaults.topName;
-      if (savedState?.bottomName === "") savedState.bottomName = defaults.bottomName;
+      if (savedState?.round === "（未選択）") savedState.round = "";
+      if (savedState?.topName === "（未入力）") savedState.topName = "";
+      if (savedState?.bottomName === "（未入力）") savedState.bottomName = "";
       const usesOldGuideDefaults = savedState
         && Number(savedState.guideVerticalGap ?? 0) === 0
         && Number(savedState.guideStart12 ?? 492) === 492
