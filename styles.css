@@ -62,17 +62,6 @@ button, input, select { font: inherit; }
   overflow: hidden;
 }
 
-.camera-work-preview {
-  position: absolute;
-  left: -9px;
-  top: -243px;
-  width: 2080px;
-  height: 1387px;
-  max-width: none;
-  object-fit: fill;
-  pointer-events: none;
-}
-
 .personal-video {
   position: absolute;
   left: 10px;
