@@ -648,6 +648,28 @@ button, input, select { font: inherit; }
   gap: 18px;
 }
 
+.channel-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #52627a;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.channel-picker select {
+  min-width: 112px;
+  height: 42px;
+  padding: 0 34px 0 14px;
+  border: 1px solid #cbd3de;
+  border-radius: 999px;
+  background-color: #f7f8fa;
+  color: #27364d;
+  font-weight: 800;
+  cursor: pointer;
+}
+
 .display-toggles {
   grid-column: 1 / -1;
   display: flex;

@@ -193,7 +193,7 @@ let ruleTimer;
 let languageMode = "ja";
 let ruleIndex = 0;
 let fitFrame;
-const savedSettingsKey = channel === "1" ? "jbs-overlay-saved-settings" : `jbs-overlay-saved-settings-${channel}`;
+const savedSettingsKey = "jbs-overlay-saved-settings";
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -790,11 +790,16 @@ function bindEditor() {
     localStorage.setItem(storageKey, JSON.stringify(state));
   });
 
-  $$('[data-output-channel]').forEach((button) => {
-    button.addEventListener("click", () => {
-      const outputChannel = button.dataset.outputChannel;
-      window.open(`output.html?channel=${outputChannel}`, `jbs-overlay-output-${outputChannel}`);
+  const channelSelect = $("#channelSelect");
+  if (channelSelect) {
+    channelSelect.value = channel;
+    channelSelect.addEventListener("change", () => {
+      location.href = `?channel=${channelSelect.value}`;
     });
+  }
+
+  $("#openOutput")?.addEventListener("click", () => {
+    window.open(`output.html?channel=${channel}`, `jbs-overlay-output-${channel}`);
   });
 
   $("#saveSettings")?.addEventListener("click", () => {
