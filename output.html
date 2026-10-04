@@ -14,7 +14,7 @@
 <body class="output-page">
   <main id="stageMount"></main>
   <script>
-    fetch('stage.html').then(r => r.text()).then(html => {
+    fetch('stage.html?v=20261005-transparent').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
       script.src = 'overlay.js';
