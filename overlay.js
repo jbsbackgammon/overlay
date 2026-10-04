@@ -175,6 +175,28 @@ const ruleSlides = [
 const query = new URLSearchParams(location.search);
 const channel = query.get("channel") === "2" ? "2" : "1";
 const storageKey = channel === "1" ? "jbs-overlay-state" : `jbs-overlay-state-${channel}`;
+
+function encodeOutputState(value) {
+  const bytes = new TextEncoder().encode(JSON.stringify(value));
+  let binary = "";
+  bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+function decodeOutputState(value) {
+  if (!value) return null;
+  try {
+    const padded = value.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(value.length / 4) * 4, "=");
+    const binary = atob(padded);
+    const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }
+  catch (_) {
+    return null;
+  }
+}
+
+const embeddedState = decodeOutputState(query.get("state"));
 const fromQuery = Object.fromEntries([...query.entries()].filter(([key]) => key in defaults));
 if ("sponsors" in fromQuery) fromQuery.sponsors = fromQuery.sponsors !== "false";
 if ("sponsors2" in fromQuery) fromQuery.sponsors2 = fromQuery.sponsors2 !== "false";
@@ -185,7 +207,7 @@ if ("video" in fromQuery) fromQuery.video = fromQuery.video !== "false";
 if ("rules" in fromQuery) fromQuery.rules = fromQuery.rules !== "false";
 if ("interval" in fromQuery) fromQuery.interval = Number(fromQuery.interval) || defaults.interval;
 
-let state = { ...defaults, ...fromQuery };
+let state = { ...defaults, ...(embeddedState || {}), ...fromQuery };
 let sponsorIndex = 0;
 let sponsorTimer;
 let languageTimer;
@@ -799,7 +821,10 @@ function bindEditor() {
   }
 
   $("#openOutput")?.addEventListener("click", () => {
-    window.open(`output.html?channel=${channel}`, `jbs-overlay-output-${channel}`);
+    const outputUrl = new URL("output.html", location.href);
+    outputUrl.searchParams.set("channel", channel);
+    outputUrl.searchParams.set("state", encodeOutputState(state));
+    window.open(outputUrl.href, `jbs-overlay-output-${channel}`);
   });
 
   $("#saveSettings")?.addEventListener("click", () => {
@@ -822,7 +847,7 @@ function bindEditor() {
 }
 
 function loadSharedState() {
-  if (!Object.keys(fromQuery).length) {
+  if (!embeddedState && !Object.keys(fromQuery).length) {
     try {
       const savedState = JSON.parse(localStorage.getItem(storageKey));
       const usesOldTextDefaults = savedState && (
