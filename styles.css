@@ -907,7 +907,24 @@ button, input, select { font: inherit; }
 .saved-setting:hover { background: #eef2f7; }
 .saved-settings-empty { margin: 18px; color: #65758b; text-align: center; }
 
-.output-page { background: transparent; overflow: hidden; }
+.output-page {
+  width: 1920px;
+  height: 1080px;
+  min-height: 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+.output-page #stageMount,
+.output-page .stage-wrap {
+  width: 1920px;
+  height: 1080px;
+  max-width: none;
+  aspect-ratio: auto;
+  box-shadow: none;
+  overflow: hidden;
+}
+
 .output-page .stage { transform: none !important; }
 
 @media (max-width: 1200px) {
