@@ -1,0 +1,55 @@
+<div class="stage-wrap">
+  <main class="stage" aria-label="バックギャモン配信用オーバーレイ">
+    <div class="camera-window" aria-label="透過するゲーム映像領域">
+      <img class="camera-work-preview" src="assets/board-preview.png" alt="作業用の盤面プレビュー">
+    </div>
+    <div class="personal-video top" aria-label="上選手の映像・写真領域"></div>
+    <div class="personal-video bottom" aria-label="下選手の映像・写真領域"></div>
+    <div class="point-guide top" aria-label="上選手のポイント番号ガイド">
+      <div class="guide-half first"><span>12</span><span>11</span><span>10</span><span>9</span><span>8</span><span>7</span></div>
+      <div class="guide-half second"><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span></div>
+      <div class="guide-goal"><span>ゴール</span></div>
+    </div>
+    <div class="point-guide bottom" aria-label="下選手のポイント番号ガイド">
+      <div class="guide-half first"><span>12</span><span>11</span><span>10</span><span>9</span><span>8</span><span>7</span></div>
+      <div class="guide-half second"><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span></div>
+      <div class="guide-goal"><span>ゴール</span></div>
+    </div>
+    <div class="player-dot top"></div>
+    <div class="player-dot bottom"></div>
+    <div class="player-name top"><span data-output="topName"></span></div>
+    <div class="player-name bottom"><span data-output="bottomName"></span></div>
+
+    <section class="title-card" aria-label="大会情報">
+      <p class="title-eyebrow"><span data-output="edition"></span></p>
+      <p class="title-name"><span data-output="title"></span></p>
+      <p class="title-game"><span data-output="game"></span></p>
+      <p class="title-round"><span data-output="round"></span></p>
+    </section>
+
+    <div class="side-stack">
+      <div class="side-video-window" aria-label="OBSで試合映像を配置する領域"></div>
+
+      <section class="sponsor-rail" aria-label="スポンサー広告">
+        <div class="sponsor-track">
+          <article class="sponsor-card sponsor-fallback">
+            <img class="sponsor-fallback-logo" src="assets/ads/jbs-logo.png" alt="JBSロゴ">
+          </article>
+        </div>
+      </section>
+
+      <section class="sponsor-secondary" aria-label="スポンサー広告2">
+        <div class="secondary-ad-slot" data-secondary-ad-slot="0"></div>
+        <div class="secondary-ad-slot" data-secondary-ad-slot="1"></div>
+      </section>
+
+      <section class="rules-panel" aria-label="バックギャモンのルール">
+        <article class="rules-slide">
+          <h2 data-rule-title></h2>
+          <div class="rules-copy" data-rule-copy></div>
+          <p class="rules-note" data-rule-note></p>
+        </article>
+      </section>
+    </div>
+  </main>
+</div>
