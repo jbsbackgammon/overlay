@@ -661,10 +661,7 @@ button, input, select { font: inherit; }
   padding: 0 24px;
   border: 0;
   border-radius: 999px;
-  background: linear-gradient(90deg,
-    var(--button-theme, #383838) 0 33.333%,
-    var(--button-top, #cf2933) 33.333% 66.666%,
-    var(--button-bottom, #ececec) 66.666% 100%);
+  background: var(--button-theme, #383838);
   color: white;
   font-weight: 800;
   box-shadow: 0 5px 12px rgba(0,0,0,.16);
