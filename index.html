@@ -9,13 +9,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23383838'/%3E%3Ccircle cx='32' cy='32' r='20' fill='%23cf2933' stroke='%23cfb064' stroke-width='5'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20261005-layout2">
+  <link rel="stylesheet" href="styles.css?v=20261005-layout3">
 </head>
 <body>
   <div class="app">
     <aside class="control-panel">
       <div class="top-actions">
-        <button class="open-output" id="openOutput">配信本番</button>
+        <button class="open-output" id="openOutput1" data-output-channel="1">配信本番1</button>
+        <button class="open-output" id="openOutput2" data-output-channel="2">配信本番2</button>
         <button class="settings-action" id="saveSettings" type="button">設定保存</button>
         <button class="settings-action" id="loadSettings" type="button">設定呼出</button>
         <button class="settings-action" id="exportPng" type="button">PNG書出</button>
@@ -71,6 +72,21 @@
       </div>
 
       <div class="color-row">
+        <div class="field"><label for="frameColorText">テーマカラー</label><div class="color-control"><input type="color" id="frameColor" data-color-for="frameColor"><input id="frameColorText" class="hex-input" data-field="frameColor" maxlength="7" spellcheck="false"></div></div>
+        <div class="field">
+          <label for="panelMode">パネルカラー</label>
+          <div class="panel-color-control">
+            <select id="panelMode" data-field="panelMode" aria-label="パネルカラーの種類">
+              <option value="gradient">金グラデ</option>
+              <option value="solid">単色</option>
+            </select>
+            <input type="color" id="panelColor" data-color-for="panelColor">
+            <input id="panelColorText" class="hex-input" data-field="panelColor" maxlength="7" spellcheck="false">
+          </div>
+        </div>
+        <div class="field"><label for="topColorText">上選手カラー</label><div class="color-control"><input type="color" id="topColor" data-color-for="topColor"><input id="topColorText" class="hex-input" data-field="topColor" maxlength="7" spellcheck="false"></div></div>
+        <div class="swap-field"><button type="button" id="swapPlayerColors" class="swap-colors"><span>上下</span><span>入替</span></button></div>
+        <div class="field"><label for="bottomColorText">下選手カラー</label><div class="color-control"><input type="color" id="bottomColor" data-color-for="bottomColor"><input id="bottomColorText" class="hex-input" data-field="bottomColor" maxlength="7" spellcheck="false"></div></div>
         <div class="field">
           <label for="boardPreset">ボード</label>
           <div class="board-control">
@@ -83,21 +99,6 @@
               <option value="saiou">賽王戦</option>
               <option value="kishino">来住野</option>
             </select>
-          </div>
-        </div>
-        <div class="field"><label for="topColorText">上選手カラー</label><div class="color-control"><input type="color" id="topColor" data-color-for="topColor"><input id="topColorText" class="hex-input" data-field="topColor" maxlength="7" spellcheck="false"></div></div>
-        <div class="swap-field"><button type="button" id="swapPlayerColors" class="swap-colors"><span>上下</span><span>入替</span></button></div>
-        <div class="field"><label for="bottomColorText">下選手カラー</label><div class="color-control"><input type="color" id="bottomColor" data-color-for="bottomColor"><input id="bottomColorText" class="hex-input" data-field="bottomColor" maxlength="7" spellcheck="false"></div></div>
-        <div class="field"><label for="frameColorText">テーマカラー</label><div class="color-control"><input type="color" id="frameColor" data-color-for="frameColor"><input id="frameColorText" class="hex-input" data-field="frameColor" maxlength="7" spellcheck="false"></div></div>
-        <div class="field">
-          <label for="panelMode">パネルカラー</label>
-          <div class="panel-color-control">
-            <select id="panelMode" data-field="panelMode" aria-label="パネルカラーの種類">
-              <option value="gradient">金グラデ</option>
-              <option value="solid">単色</option>
-            </select>
-            <input type="color" id="panelColor" data-color-for="panelColor">
-            <input id="panelColorText" class="hex-input" data-field="panelColor" maxlength="7" spellcheck="false">
           </div>
         </div>
       </div>
@@ -120,7 +121,7 @@
     fetch('stage.html?v=20261005-transparent').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261005-layout2';
+      script.src = 'overlay.js?v=20261005-layout3';
       document.body.appendChild(script);
     });
   </script>

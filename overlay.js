@@ -173,6 +173,8 @@ const ruleSlides = [
 ];
 
 const query = new URLSearchParams(location.search);
+const channel = query.get("channel") === "2" ? "2" : "1";
+const storageKey = channel === "1" ? "jbs-overlay-state" : `jbs-overlay-state-${channel}`;
 const fromQuery = Object.fromEntries([...query.entries()].filter(([key]) => key in defaults));
 if ("sponsors" in fromQuery) fromQuery.sponsors = fromQuery.sponsors !== "false";
 if ("sponsors2" in fromQuery) fromQuery.sponsors2 = fromQuery.sponsors2 !== "false";
@@ -191,7 +193,7 @@ let ruleTimer;
 let languageMode = "ja";
 let ruleIndex = 0;
 let fitFrame;
-const savedSettingsKey = "jbs-overlay-saved-settings";
+const savedSettingsKey = channel === "1" ? "jbs-overlay-saved-settings" : `jbs-overlay-saved-settings-${channel}`;
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -250,6 +252,11 @@ function render() {
   if (!stage) return;
   if (state.rules && state.sponsors2) state.sponsors2 = false;
   stage.style.setProperty("--frame-color", state.frameColor);
+  $$(".open-output").forEach((button) => {
+    button.style.setProperty("--button-theme", state.frameColor);
+    button.style.setProperty("--button-top", state.topColor);
+    button.style.setProperty("--button-bottom", state.bottomColor);
+  });
   stage.classList.toggle("personal-mode", state.personal);
   stage.classList.toggle("player-photo-mode", state.playerPhoto);
   const guideVerticalGap = Math.max(0, Number(state.guideVerticalGap) || 0);
@@ -659,7 +666,7 @@ function renderSavedSettings() {
     button.textContent = settingLabel(entry);
     button.addEventListener("click", () => {
       state = { ...defaults, ...entry.state };
-      localStorage.setItem("jbs-overlay-state", JSON.stringify(state));
+      localStorage.setItem(storageKey, JSON.stringify(state));
       syncEditorFromState();
       $("#settingsDialog").close();
     });
@@ -698,7 +705,7 @@ function bindEditor() {
         updateEnglishFields();
         startLanguageRotation();
       }
-      localStorage.setItem("jbs-overlay-state", JSON.stringify(state));
+      localStorage.setItem(storageKey, JSON.stringify(state));
     });
   });
 
@@ -714,7 +721,7 @@ function bindEditor() {
       }
       $$(`[data-field="${key}"]`).forEach((peer) => { peer.value = input.value.toUpperCase(); });
       render();
-      localStorage.setItem("jbs-overlay-state", JSON.stringify(state));
+      localStorage.setItem(storageKey, JSON.stringify(state));
     };
     input.addEventListener("input", applyColor);
     input.addEventListener("change", applyColor);
@@ -752,7 +759,7 @@ function bindEditor() {
         $("[data-field=roundEn]").value = state.roundEn;
       }
       render();
-      localStorage.setItem("jbs-overlay-state", JSON.stringify(state));
+      localStorage.setItem(storageKey, JSON.stringify(state));
       select.value = "";
     });
   });
@@ -761,7 +768,7 @@ function bindEditor() {
     state.boardPreset = event.currentTarget.value;
     const preset = boardPresets[state.boardPreset];
     if (!preset) {
-      localStorage.setItem("jbs-overlay-state", JSON.stringify(state));
+      localStorage.setItem(storageKey, JSON.stringify(state));
       return;
     }
     Object.entries(preset).forEach(([key, value]) => {
@@ -770,7 +777,7 @@ function bindEditor() {
       $$(`[data-color-for="${key}"]`).forEach((input) => { input.value = value; });
     });
     render();
-    localStorage.setItem("jbs-overlay-state", JSON.stringify(state));
+    localStorage.setItem(storageKey, JSON.stringify(state));
   });
 
   $("#swapPlayerColors")?.addEventListener("click", () => {
@@ -780,11 +787,14 @@ function bindEditor() {
       $$(`[data-color-for="${key}"]`).forEach((input) => { input.value = state[key]; });
     });
     render();
-    localStorage.setItem("jbs-overlay-state", JSON.stringify(state));
+    localStorage.setItem(storageKey, JSON.stringify(state));
   });
 
-  $("#openOutput")?.addEventListener("click", () => {
-    window.open("output.html", "jbs-overlay-output");
+  $$('[data-output-channel]').forEach((button) => {
+    button.addEventListener("click", () => {
+      const outputChannel = button.dataset.outputChannel;
+      window.open(`output.html?channel=${outputChannel}`, `jbs-overlay-output-${outputChannel}`);
+    });
   });
 
   $("#saveSettings")?.addEventListener("click", () => {
@@ -807,9 +817,9 @@ function bindEditor() {
 }
 
 function loadSharedState() {
-  if (!query.size) {
+  if (!Object.keys(fromQuery).length) {
     try {
-      const savedState = JSON.parse(localStorage.getItem("jbs-overlay-state"));
+      const savedState = JSON.parse(localStorage.getItem(storageKey));
       const usesOldTextDefaults = savedState && (
         savedState.edition === "JBS 第54回"
         || savedState.round === "準決勝"
@@ -835,10 +845,10 @@ function loadSharedState() {
         savedState.guidePointGap = defaults.guidePointGap;
       }
       state = { ...state, ...savedState };
-      if (usesOldGuideDefaults || usesOldTextDefaults) localStorage.setItem("jbs-overlay-state", JSON.stringify(state));
+      if (usesOldGuideDefaults || usesOldTextDefaults) localStorage.setItem(storageKey, JSON.stringify(state));
       if (state.panelColor?.toUpperCase() === "#CFB064") {
         state.panelColor = "#FFFFFF";
-        localStorage.setItem("jbs-overlay-state", JSON.stringify(state));
+        localStorage.setItem(storageKey, JSON.stringify(state));
       }
     }
     catch (_) { /* use defaults */ }
