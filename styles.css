@@ -648,6 +648,14 @@ button, input, select { font: inherit; }
   gap: 12px;
 }
 
+.action-separator {
+  width: 1px;
+  height: 26px;
+  flex: 0 0 1px;
+  align-self: center;
+  background: #aeb5c0;
+}
+
 .channel-picker {
   display: flex;
   align-items: center;
@@ -757,6 +765,7 @@ button, input, select { font: inherit; }
 }
 
 .preset-input input { border-radius: 0 9px 9px 0; }
+.player-input select { width: 64px; }
 
 .english-input[hidden] { display: none; }
 

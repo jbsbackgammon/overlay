@@ -603,6 +603,80 @@ function settingLabel(entry) {
     .join("・");
 }
 
+function downloadJson() {
+  const payload = { version: 1, exportedAt: new Date().toISOString(), state: { ...state } };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const now = new Date();
+  const pad = (number) => String(number).padStart(2, "0");
+  link.download = `配信盤面設定-${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.json`;
+  link.href = url;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function importJsonFile(file) {
+  if (!file) return;
+  try {
+    const parsed = JSON.parse(await file.text());
+    const imported = parsed?.state && typeof parsed.state === "object" ? parsed.state : parsed;
+    if (!imported || typeof imported !== "object" || Array.isArray(imported)) throw new Error();
+    const allowed = Object.fromEntries(Object.entries(imported).filter(([key]) => key in defaults));
+    state = { ...defaults, ...allowed };
+    localStorage.setItem(storageKey, JSON.stringify(state));
+    syncEditorFromState();
+  }
+  catch (_) {
+    alert("JSON設定を読み込めませんでした。配信盤面から出力したJSONファイルを選択してください。");
+  }
+}
+
+async function loadMembers() {
+  const selects = $$('[data-member-for]');
+  if (!selects.length) return;
+  try {
+    const response = await fetch('/member/data/members.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error();
+    const data = await response.json();
+    const source = Array.isArray(data) ? data : data?.members;
+    if (!Array.isArray(source)) throw new Error();
+    const members = source
+      .map((member) => ({
+        nameJa: String(member?.name ?? member?.nameJa ?? '').trim(),
+        nameEn: String(member?.nameEn ?? '').trim()
+      }))
+      .filter((member) => member.nameJa)
+      .sort((a, b) => a.nameJa.localeCompare(b.nameJa, 'ja'));
+    selects.forEach((select) => {
+      members.forEach((member) => {
+        const option = document.createElement('option');
+        option.value = member.nameJa;
+        option.textContent = member.nameJa;
+        option.dataset.nameEn = member.nameEn;
+        select.append(option);
+      });
+      select.addEventListener('change', () => {
+        if (!select.value) return;
+        const side = select.dataset.memberFor;
+        const option = select.selectedOptions[0];
+        state[`${side}Name`] = select.value;
+        state[`${side}NameEn`] = option.dataset.nameEn || '';
+        $(`[data-field="${side}Name"]`).value = state[`${side}Name`];
+        $(`[data-field="${side}NameEn"]`).value = state[`${side}NameEn`];
+        localStorage.setItem(storageKey, JSON.stringify(state));
+        render();
+        select.value = '';
+      });
+    });
+  }
+  catch (_) {
+    selects.forEach((select) => {
+      select.title = '選手一覧を取得できませんでした。直接入力してください。';
+    });
+  }
+}
+
 async function exportStageAsPng() {
   const stage = $(".stage");
   const button = $("#exportPng");
@@ -823,6 +897,7 @@ function bindEditor() {
   $("#openOutput")?.addEventListener("click", () => {
     const outputUrl = new URL("output.html", location.href);
     outputUrl.searchParams.set("channel", channel);
+    outputUrl.searchParams.set("v", "20261005-obsfit1");
     outputUrl.searchParams.set("state", encodeOutputState(state));
     window.open(outputUrl.href, `jbs-overlay-output-${channel}`);
   });
@@ -831,6 +906,13 @@ function bindEditor() {
     const entries = readSavedSettings();
     entries.unshift({ savedAt: new Date().toISOString(), state: { ...state } });
     localStorage.setItem(savedSettingsKey, JSON.stringify(entries.slice(0, 100)));
+  });
+
+  $("#exportJson")?.addEventListener("click", downloadJson);
+  $("#importJson")?.addEventListener("click", () => $("#importJsonFile")?.click());
+  $("#importJsonFile")?.addEventListener("change", async (event) => {
+    await importJsonFile(event.currentTarget.files?.[0]);
+    event.currentTarget.value = "";
   });
 
   $("#loadSettings")?.addEventListener("click", () => {
@@ -889,6 +971,7 @@ loadSharedState();
 state.interval = 60000;
 render();
 bindEditor();
+loadMembers();
 updateEnglishFields();
 loadSponsorImages().finally(startRotation);
 startLanguageRotation();
