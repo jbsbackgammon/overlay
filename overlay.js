@@ -428,6 +428,8 @@ function render() {
   $(".rules-panel").hidden = (state.right4Mode || "rules") !== "rules";
   $(".sponsor-rail").hidden = (state.right3Mode || "sponsors") !== "sponsors";
   $(".sponsor-secondary").hidden = !["sponsors2", "sponsors2bottom"].includes(state.right4Mode || "rules");
+  $(".slot-reference-3").hidden = (state.right3Mode || "sponsors") !== "reference";
+  $(".slot-reference-4").hidden = (state.right4Mode || "rules") !== "reference";
   const sponsors2Toggle = $("[data-field=sponsors2]");
   const rulesToggle = $("[data-field=rules]");
   const personalToggle = $("[data-field=personal]");
@@ -466,12 +468,12 @@ function rotateSponsor(index) {
   const cards = $$(".sponsor-track .sponsor-card:not(.sponsor-clone)");
   if (!cards.length) return;
   const track = $(".sponsor-track");
-  const fixedThreeUp = state.sponsors && state.sponsors2 && cards.length <= 3;
-  if (fixedThreeUp) index = 0;
+  const fixedAllVisible = getActiveSponsorSlotCount() >= cards.length;
+  if (fixedAllVisible) index = 0;
   const nextIndex = ((index % cards.length) + cards.length) % cards.length;
-  const loopsForward = sponsorIndex === cards.length - 1 && nextIndex === 0 && index > sponsorIndex;
+  const loopsForward = index >= cards.length && index > sponsorIndex;
   if (loopsForward) {
-    track.style.transform = `translateX(-${cards.length * 100}%)`;
+    track.style.transform = `translateX(-${index * 100}%)`;
     track.addEventListener("transitionend", () => {
       track.style.transition = "none";
       track.style.transform = "translateX(0)";
@@ -482,26 +484,41 @@ function rotateSponsor(index) {
     track.style.transform = `translateX(-${nextIndex * 100}%)`;
   }
   sponsorIndex = nextIndex;
-  rotateSecondarySponsors(nextIndex, loopsForward, cards.length);
+  rotateSecondarySponsors(nextIndex, loopsForward, index);
+}
+
+function getActiveSponsorSlotCount() {
+  const primaryCount = (state.right3Mode || "sponsors") === "sponsors" ? 1 : 0;
+  const right4Mode = state.right4Mode || "rules";
+  const secondaryCount = right4Mode === "sponsors2" ? 2 : right4Mode === "sponsors2bottom" ? 1 : 0;
+  return primaryCount + secondaryCount;
 }
 
 function setupSecondarySponsors(index = sponsorIndex) {
   const cards = $$(".sponsor-track .sponsor-card:not(.sponsor-clone)");
   if (!cards.length) return;
+  const primaryOffset = (state.right3Mode || "sponsors") === "sponsors" ? 1 : 0;
+  const right4Mode = state.right4Mode || "rules";
+  const activeSlotIndexes = right4Mode === "sponsors2" ? [0, 1] : right4Mode === "sponsors2bottom" ? [1] : [];
   $$('[data-secondary-ad-slot]').forEach((slot, slotIndex) => {
     const secondaryTrack = document.createElement("div");
     secondaryTrack.className = "secondary-sponsor-track";
-    const orderedCards = cards.map((_, cardIndex) => cards[(cardIndex + slotIndex + 1) % cards.length]);
+    const activePosition = Math.max(0, activeSlotIndexes.indexOf(slotIndex));
+    const slotOffset = primaryOffset + activePosition;
+    const orderedCards = cards.map((_, cardIndex) => cards[(cardIndex + slotOffset) % cards.length]);
     orderedCards.forEach((source) => {
       const card = source.cloneNode(true);
       card.classList.remove("sponsor-clone");
       card.removeAttribute("aria-hidden");
       secondaryTrack.append(card);
     });
-    const loopClone = orderedCards[0].cloneNode(true);
-    loopClone.classList.add("sponsor-clone");
-    loopClone.setAttribute("aria-hidden", "true");
-    secondaryTrack.append(loopClone);
+    const cloneCount = Math.max(1, getActiveSponsorSlotCount());
+    orderedCards.slice(0, cloneCount).forEach((source) => {
+      const loopClone = source.cloneNode(true);
+      loopClone.classList.add("sponsor-clone");
+      loopClone.setAttribute("aria-hidden", "true");
+      secondaryTrack.append(loopClone);
+    });
     secondaryTrack.style.transition = "none";
     secondaryTrack.style.transform = `translateX(-${index * 100}%)`;
     slot.replaceChildren(secondaryTrack);
@@ -510,13 +527,13 @@ function setupSecondarySponsors(index = sponsorIndex) {
   });
 }
 
-function rotateSecondarySponsors(index, loopsForward, cardCount) {
+function rotateSecondarySponsors(index, loopsForward, rawIndex) {
   $$(".secondary-sponsor-track").forEach((track) => {
     if (loopsForward) {
-      track.style.transform = `translateX(-${cardCount * 100}%)`;
+      track.style.transform = `translateX(-${rawIndex * 100}%)`;
       track.addEventListener("transitionend", () => {
         track.style.transition = "none";
-        track.style.transform = "translateX(0)";
+        track.style.transform = `translateX(-${index * 100}%)`;
         track.offsetWidth;
         track.style.transition = "";
       }, { once: true });
@@ -569,23 +586,26 @@ async function loadSponsorImages() {
 function startRotation() {
   clearInterval(sponsorTimer);
   const track = $(".sponsor-track");
-  if (track && !track.querySelector(".sponsor-clone")) {
-    const first = track.querySelector(".sponsor-card");
-    if (first) {
+  if (track) {
+    track.querySelectorAll(".sponsor-clone").forEach((clone) => clone.remove());
+    const cards = [...track.querySelectorAll(".sponsor-card")];
+    const cloneCount = Math.max(1, getActiveSponsorSlotCount());
+    cards.slice(0, cloneCount).forEach((first) => {
       const clone = first.cloneNode(true);
       clone.classList.add("sponsor-clone");
       clone.setAttribute("aria-hidden", "true");
       track.append(clone);
-    }
+    });
   }
   setupSecondarySponsors(sponsorIndex);
   const cardCount = $$(".sponsor-track .sponsor-card:not(.sponsor-clone)").length;
-  if (state.sponsors && state.sponsors2 && cardCount <= 3) {
+  if (getActiveSponsorSlotCount() >= cardCount) {
     sponsorIndex = 0;
     rotateSponsor(0);
     return;
   }
-  sponsorTimer = setInterval(() => rotateSponsor(sponsorIndex + 1), state.interval);
+  const step = Math.max(1, getActiveSponsorSlotCount());
+  sponsorTimer = setInterval(() => rotateSponsor(sponsorIndex + step), state.interval);
 }
 
 function updateEnglishFields() {
@@ -880,7 +900,7 @@ function bindEditor() {
       });
       $$(`[data-color-for="${key}"]`).forEach((peer) => { peer.value = value; });
       render();
-      if (["sponsors", "sponsors2", "rules"].includes(key)) startRotation();
+      if (["sponsors", "sponsors2", "rules", "right3Mode", "right4Mode"].includes(key)) startRotation();
       if (key === "english") {
         updateEnglishFields();
         startLanguageRotation();

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23383838'/%3E%3Ccircle cx='32' cy='32' r='20' fill='%23cf2933' stroke='%23cfb064' stroke-width='5'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20261005-rightslots9">
+  <link rel="stylesheet" href="styles.css?v=20261005-reference7">
 </head>
 <body>
   <div class="app">
@@ -44,10 +44,10 @@
       </div>
 
       <div class="right-selects">
-        <div class="field"><label for="right1Mode">右1</label><select id="right1Mode" data-field="right1Mode"><option value="none">表示無し</option><option value="reference">参考エリア</option><option value="title" selected>大会名</option><option value="thumbnail">サムネイル</option></select><select class="thumbnail-picker" id="right1Thumbnail" data-field="right1Thumbnail" hidden><option value="">画像を選択</option></select><input class="thumbnail-upload" id="right1Upload" type="file" accept="image/*" hidden></div>
-        <div class="field"><label for="right2Mode">右2</label><select id="right2Mode" data-field="right2Mode"><option value="none">表示無し</option><option value="reference">参考エリア</option><option value="thumbnail" selected>サムネイル</option></select><select class="thumbnail-picker" id="right2Thumbnail" data-field="right2Thumbnail" hidden><option value="">画像を選択</option></select><input class="thumbnail-upload" id="right2Upload" type="file" accept="image/*" hidden></div>
-        <div class="field"><label for="right3Mode">右3</label><select id="right3Mode" data-field="right3Mode"><option value="none">表示無し</option><option value="reference">参考エリア</option><option value="sponsors" selected>広告</option></select></div>
-        <div class="field"><label for="right4Mode">右4</label><select id="right4Mode" data-field="right4Mode"><option value="none">表示無し</option><option value="reference">参考エリア</option><option value="rules">ルール</option><option value="sponsors2">広告2枚</option><option value="sponsors2bottom">広告下のみ</option></select></div>
+        <div class="field"><label for="right1Mode">右1</label><select id="right1Mode" data-field="right1Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="title" selected>大会名</option><option value="thumbnail">サムネイル</option></select><select class="thumbnail-picker" id="right1Thumbnail" data-field="right1Thumbnail" hidden><option value="">画像を選択</option></select><input class="thumbnail-upload" id="right1Upload" type="file" accept="image/*" hidden></div>
+        <div class="field"><label for="right2Mode">右2</label><select id="right2Mode" data-field="right2Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="thumbnail" selected>サムネイル</option></select><select class="thumbnail-picker" id="right2Thumbnail" data-field="right2Thumbnail" hidden><option value="">画像を選択</option></select><input class="thumbnail-upload" id="right2Upload" type="file" accept="image/*" hidden></div>
+        <div class="field"><label for="right3Mode">右3</label><select id="right3Mode" data-field="right3Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="sponsors" selected>広告</option></select></div>
+        <div class="field"><label for="right4Mode">右4</label><select id="right4Mode" data-field="right4Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="rules">ルール</option><option value="sponsors2">広告2枚</option><option value="sponsors2bottom">広告下のみ</option></select></div>
       </div>
 
       <div class="title-fields">
@@ -111,10 +111,10 @@
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
-    fetch('stage.html?v=20261005-transparent').then(r => r.text()).then(html => {
+    fetch('stage.html?v=20261005-reference1').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261005-rightslots6';
+      script.src = 'overlay.js?v=20261005-adsrotation1';
       document.body.appendChild(script);
     });
   </script>

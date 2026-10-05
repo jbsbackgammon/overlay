@@ -374,11 +374,13 @@ button, input, select { font: inherit; }
 }
 
 .stage[data-right1-mode="reference"] .title-card::after {
-  content: "480px × 270px";
+  content: "右1\A 480px × 270px";
+  white-space: pre-line;
   grid-row: 1 / -1;
   font-size: 28px;
   font-weight: 700;
   letter-spacing: .04em;
+  text-align: center;
 }
 
 .stage[data-right1-mode="reference"] .title-card > * { visibility: hidden; }
@@ -420,12 +422,38 @@ button, input, select { font: inherit; }
 }
 
 .side-video-window::after {
-  content: "480px × 270px";
+  content: "右2\A 480px × 270px";
+  white-space: pre-line;
   color: #a7adb6;
   font-size: 28px;
   font-weight: 700;
   letter-spacing: .04em;
+  text-align: center;
 }
+
+.slot-reference {
+  position: absolute;
+  left: 0;
+  width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: #e4e7eb;
+  color: #a7adb6;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  line-height: normal;
+  overflow: hidden;
+}
+
+.slot-reference strong,
+.slot-reference span { font: inherit; }
+.slot-reference-3 { top: 280px; height: 160px; }
+.slot-reference-4 { top: 450px; height: 330px; }
+.slot-reference[hidden] { display: none; }
 
 .side-thumbnail {
   position: absolute;
@@ -461,6 +489,15 @@ button, input, select { font: inherit; }
   display: grid;
   grid-template-rows: 160px 160px;
   gap: 10px;
+}
+
+.stage[data-right4-mode="sponsors2bottom"] .sponsor-secondary {
+  grid-template-rows: 160px;
+  align-content: end;
+}
+
+.stage[data-right4-mode="sponsors2bottom"] .secondary-ad-slot:first-child {
+  display: none;
 }
 
 .secondary-ad-slot {
@@ -716,7 +753,7 @@ button, input, select { font: inherit; }
 .event-fields {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) 54px minmax(320px, 2fr);
+  grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) 41px minmax(320px, 2fr);
   gap: 16px;
   align-items: end;
 }
@@ -786,6 +823,7 @@ button, input, select { font: inherit; }
   grid-column: 4 / -1;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 12px;
   align-self: start;
   height: 38px;
@@ -835,7 +873,7 @@ button, input, select { font: inherit; }
   align-items: center;
   gap: 9px;
   min-height: 34px;
-  padding: 0 14px;
+  padding: 0;
   color: #3e5069;
   font-size: 14px;
   font-weight: 700;
@@ -893,8 +931,14 @@ button, input, select { font: inherit; }
 .color-row {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: minmax(90px, .8fr) minmax(170px, 1.1fr) minmax(100px, .8fr) minmax(100px, .8fr) 44px minmax(100px, .8fr);
-  gap: 6px;
+  grid-template-columns:
+    minmax(0, calc((100% - 308px) / 6 + 47px))
+    minmax(0, calc((100% - 308px) / 3 + 56px))
+    minmax(0, calc((100% - 308px) / 6 + 47px))
+    minmax(0, calc((100% - 308px) / 6 + 47px))
+    41px
+    minmax(0, calc((100% - 308px) / 6));
+  gap: 14px;
 }
 
 .color-row > .field:last-child { grid-column: 6; grid-row: 1; }
@@ -917,6 +961,7 @@ button, input, select { font: inherit; }
   align-items: flex-end;
   grid-column: 5;
   grid-row: 1;
+  margin-left: -5px;
 }
 
 .swap-field + .field {
@@ -925,9 +970,9 @@ button, input, select { font: inherit; }
 }
 
 .swap-colors {
-  width: 54px;
-  height: 38px;
-  padding: 3px 6px;
+  width: 41px;
+  height: 41px;
+  padding: 3px 2px;
   display: grid;
   place-content: center;
   line-height: 1.15;
@@ -946,16 +991,14 @@ button, input, select { font: inherit; }
 
 .color-control {
   display: grid;
-  grid-template-columns: 38px 96px;
+  grid-template-columns: 38px minmax(0, 1fr);
   gap: 9px;
-  justify-content: start;
 }
 
 .panel-color-control {
   display: grid;
-  grid-template-columns: 110px 38px 96px;
+  grid-template-columns: minmax(0, 1fr) 38px minmax(0, 1fr);
   gap: 9px;
-  justify-content: start;
 }
 
 .panel-color-control select { padding-left: 7px; padding-right: 5px; }
@@ -978,9 +1021,9 @@ button, input, select { font: inherit; }
 }
 
 .hex-input {
-  width: 96px !important;
-  min-width: 96px;
-  max-width: 96px;
+  width: 100% !important;
+  min-width: 0;
+  max-width: none;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums;
   letter-spacing: .035em;
