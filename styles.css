@@ -822,13 +822,13 @@ button, input, select { font: inherit; }
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns:
-    minmax(145px, .9fr)
-    minmax(255px, 1.2fr)
-    minmax(145px, .9fr)
-    54px
-    minmax(145px, .9fr)
-    minmax(150px, .85fr);
-  gap: 12px;
+    minmax(152px, .95fr)
+    minmax(272px, 1.35fr)
+    minmax(152px, .95fr)
+    52px
+    minmax(152px, .95fr)
+    minmax(140px, .9fr);
+  gap: 10px;
 }
 
 [data-board-preset] {
@@ -871,14 +871,14 @@ button, input, select { font: inherit; }
 
 .color-control {
   display: grid;
-  grid-template-columns: 38px calc(7ch + 22px);
+  grid-template-columns: 38px 96px;
   gap: 9px;
   justify-content: start;
 }
 
 .panel-color-control {
   display: grid;
-  grid-template-columns: 112px 38px calc(7ch + 22px);
+  grid-template-columns: 110px 38px 96px;
   gap: 9px;
   justify-content: start;
 }
@@ -903,9 +903,9 @@ button, input, select { font: inherit; }
 }
 
 .hex-input {
-  width: calc(7ch + 22px) !important;
-  min-width: calc(7ch + 22px);
-  max-width: calc(7ch + 22px);
+  width: 96px !important;
+  min-width: 96px;
+  max-width: 96px;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums;
   letter-spacing: .035em;
