@@ -367,15 +367,48 @@ button, input, select { font: inherit; }
 
 .title-round > span { top: calc(50% - 3px); }
 
+.stage[data-right1-mode="reference"] .title-card {
+  display: grid;
+  background: #e5e7eb;
+  color: #a7adb6;
+}
+
+.stage[data-right1-mode="reference"] .title-card::after {
+  content: "480px × 270px";
+  grid-row: 1 / -1;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+.stage[data-right1-mode="reference"] .title-card > * { visibility: hidden; }
+.stage[data-right1-mode="thumbnail"] .title-card {
+  background-color: #e5e7eb;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.stage[data-right1-mode="thumbnail"] .title-card > * { visibility: hidden; }
+.stage[data-right1-mode="none"] .title-card { visibility: hidden; }
+
 .side-stack {
   position: absolute;
   right: 10px;
   bottom: 10px;
   width: 480px;
+  height: 780px;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: block;
 }
+
+.side-stack > .side-video-window,
+.side-stack > .sponsor-rail,
+.side-stack > .sponsor-secondary,
+.side-stack > .rules-panel { position: absolute; left: 0; }
+.side-stack > .side-video-window { top: 0; }
+.side-stack > .sponsor-rail { top: 280px; }
+.side-stack > .sponsor-secondary,
+.side-stack > .rules-panel { top: 450px; }
 
 .side-video-window {
   flex: 0 0 270px;
@@ -394,6 +427,14 @@ button, input, select { font: inherit; }
   letter-spacing: .04em;
 }
 
+.side-thumbnail {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .sponsor-rail {
   position: relative;
   flex: 0 0 160px;
@@ -407,6 +448,11 @@ button, input, select { font: inherit; }
 .sponsor-secondary[hidden],
 .side-video-window[hidden],
 .rules-panel[hidden] { display: none; }
+
+.side-stack > [hidden] {
+  display: block;
+  visibility: hidden;
+}
 
 .sponsor-secondary {
   flex: 0 0 330px;
@@ -670,11 +716,25 @@ button, input, select { font: inherit; }
 .event-fields {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: .75fr 1.4fr 1.25fr 1fr 1fr;
+  grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) 54px minmax(320px, 2fr);
   gap: 16px;
+  align-items: end;
 }
 
 .event-fields > .field { min-width: 0; }
+
+.title-fields,
+.right-selects {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.right-selects { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; }
+.right-selects > .field > select:first-of-type { height: 38px; }
+.title-fields[hidden] { display: none; }
+.thumbnail-picker:not([hidden]) { margin-top: 4px; }
 
 .guide-fields {
   grid-column: 1 / -1;
@@ -716,17 +776,29 @@ button, input, select { font: inherit; }
   padding: 0 34px 0 14px;
   border: 1px solid #cbd3de;
   border-radius: 9px;
-  background-color: #f7f8fa;
+  background-color: #ffffff;
   color: #27364d;
   font-weight: 800;
   cursor: pointer;
 }
 
 .display-toggles {
-  grid-column: 1 / -1;
+  grid-column: 4 / -1;
   display: flex;
   align-items: center;
   gap: 12px;
+  align-self: start;
+  height: 38px;
+  margin-top: 24px;
+}
+
+.player-swap-field {
+  display: flex;
+  align-items: flex-end;
+}
+
+.player-swap-field .swap-colors {
+  margin-bottom: 0;
 }
 
 .open-output {
@@ -821,18 +893,14 @@ button, input, select { font: inherit; }
 .color-row {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns:
-    minmax(152px, .95fr)
-    minmax(272px, 1.35fr)
-    minmax(152px, .95fr)
-    52px
-    minmax(152px, .95fr)
-    minmax(140px, .9fr);
-  gap: 10px;
+  grid-template-columns: minmax(90px, .8fr) minmax(170px, 1.1fr) minmax(100px, .8fr) minmax(100px, .8fr) 44px minmax(100px, .8fr);
+  gap: 6px;
 }
 
+.color-row > .field:last-child { grid-column: 6; grid-row: 1; }
+
 [data-board-preset] {
-  background: #f7f8fa !important;
+  background: #ffffff !important;
   color: #27364d !important;
   font-weight: 700 !important;
   cursor: pointer;
@@ -847,6 +915,13 @@ button, input, select { font: inherit; }
 .swap-field {
   display: flex;
   align-items: flex-end;
+  grid-column: 5;
+  grid-row: 1;
+}
+
+.swap-field + .field {
+  grid-column: 4;
+  grid-row: 1;
 }
 
 .swap-colors {
@@ -995,7 +1070,7 @@ button, input, select { font: inherit; }
 @media (max-width: 1200px) {
   .app { grid-template-rows: auto auto; }
   .control-panel { grid-template-columns: 1fr; }
-  .event-fields { grid-template-columns: .75fr 1.4fr 1.25fr 1fr 1fr; }
+  .event-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .color-row { grid-column: 1; }
   .stage-shell { padding: 12px; }
 }

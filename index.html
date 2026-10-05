@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23383838'/%3E%3Ccircle cx='32' cy='32' r='20' fill='%23cf2933' stroke='%23cfb064' stroke-width='5'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20261005-colorrow1">
+  <link rel="stylesheet" href="styles.css?v=20261005-rightslots9">
 </head>
 <body>
   <div class="app">
@@ -31,46 +31,29 @@
         <button class="settings-action" id="exportJson" type="button">JSON出力</button>
         <button class="settings-action" id="exportPng" type="button">PNG書出</button>
       </div>
-      <div class="display-toggles">
-        <label class="sponsor-toggle" for="english"><input type="checkbox" id="english" data-field="english"><span>英語</span></label>
-        <label class="sponsor-toggle" for="personal"><input type="checkbox" id="personal" data-field="personal"><span>選手映像</span></label>
-        <label class="sponsor-toggle" for="playerPhoto"><input type="checkbox" id="playerPhoto" data-field="playerPhoto"><span>選手写真</span></label>
-        <label class="sponsor-toggle" for="guide"><input type="checkbox" id="guide" data-field="guide"><span>ガイド</span></label>
-        <label class="sponsor-toggle" for="video"><input type="checkbox" id="video" data-field="video"><span>映像</span></label>
-        <label class="sponsor-toggle" for="sponsors"><input type="checkbox" id="sponsors" data-field="sponsors"><span>広告</span></label>
-        <label class="sponsor-toggle" for="sponsors2"><input type="checkbox" id="sponsors2" data-field="sponsors2"><span>広告2</span></label>
-        <label class="sponsor-toggle" for="rules"><input type="checkbox" id="rules" data-field="rules"><span>ルール</span></label>
-      </div>
-
       <div class="event-fields">
-        <div class="field"><label for="edition">回次等</label><input id="edition" data-field="edition"><input class="english-input" id="editionEn" data-field="editionEn" placeholder="English" hidden></div>
-        <div class="field">
-          <label for="title">大会名</label>
-          <div class="preset-input">
-            <select id="titlePreset" data-preset-for="title" aria-label="大会名のプリセット">
-              <option value="">選択</option>
-              <option>日本選手権</option><option>盤聖戦</option><option>名人戦</option><option>王位戦</option>
-              <option>賽王戦</option><option>棋聖戦</option><option>女王戦</option><option>新鋭戦</option>
-              <option>東京オープン</option><option>大阪オープン</option><option>名古屋オープン</option>
-            </select>
-            <input id="title" data-field="title">
-          </div>
-          <input class="english-input" id="titleEn" data-field="titleEn" placeholder="English" hidden>
-        </div>
-        <div class="field">
-          <label for="round">試合名</label>
-          <div class="preset-input">
-            <select id="roundPreset" data-preset-for="round" aria-label="試合名のプリセット">
-              <option value="">選択</option>
-              <option>決勝</option><option>準決勝</option><option>準々決勝</option><option>プレーオフ</option>
-              <option>１回戦</option><option>２回戦</option><option>３回戦</option>
-            </select>
-            <input id="round" data-field="round">
-          </div>
-          <input class="english-input" id="roundEn" data-field="roundEn" placeholder="English" hidden>
-        </div>
         <div class="field"><label for="topName">上選手名</label><div class="preset-input player-input"><select id="topMember" data-member-for="top" aria-label="上選手名の選択"><option value="">選択</option></select><input id="topName" data-field="topName"></div><input class="english-input" id="topNameEn" data-field="topNameEn" placeholder="English" hidden></div>
         <div class="field"><label for="bottomName">下選手名</label><div class="preset-input player-input"><select id="bottomMember" data-member-for="bottom" aria-label="下選手名の選択"><option value="">選択</option></select><input id="bottomName" data-field="bottomName"></div><input class="english-input" id="bottomNameEn" data-field="bottomNameEn" placeholder="English" hidden></div>
+        <div class="player-swap-field"><button type="button" id="swapPlayerNames" class="swap-colors"><span>上下</span><span>入替</span></button></div>
+        <div class="display-toggles">
+          <label class="sponsor-toggle" for="personal"><input type="checkbox" id="personal" data-field="personal"><span>選手映像</span></label>
+          <label class="sponsor-toggle" for="playerPhoto"><input type="checkbox" id="playerPhoto" data-field="playerPhoto"><span>選手写真</span></label>
+          <label class="sponsor-toggle" for="english"><input type="checkbox" id="english" data-field="english"><span>英語</span></label>
+          <label class="sponsor-toggle" for="guide"><input type="checkbox" id="guide" data-field="guide"><span>ガイド</span></label>
+        </div>
+      </div>
+
+      <div class="right-selects">
+        <div class="field"><label for="right1Mode">右1</label><select id="right1Mode" data-field="right1Mode"><option value="none">表示無し</option><option value="reference">参考エリア</option><option value="title" selected>大会名</option><option value="thumbnail">サムネイル</option></select><select class="thumbnail-picker" id="right1Thumbnail" data-field="right1Thumbnail" hidden><option value="">画像を選択</option></select><input class="thumbnail-upload" id="right1Upload" type="file" accept="image/*" hidden></div>
+        <div class="field"><label for="right2Mode">右2</label><select id="right2Mode" data-field="right2Mode"><option value="none">表示無し</option><option value="reference">参考エリア</option><option value="thumbnail" selected>サムネイル</option></select><select class="thumbnail-picker" id="right2Thumbnail" data-field="right2Thumbnail" hidden><option value="">画像を選択</option></select><input class="thumbnail-upload" id="right2Upload" type="file" accept="image/*" hidden></div>
+        <div class="field"><label for="right3Mode">右3</label><select id="right3Mode" data-field="right3Mode"><option value="none">表示無し</option><option value="reference">参考エリア</option><option value="sponsors" selected>広告</option></select></div>
+        <div class="field"><label for="right4Mode">右4</label><select id="right4Mode" data-field="right4Mode"><option value="none">表示無し</option><option value="reference">参考エリア</option><option value="rules">ルール</option><option value="sponsors2">広告2枚</option><option value="sponsors2bottom">広告下のみ</option></select></div>
+      </div>
+
+      <div class="title-fields">
+        <div class="field"><label for="edition">回次等</label><input id="edition" data-field="edition"><input class="english-input" id="editionEn" data-field="editionEn" placeholder="English" hidden></div>
+        <div class="field"><label for="title">大会名</label><div class="preset-input"><select id="titlePreset" data-preset-for="title" aria-label="大会名のプリセット"><option value="">選択</option><option>日本選手権</option><option>盤聖戦</option><option>名人戦</option><option>王位戦</option><option>賽王戦</option><option>棋聖戦</option><option>女王戦</option><option>新鋭戦</option><option>東京オープン</option><option>大阪オープン</option><option>名古屋オープン</option></select><input id="title" data-field="title"></div><input class="english-input" id="titleEn" data-field="titleEn" placeholder="English" hidden></div>
+        <div class="field"><label for="round">試合名</label><div class="preset-input"><select id="roundPreset" data-preset-for="round" aria-label="試合名のプリセット"><option value="">選択</option><option>決勝</option><option>準決勝</option><option>準々決勝</option><option>プレーオフ</option><option>１回戦</option><option>２回戦</option><option>３回戦</option></select><input id="round" data-field="round"></div><input class="english-input" id="roundEn" data-field="roundEn" placeholder="English" hidden></div>
       </div>
 
       <div class="guide-fields" hidden>
@@ -131,7 +114,7 @@
     fetch('stage.html?v=20261005-transparent').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261005-colorrow1';
+      script.src = 'overlay.js?v=20261005-rightslots6';
       document.body.appendChild(script);
     });
   </script>

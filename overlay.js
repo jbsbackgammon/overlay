@@ -30,11 +30,18 @@ const defaults = {
   sponsors: true,
   sponsors2: false,
   rules: true,
+  right1Mode: "title",
+  right2Mode: "thumbnail",
+  right3Mode: "sponsors",
+  right4Mode: "rules",
+  right1Thumbnail: "",
+  right2Thumbnail: "",
   interval: 60000
 };
 
 const defaultPlayerPhoto = "assets/dummy.png";
 const memberPhotoByName = new Map();
+const thumbnailOptions = [];
 
 const boardPresets = {
   japan: { topColor: "#2E3F48", bottomColor: "#ECECEC" },
@@ -232,6 +239,24 @@ function fitStage() {
   wrap.style.height = `${1080 * scale}px`;
 }
 
+async function loadThumbnailOptions() {
+  try {
+    const response = await fetch("https://api.github.com/repos/jbsbackgammon/overlay/contents/thumbnail");
+    if (!response.ok) return;
+    const files = await response.json();
+    ["right1Thumbnail", "right2Thumbnail"].forEach((id) => {
+      const select = $(`#${id}`);
+      if (!select) return;
+      files.filter((file) => file.type === "file" && /\.(png|jpe?g|webp)$/i.test(file.name)).forEach((file) => {
+        const option = document.createElement("option");
+        option.value = file.download_url;
+        option.textContent = file.name;
+        select.append(option);
+      });
+    });
+  } catch (_) {}
+}
+
 function hexToRgb(hex) {
   const value = hex.replace("#", "");
   return {
@@ -284,6 +309,15 @@ function render() {
   });
   stage.classList.toggle("personal-mode", state.personal);
   stage.classList.toggle("player-photo-mode", state.playerPhoto);
+  stage.dataset.right1Mode = state.right1Mode || "title";
+  stage.dataset.right2Mode = state.right2Mode || "thumbnail";
+  stage.dataset.right3Mode = state.right3Mode || "sponsors";
+  stage.dataset.right4Mode = state.right4Mode || "rules";
+  ["right1", "right2"].forEach((slot) => {
+    const mode = state[`${slot}Mode`] || "thumbnail";
+    const picker = $(`#${slot}Thumbnail`);
+    if (picker) picker.hidden = mode !== "thumbnail";
+  });
   const guideVerticalGap = Math.max(0, Number(state.guideVerticalGap) || 0);
   const guideStart12 = Number(state.guideStart12) || 0;
   const guideStart6 = Number(state.guideStart6) || 0;
@@ -359,6 +393,15 @@ function render() {
   if (guideFields) guideFields.hidden = !state.guide;
   $(".sponsor-rail").hidden = !state.sponsors;
   $(".sponsor-secondary").hidden = !state.sponsors2;
+  const titleFields = $(".title-fields");
+  if (titleFields) titleFields.hidden = (state.right1Mode || "title") !== "title";
+  const titleCard = $(".title-card");
+  if (titleCard) titleCard.hidden = (state.right1Mode || "title") === "none";
+  if (titleCard && (state.right1Mode || "title") === "thumbnail") {
+    titleCard.style.backgroundImage = state.right1Thumbnail ? `url("${state.right1Thumbnail}")` : "none";
+  } else if (titleCard) {
+    titleCard.style.backgroundImage = "";
+  }
   $$(".personal-video").forEach((area) => { area.hidden = !(state.personal || state.playerPhoto); });
   ["top", "bottom"].forEach((side) => {
     const image = $(`.personal-video.${side} .personal-photo`);
@@ -375,8 +418,16 @@ function render() {
       image.src = requestedSrc;
     }
   });
-  $(".side-video-window").hidden = !state.video;
-  $(".rules-panel").hidden = !state.rules;
+  $(".side-video-window").hidden = !["reference", "thumbnail"].includes(state.right2Mode || "thumbnail");
+  const thumbnail = $(".side-thumbnail");
+  if (thumbnail) {
+    const src = state.right2Thumbnail || "";
+    thumbnail.hidden = (state.right2Mode || "thumbnail") !== "thumbnail" || !src;
+    if (src && thumbnail.getAttribute("src") !== src) thumbnail.src = src;
+  }
+  $(".rules-panel").hidden = (state.right4Mode || "rules") !== "rules";
+  $(".sponsor-rail").hidden = (state.right3Mode || "sponsors") !== "sponsors";
+  $(".sponsor-secondary").hidden = !["sponsors2", "sponsors2bottom"].includes(state.right4Mode || "rules");
   const sponsors2Toggle = $("[data-field=sponsors2]");
   const rulesToggle = $("[data-field=rules]");
   const personalToggle = $("[data-field=personal]");
@@ -919,6 +970,16 @@ function bindEditor() {
     localStorage.setItem(storageKey, JSON.stringify(state));
   });
 
+  $("#swapPlayerNames")?.addEventListener("click", () => {
+    [state.topName, state.bottomName] = [state.bottomName, state.topName];
+    [state.topNameEn, state.bottomNameEn] = [state.bottomNameEn, state.topNameEn];
+    ["topName", "bottomName", "topNameEn", "bottomNameEn"].forEach((key) => {
+      $$(`[data-field="${key}"]`).forEach((input) => { input.value = state[key] || ""; });
+    });
+    render();
+    localStorage.setItem(storageKey, JSON.stringify(state));
+  });
+
   const channelSelect = $("#channelSelect");
   if (channelSelect) {
     channelSelect.value = channel;
@@ -955,11 +1016,24 @@ function bindEditor() {
 
   $("#exportPng")?.addEventListener("click", exportStageAsPng);
 
+  ["right1", "right2"].forEach((slot) => {
+    const upload = $(`#${slot}Upload`);
+    upload?.addEventListener("change", () => {
+      const file = upload.files?.[0];
+      if (!file) return;
+      state[`${slot}Thumbnail`] = URL.createObjectURL(file);
+      render();
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    });
+  });
+
   $("#closeSettings")?.addEventListener("click", () => $("#settingsDialog")?.close());
   $("#settingsDialog")?.addEventListener("click", (event) => {
     if (event.target === event.currentTarget) event.currentTarget.close();
   });
 }
+
+loadThumbnailOptions();
 
 function loadSharedState() {
   if (!embeddedState && !Object.keys(fromQuery).length) {
