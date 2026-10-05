@@ -79,8 +79,14 @@ button, input, select { font: inherit; }
   z-index: 3;
 }
 
-.personal-video.top { top: 10px; }
-.personal-video.bottom { bottom: 10px; }
+.personal-video.top {
+  top: 10px;
+  border-radius: 14px 14px 14px 0;
+}
+.personal-video.bottom {
+  bottom: 10px;
+  border-radius: 0 14px 14px 14px;
+}
 .personal-video[hidden] { display: none; }
 
 .stage.player-photo-mode .personal-video {

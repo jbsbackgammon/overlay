@@ -646,15 +646,7 @@ async function loadMembers() {
         nameJa: String(member?.name ?? member?.nameJa ?? '').trim(),
         nameEn: String(member?.nameEn ?? '').trim()
       }))
-      .filter((member) => member.nameJa)
-      .sort((a, b) => {
-        const byEnglish = (a.nameEn || a.nameJa).localeCompare(
-          b.nameEn || b.nameJa,
-          'en',
-          { sensitivity: 'base', numeric: true }
-        );
-        return byEnglish || a.nameJa.localeCompare(b.nameJa, 'ja');
-      });
+      .filter((member) => member.nameJa);
     selects.forEach((select) => {
       members.forEach((member) => {
         const option = document.createElement('option');
