@@ -31,7 +31,7 @@ const defaults = {
   sponsors2: false,
   rules: true,
   right1Mode: "title",
-  right2Mode: "thumbnail",
+  right2Mode: "none",
   right3Mode: "sponsors",
   right4Mode: "rules",
   right1Thumbnail: "",
@@ -218,6 +218,7 @@ if ("rules" in fromQuery) fromQuery.rules = fromQuery.rules !== "false";
 if ("interval" in fromQuery) fromQuery.interval = Number(fromQuery.interval) || defaults.interval;
 
 let state = { ...defaults, ...(embeddedState || {}), ...fromQuery };
+if (!state.right1Mode) state.right1Mode = "title";
 let sponsorIndex = 0;
 let sponsorTimer;
 let languageTimer;
@@ -241,7 +242,7 @@ function fitStage() {
 
 async function loadThumbnailOptions() {
   try {
-    const response = await fetch("https://api.github.com/repos/jbsbackgammon/overlay/contents/thumbnail");
+    const response = await fetch("https://api.github.com/repos/jbsbackgammon/overlay/contents/assets/thumbnail");
     if (!response.ok) return;
     const files = await response.json();
     ["right1Thumbnail", "right2Thumbnail"].forEach((id) => {
@@ -310,7 +311,7 @@ function render() {
   stage.classList.toggle("personal-mode", state.personal);
   stage.classList.toggle("player-photo-mode", state.playerPhoto);
   stage.dataset.right1Mode = state.right1Mode || "title";
-  stage.dataset.right2Mode = state.right2Mode || "thumbnail";
+  stage.dataset.right2Mode = state.right2Mode || "none";
   stage.dataset.right3Mode = state.right3Mode || "sponsors";
   stage.dataset.right4Mode = state.right4Mode || "rules";
   ["right1", "right2"].forEach((slot) => {
@@ -418,11 +419,11 @@ function render() {
       image.src = requestedSrc;
     }
   });
-  $(".side-video-window").hidden = !["reference", "thumbnail"].includes(state.right2Mode || "thumbnail");
+  $(".side-video-window").hidden = !["reference", "thumbnail"].includes(state.right2Mode || "none");
   const thumbnail = $(".side-thumbnail");
   if (thumbnail) {
     const src = state.right2Thumbnail || "";
-    thumbnail.hidden = (state.right2Mode || "thumbnail") !== "thumbnail" || !src;
+    thumbnail.hidden = (state.right2Mode || "none") !== "thumbnail" || !src;
     if (src && thumbnail.getAttribute("src") !== src) thumbnail.src = src;
   }
   $(".rules-panel").hidden = (state.right4Mode || "rules") !== "rules";
@@ -725,7 +726,7 @@ async function loadMembers() {
   const selects = $$('[data-member-for]');
   if (!selects.length) return;
   try {
-    const response = await fetch('/member/data/members.json', { cache: 'no-store' });
+    const response = await fetch('https://jbsbackgammon.github.io/member/data/members.json', { cache: 'no-store' });
     if (!response.ok) throw new Error();
     const data = await response.json();
     const source = Array.isArray(data) ? data : data?.members;
@@ -733,7 +734,8 @@ async function loadMembers() {
     const members = source
       .map((member) => ({
         nameJa: String(member?.name ?? member?.nameJa ?? '').trim(),
-        nameEn: String(member?.nameEn ?? '').trim()
+        nameEn: String(member?.nameEn ?? '').trim(),
+        photo: String(member?.photo ?? '').trim()
       }))
       .filter((member) => member.nameJa)
       .sort((a, b) => {
@@ -747,9 +749,14 @@ async function loadMembers() {
       });
     memberPhotoByName.clear();
     members.forEach((member) => {
-      if (!member.nameEn) return;
-      const filename = `${member.nameJa}_${member.nameEn}.png`;
-      memberPhotoByName.set(member.nameJa, `https://jbsbackgammon.github.io/member/images/${encodeURIComponent(filename)}`);
+      const fallbackFilename = member.nameEn ? `${member.nameJa}_${member.nameEn}.png` : '';
+      const photoPath = member.photo.replace(/^\.\.\//, '').replace(/^\//, '');
+      const photoUrl = photoPath
+        ? new URL(photoPath, 'https://jbsbackgammon.github.io/member/').href
+        : fallbackFilename
+          ? `https://jbsbackgammon.github.io/member/images/${encodeURIComponent(fallbackFilename)}`
+          : '';
+      if (photoUrl) memberPhotoByName.set(member.nameJa, photoUrl);
     });
     selects.forEach((select) => {
       members.forEach((member) => {
@@ -1084,6 +1091,7 @@ function loadSharedState() {
         savedState.guidePointGap = defaults.guidePointGap;
       }
       state = { ...state, ...savedState };
+      if (!state.right1Mode) state.right1Mode = "title";
       if (usesOldGuideDefaults || usesOldTextDefaults) localStorage.setItem(storageKey, JSON.stringify(state));
       if (state.panelColor?.toUpperCase() === "#CFB064") {
         state.panelColor = "#FFFFFF";

@@ -45,7 +45,7 @@
 
       <div class="right-selects">
         <div class="field"><label for="right1Mode">右1</label><select id="right1Mode" data-field="right1Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="title" selected>大会名</option><option value="thumbnail">サムネイル</option></select><select class="thumbnail-picker" id="right1Thumbnail" data-field="right1Thumbnail" hidden><option value="">画像を選択</option></select><input class="thumbnail-upload" id="right1Upload" type="file" accept="image/*" hidden></div>
-        <div class="field"><label for="right2Mode">右2</label><select id="right2Mode" data-field="right2Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="thumbnail" selected>サムネイル</option></select><select class="thumbnail-picker" id="right2Thumbnail" data-field="right2Thumbnail" hidden><option value="">画像を選択</option></select><input class="thumbnail-upload" id="right2Upload" type="file" accept="image/*" hidden></div>
+        <div class="field"><label for="right2Mode">右2</label><select id="right2Mode" data-field="right2Mode"><option value="none" selected>表示無し</option><option value="reference">参考表示</option><option value="thumbnail">サムネイル</option></select><select class="thumbnail-picker" id="right2Thumbnail" data-field="right2Thumbnail" hidden><option value="">画像を選択</option></select><input class="thumbnail-upload" id="right2Upload" type="file" accept="image/*" hidden></div>
         <div class="field"><label for="right3Mode">右3</label><select id="right3Mode" data-field="right3Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="sponsors" selected>広告</option></select></div>
         <div class="field"><label for="right4Mode">右4</label><select id="right4Mode" data-field="right4Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="rules">ルール</option><option value="sponsors2">広告2枚</option><option value="sponsors2bottom">広告下のみ</option></select></div>
       </div>
@@ -114,7 +114,7 @@
     fetch('stage.html?v=20261005-reference1').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261005-adsrotation1';
+      script.src = 'overlay.js?v=20261005-playerphotos2';
       document.body.appendChild(script);
     });
   </script>
