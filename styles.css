@@ -113,6 +113,10 @@ button, input, select { font: inherit; }
   background: var(--frame-color, #383838);
 }
 
+.stage.player-photo-mode .personal-video.top {
+  padding-top: 0;
+}
+
 .stage.player-photo-mode .personal-photo {
   position: relative;
   z-index: 1;
