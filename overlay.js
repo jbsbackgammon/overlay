@@ -33,6 +33,9 @@ const defaults = {
   interval: 60000
 };
 
+const defaultPlayerPhoto = "assets/dummy.png";
+const memberPhotoByName = new Map();
+
 const boardPresets = {
   japan: { topColor: "#2E3F48", bottomColor: "#ECECEC" },
   bansei: { topColor: "#5D2F47", bottomColor: "#ECECEC" },
@@ -357,6 +360,21 @@ function render() {
   $(".sponsor-rail").hidden = !state.sponsors;
   $(".sponsor-secondary").hidden = !state.sponsors2;
   $$(".personal-video").forEach((area) => { area.hidden = !(state.personal || state.playerPhoto); });
+  ["top", "bottom"].forEach((side) => {
+    const image = $(`.personal-video.${side} .personal-photo`);
+    if (!image) return;
+    if (!image.dataset.fallbackBound) {
+      image.addEventListener("error", () => {
+        if (!image.src.endsWith(`/${defaultPlayerPhoto}`)) image.src = defaultPlayerPhoto;
+      });
+      image.dataset.fallbackBound = "true";
+    }
+    const requestedSrc = memberPhotoByName.get(state[`${side}Name`]) || defaultPlayerPhoto;
+    if (image.dataset.requestedSrc !== requestedSrc) {
+      image.dataset.requestedSrc = requestedSrc;
+      image.src = requestedSrc;
+    }
+  });
   $(".side-video-window").hidden = !state.video;
   $(".rules-panel").hidden = !state.rules;
   const sponsors2Toggle = $("[data-field=sponsors2]");
@@ -656,6 +674,12 @@ async function loadMembers() {
         return aKey.localeCompare(bKey, 'en', { sensitivity: 'base', numeric: true })
           || a.nameJa.localeCompare(b.nameJa, 'ja');
       });
+    memberPhotoByName.clear();
+    members.forEach((member) => {
+      if (!member.nameEn) return;
+      const filename = `${member.nameJa}_${member.nameEn}.png`;
+      memberPhotoByName.set(member.nameJa, `https://jbsbackgammon.github.io/member/images/${encodeURIComponent(filename)}`);
+    });
     selects.forEach((select) => {
       members.forEach((member) => {
         const option = document.createElement('option');
@@ -677,6 +701,7 @@ async function loadMembers() {
         select.value = '';
       });
     });
+    render();
   }
   catch (_) {
     selects.forEach((select) => {
