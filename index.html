@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23383838'/%3E%3Ccircle cx='32' cy='32' r='20' fill='%23cf2933' stroke='%23cfb064' stroke-width='5'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20261005-jsonmembers1">
+  <link rel="stylesheet" href="styles.css?v=20261005-membersort1">
 </head>
 <body>
   <div class="app">
@@ -23,12 +23,12 @@
         </label>
         <button class="open-output" id="openOutput">配信本番</button>
         <span class="action-separator" aria-hidden="true"></span>
-        <button class="settings-action" id="saveSettings" type="button">設定保存</button>
-        <button class="settings-action" id="exportJson" type="button">JSON出力</button>
-        <span class="action-separator" aria-hidden="true"></span>
         <button class="settings-action" id="loadSettings" type="button">設定呼出</button>
         <button class="settings-action" id="importJson" type="button">JSON取込</button>
         <input id="importJsonFile" type="file" accept="application/json,.json" hidden>
+        <span class="action-separator" aria-hidden="true"></span>
+        <button class="settings-action" id="saveSettings" type="button">設定保存</button>
+        <button class="settings-action" id="exportJson" type="button">JSON出力</button>
         <button class="settings-action" id="exportPng" type="button">PNG書出</button>
       </div>
       <div class="display-toggles">
@@ -131,7 +131,7 @@
     fetch('stage.html?v=20261005-transparent').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261005-jsonmembers1';
+      script.src = 'overlay.js?v=20261005-membersort1';
       document.body.appendChild(script);
     });
   </script>

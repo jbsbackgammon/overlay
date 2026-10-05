@@ -765,7 +765,7 @@ button, input, select { font: inherit; }
 }
 
 .preset-input input { border-radius: 0 9px 9px 0; }
-.player-input select { width: 64px; }
+.player-input select { width: 100%; }
 
 .english-input[hidden] { display: none; }
 
