@@ -110,9 +110,24 @@ button, input, select { font: inherit; }
 .stage.player-photo-mode .personal-video {
   width: 200px;
   height: 200px;
+  padding: 6px;
+  background: var(--frame-color, #383838);
 }
 
-.stage.player-photo-mode .personal-photo { display: block; }
+.stage.player-photo-mode .personal-photo {
+  position: relative;
+  z-index: 1;
+  display: block;
+  border-radius: 9px;
+}
+
+.stage.player-photo-mode .personal-video.top .personal-photo {
+  border-bottom-left-radius: 0;
+}
+
+.stage.player-photo-mode .personal-video.bottom .personal-photo {
+  border-top-left-radius: 0;
+}
 
 .point-guide {
   position: absolute;
