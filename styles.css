@@ -124,14 +124,6 @@ button, input, select { font: inherit; }
   border-radius: 9px;
 }
 
-.stage.player-photo-mode .personal-video.top .personal-photo {
-  border-bottom-left-radius: 0;
-}
-
-.stage.player-photo-mode .personal-video.bottom .personal-photo {
-  border-top-left-radius: 0;
-}
-
 .point-guide {
   position: absolute;
   left: var(--guide-left, 460px);

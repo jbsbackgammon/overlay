@@ -185,6 +185,8 @@ const ruleSlides = [
 const query = new URLSearchParams(location.search);
 const channel = query.get("channel") === "2" ? "2" : "1";
 const storageKey = channel === "1" ? "jbs-overlay-state" : `jbs-overlay-state-${channel}`;
+const stateChannelName = `jbs-overlay-live-${channel}`;
+const stateChannel = typeof BroadcastChannel === "function" ? new BroadcastChannel(stateChannelName) : null;
 
 function encodeOutputState(value) {
   const bytes = new TextEncoder().encode(JSON.stringify(value));
@@ -226,10 +228,36 @@ let ruleTimer;
 let languageMode = "ja";
 let ruleIndex = 0;
 let fitFrame;
+let lastStoredState = embeddedState ? null : localStorage.getItem(storageKey);
 const savedSettingsKey = "jbs-overlay-saved-settings";
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+function persistState() {
+  const serialized = JSON.stringify(state);
+  lastStoredState = serialized;
+  localStorage.setItem(storageKey, serialized);
+  stateChannel?.postMessage({ type: "state", state });
+}
+
+function applyExternalState(nextState) {
+  if (!nextState || typeof nextState !== "object" || Array.isArray(nextState)) return;
+  state = { ...defaults, ...nextState };
+  if (!state.right1Mode) state.right1Mode = "title";
+  syncEditorFromState();
+}
+
+stateChannel?.addEventListener("message", (event) => {
+  if (event.data?.type === "state") applyExternalState(event.data.state);
+});
+
+addEventListener("storage", (event) => {
+  if (event.key !== storageKey || !event.newValue) return;
+  lastStoredState = event.newValue;
+  try { applyExternalState(JSON.parse(event.newValue)); }
+  catch (_) { /* ignore malformed shared state */ }
+});
 
 function fitStage() {
   const wrap = $(".stage-wrap");
@@ -714,7 +742,7 @@ async function importJsonFile(file) {
     if (!imported || typeof imported !== "object" || Array.isArray(imported)) throw new Error();
     const allowed = Object.fromEntries(Object.entries(imported).filter(([key]) => key in defaults));
     state = { ...defaults, ...allowed };
-    localStorage.setItem(storageKey, JSON.stringify(state));
+    persistState();
     syncEditorFromState();
   }
   catch (_) {
@@ -724,7 +752,6 @@ async function importJsonFile(file) {
 
 async function loadMembers() {
   const selects = $$('[data-member-for]');
-  if (!selects.length) return;
   try {
     const response = await fetch('https://jbsbackgammon.github.io/member/data/members.json', { cache: 'no-store' });
     if (!response.ok) throw new Error();
@@ -774,7 +801,7 @@ async function loadMembers() {
         state[`${side}NameEn`] = option.dataset.nameEn || '';
         $(`[data-field="${side}Name"]`).value = state[`${side}Name`];
         $(`[data-field="${side}NameEn"]`).value = state[`${side}NameEn`];
-        localStorage.setItem(storageKey, JSON.stringify(state));
+        persistState();
         render();
         select.value = '';
       });
@@ -873,7 +900,7 @@ function renderSavedSettings() {
     button.textContent = settingLabel(entry);
     button.addEventListener("click", () => {
       state = { ...defaults, ...entry.state };
-      localStorage.setItem(storageKey, JSON.stringify(state));
+      persistState();
       syncEditorFromState();
       $("#settingsDialog").close();
     });
@@ -912,7 +939,7 @@ function bindEditor() {
         updateEnglishFields();
         startLanguageRotation();
       }
-      localStorage.setItem(storageKey, JSON.stringify(state));
+      persistState();
     });
   });
 
@@ -928,7 +955,7 @@ function bindEditor() {
       }
       $$(`[data-field="${key}"]`).forEach((peer) => { peer.value = input.value.toUpperCase(); });
       render();
-      localStorage.setItem(storageKey, JSON.stringify(state));
+      persistState();
     };
     input.addEventListener("input", applyColor);
     input.addEventListener("change", applyColor);
@@ -966,7 +993,7 @@ function bindEditor() {
         $("[data-field=roundEn]").value = state.roundEn;
       }
       render();
-      localStorage.setItem(storageKey, JSON.stringify(state));
+      persistState();
       select.value = "";
     });
   });
@@ -975,7 +1002,7 @@ function bindEditor() {
     state.boardPreset = event.currentTarget.value;
     const preset = boardPresets[state.boardPreset];
     if (!preset) {
-      localStorage.setItem(storageKey, JSON.stringify(state));
+      persistState();
       return;
     }
     Object.entries(preset).forEach(([key, value]) => {
@@ -984,7 +1011,7 @@ function bindEditor() {
       $$(`[data-color-for="${key}"]`).forEach((input) => { input.value = value; });
     });
     render();
-    localStorage.setItem(storageKey, JSON.stringify(state));
+    persistState();
   });
 
   $("#swapPlayerColors")?.addEventListener("click", () => {
@@ -994,7 +1021,7 @@ function bindEditor() {
       $$(`[data-color-for="${key}"]`).forEach((input) => { input.value = state[key]; });
     });
     render();
-    localStorage.setItem(storageKey, JSON.stringify(state));
+    persistState();
   });
 
   $("#swapPlayerNames")?.addEventListener("click", () => {
@@ -1004,7 +1031,7 @@ function bindEditor() {
       $$(`[data-field="${key}"]`).forEach((input) => { input.value = state[key] || ""; });
     });
     render();
-    localStorage.setItem(storageKey, JSON.stringify(state));
+    persistState();
   });
 
   const channelSelect = $("#channelSelect");
@@ -1050,7 +1077,7 @@ function bindEditor() {
       if (!file) return;
       state[`${slot}Thumbnail`] = URL.createObjectURL(file);
       render();
-      localStorage.setItem(storageKey, JSON.stringify(state));
+      persistState();
     });
   });
 
@@ -1092,10 +1119,10 @@ function loadSharedState() {
       }
       state = { ...state, ...savedState };
       if (!state.right1Mode) state.right1Mode = "title";
-      if (usesOldGuideDefaults || usesOldTextDefaults) localStorage.setItem(storageKey, JSON.stringify(state));
+      if (usesOldGuideDefaults || usesOldTextDefaults) persistState();
       if (state.panelColor?.toUpperCase() === "#CFB064") {
         state.panelColor = "#FFFFFF";
-        localStorage.setItem(storageKey, JSON.stringify(state));
+        persistState();
       }
     }
     catch (_) { /* use defaults */ }
@@ -1111,6 +1138,13 @@ updateEnglishFields();
 loadSponsorImages().finally(startRotation);
 startLanguageRotation();
 startRuleRotation();
+setInterval(() => {
+  const serialized = localStorage.getItem(storageKey);
+  if (!serialized || serialized === lastStoredState) return;
+  lastStoredState = serialized;
+  try { applyExternalState(JSON.parse(serialized)); }
+  catch (_) { /* ignore malformed shared state */ }
+}, 1000);
 addEventListener("resize", fitStage);
 fitStage();
 document.fonts?.ready.then(() => {
