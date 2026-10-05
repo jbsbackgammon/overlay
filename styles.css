@@ -59,14 +59,13 @@ button, input, select { font: inherit; }
   border-radius: 22px;
   background: transparent;
   box-shadow: 0 0 0 2000px var(--frame-color, #383838);
-  overflow: hidden;
+  overflow: visible;
 }
 
-.stage.personal-mode .camera-window::before,
-.stage.player-photo-mode .camera-window::before {
+.camera-window::before {
   content: "";
   position: absolute;
-  left: 0;
+  left: -1px;
   top: 22px;
   bottom: 22px;
   width: 1px;
@@ -110,7 +109,7 @@ button, input, select { font: inherit; }
 .stage.player-photo-mode .personal-video {
   width: 200px;
   height: 200px;
-  padding: 6px;
+  padding: 6px 6px 6px 0;
   background: var(--frame-color, #383838);
 }
 
