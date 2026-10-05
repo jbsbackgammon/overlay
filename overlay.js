@@ -230,6 +230,7 @@ let ruleIndex = 0;
 let fitFrame;
 let lastStoredState = embeddedState ? null : localStorage.getItem(storageKey);
 const savedSettingsKey = "jbs-overlay-saved-settings";
+let pendingPngDownload = null;
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -308,6 +309,11 @@ function luminance(r, g, b) {
 function contrastText(hex) {
   const { r, g, b } = hexToRgb(hex);
   return luminance(r, g, b) > 0.179 ? "#000000" : "#ffffff";
+}
+
+function rgba(hex, alpha) {
+  const { r, g, b } = hexToRgb(hex);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 function ordinal(number) {
@@ -414,9 +420,15 @@ function render() {
   const topGuide = $(".point-guide.top");
   const bottomGuide = $(".point-guide.bottom");
   topGuide.style.setProperty("--guide-color", state.topColor);
-  topGuide.style.setProperty("--guide-ink", contrastText(state.topColor));
+  const topGuideInk = contrastText(state.topColor);
+  topGuide.style.setProperty("--guide-ink", topGuideInk);
+  topGuide.style.setProperty("--guide-background", rgba(state.topColor, 0.7));
+  topGuide.style.setProperty("--guide-border", rgba(topGuideInk, 0.34));
   bottomGuide.style.setProperty("--guide-color", state.bottomColor);
-  bottomGuide.style.setProperty("--guide-ink", contrastText(state.bottomColor));
+  const bottomGuideInk = contrastText(state.bottomColor);
+  bottomGuide.style.setProperty("--guide-ink", bottomGuideInk);
+  bottomGuide.style.setProperty("--guide-background", rgba(state.bottomColor, 0.7));
+  bottomGuide.style.setProperty("--guide-border", rgba(bottomGuideInk, 0.34));
   $$(".point-guide").forEach((guide) => { guide.hidden = !state.guide; });
   const guideFields = $(".guide-fields");
   if (guideFields) guideFields.hidden = !state.guide;
@@ -819,6 +831,20 @@ async function exportStageAsPng() {
   const stage = $(".stage");
   const button = $("#exportPng");
   if (!stage || !button) return;
+  if (pendingPngDownload) {
+    const { filename, url } = pendingPngDownload;
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = url;
+    link.hidden = true;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    pendingPngDownload = null;
+    button.textContent = "PNG書出";
+    return;
+  }
   if (typeof window.html2canvas !== "function") {
     alert("PNG書出機能を読み込めませんでした。インターネット接続を確認して、ページを再読み込みしてください。");
     return;
@@ -826,6 +852,7 @@ async function exportStageAsPng() {
 
   const originalText = button.textContent;
   const originalTransform = stage.style.transform;
+  let readyToSave = false;
   button.disabled = true;
   button.textContent = "書出中…";
   try {
@@ -843,22 +870,28 @@ async function exportStageAsPng() {
       scale: 1,
       backgroundColor: null,
       useCORS: true,
+      imageTimeout: 5000,
       logging: false
     });
     const now = new Date();
     const pad = (number) => String(number).padStart(2, "0");
     const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
-    const link = document.createElement("a");
-    link.download = `配信盤面-${stamp}.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob((value) => value ? resolve(value) : reject(new Error("PNG blob creation failed")), "image/png");
+    });
+    const downloadUrl = URL.createObjectURL(blob);
+    pendingPngDownload = {
+      filename: `配信盤面-${stamp}.png`,
+      url: downloadUrl
+    };
+    readyToSave = true;
   } catch (error) {
     console.error(error);
     alert("PNGの書き出しに失敗しました。ページを再読み込みして、もう一度お試しください。");
   } finally {
     stage.style.transform = originalTransform;
     button.disabled = false;
-    button.textContent = originalText;
+    button.textContent = readyToSave ? "PNG保存" : originalText;
   }
 }
 

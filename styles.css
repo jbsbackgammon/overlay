@@ -131,9 +131,9 @@ button, input, select { font: inherit; }
   height: 34px;
   display: block;
   color: var(--guide-ink, #ffffff);
-  border: 2px solid color-mix(in srgb, var(--guide-ink) 34%, transparent);
+  border: 2px solid var(--guide-border, rgba(255, 255, 255, .34));
   border-radius: 0;
-  background: color-mix(in srgb, var(--guide-color) 70%, transparent);
+  background: var(--guide-background, rgba(56, 56, 56, .7));
   overflow: hidden;
   z-index: 4;
   filter: drop-shadow(0 3px 7px rgba(0,0,0,.32));
