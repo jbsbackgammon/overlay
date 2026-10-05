@@ -845,7 +845,7 @@ async function exportStageAsPng() {
     button.textContent = "PNG書出";
     return;
   }
-  if (typeof window.html2canvas !== "function") {
+  if (!window.htmlToImage && typeof window.html2canvas !== "function") {
     alert("PNG書出機能を読み込めませんでした。インターネット接続を確認して、ページを再読み込みしてください。");
     return;
   }
@@ -864,21 +864,42 @@ async function exportStageAsPng() {
         image.addEventListener("error", resolve, { once: true });
       })));
     stage.style.transform = "none";
-    const canvas = await window.html2canvas(stage, {
-      width: 1920,
-      height: 1080,
-      scale: 1,
-      backgroundColor: null,
-      useCORS: true,
-      imageTimeout: 5000,
-      logging: false
-    });
+    let blob;
+    if (window.htmlToImage?.toBlob) {
+      blob = await window.htmlToImage.toBlob(stage, {
+        width: 1920,
+        height: 1080,
+        canvasWidth: 1920,
+        canvasHeight: 1080,
+        pixelRatio: 1,
+        cacheBust: false,
+        skipFonts: true,
+        backgroundColor: "transparent",
+        style: {
+          width: "1920px",
+          height: "1080px",
+          transform: "none",
+          transformOrigin: "top left"
+        }
+      });
+      if (!blob) throw new Error("PNG blob creation failed");
+    } else {
+      const canvas = await window.html2canvas(stage, {
+        width: 1920,
+        height: 1080,
+        scale: 1,
+        backgroundColor: null,
+        useCORS: true,
+        imageTimeout: 5000,
+        logging: false
+      });
+      blob = await new Promise((resolve, reject) => {
+        canvas.toBlob((value) => value ? resolve(value) : reject(new Error("PNG blob creation failed")), "image/png");
+      });
+    }
     const now = new Date();
     const pad = (number) => String(number).padStart(2, "0");
     const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
-    const blob = await new Promise((resolve, reject) => {
-      canvas.toBlob((value) => value ? resolve(value) : reject(new Error("PNG blob creation failed")), "image/png");
-    });
     const downloadUrl = URL.createObjectURL(blob);
     pendingPngDownload = {
       filename: `配信盤面-${stamp}.png`,
