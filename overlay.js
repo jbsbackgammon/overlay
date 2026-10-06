@@ -43,6 +43,82 @@ const defaultPlayerPhoto = "assets/dummy.png";
 const memberPhotoByName = new Map();
 const thumbnailOptions = [];
 
+function isForeignMember(member) {
+  const name = member.nameJa;
+  return /[A-Za-z]/.test(name) && !/[\u3040-\u30ff\u3400-\u9fff]/.test(name);
+}
+
+function katakanaToHiragana(value) {
+  return String(value || '').replace(/[\u30a1-\u30f6]/g, (character) =>
+    String.fromCharCode(character.charCodeAt(0) - 0x60)
+  );
+}
+
+const ROMAJI_TO_HIRAGANA = new Map(Object.entries({
+  kya:'きゃ', kyu:'きゅ', kyo:'きょ', gya:'ぎゃ', gyu:'ぎゅ', gyo:'ぎょ',
+  sha:'しゃ', shu:'しゅ', sho:'しょ', sya:'しゃ', syu:'しゅ', syo:'しょ',
+  ja:'じゃ', ju:'じゅ', jo:'じょ', jya:'じゃ', jyu:'じゅ', jyo:'じょ',
+  cha:'ちゃ', chu:'ちゅ', cho:'ちょ', cya:'ちゃ', cyu:'ちゅ', cyo:'ちょ',
+  tya:'ちゃ', tyu:'ちゅ', tyo:'ちょ', nya:'にゃ', nyu:'にゅ', nyo:'にょ',
+  hya:'ひゃ', hyu:'ひゅ', hyo:'ひょ', bya:'びゃ', byu:'びゅ', byo:'びょ',
+  pya:'ぴゃ', pyu:'ぴゅ', pyo:'ぴょ', mya:'みゃ', myu:'みゅ', myo:'みょ',
+  rya:'りゃ', ryu:'りゅ', ryo:'りょ', fa:'ふぁ', fi:'ふぃ', fe:'ふぇ', fo:'ふぉ',
+  va:'ゔぁ', vi:'ゔぃ', vu:'ゔ', ve:'ゔぇ', vo:'ゔぉ', shi:'し', chi:'ち', tsu:'つ',
+  si:'し', ti:'ち', tu:'つ', hu:'ふ', ji:'じ', zi:'じ',
+  a:'あ', i:'い', u:'う', e:'え', o:'お', ka:'か', ki:'き', ku:'く', ke:'け', ko:'こ',
+  ga:'が', gi:'ぎ', gu:'ぐ', ge:'げ', go:'ご', sa:'さ', su:'す', se:'せ', so:'そ',
+  za:'ざ', zu:'ず', ze:'ぜ', zo:'ぞ', ta:'た', te:'て', to:'と', da:'だ', di:'ぢ',
+  du:'づ', de:'で', do:'ど', na:'な', ni:'に', nu:'ぬ', ne:'ね', no:'の',
+  ha:'は', hi:'ひ', fu:'ふ', he:'へ', ho:'ほ', ba:'ば', bi:'び', bu:'ぶ', be:'べ', bo:'ぼ',
+  pa:'ぱ', pi:'ぴ', pu:'ぷ', pe:'ぺ', po:'ぽ', ma:'ま', mi:'み', mu:'む', me:'め', mo:'も',
+  ya:'や', yu:'ゆ', yo:'よ', ra:'ら', ri:'り', ru:'る', re:'れ', ro:'ろ',
+  wa:'わ', wi:'ゐ', we:'ゑ', wo:'を', n:'ん'
+}));
+
+function romajiToHiragana(value) {
+  const source = String(value || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[’']/g, "'").replace(/[^A-Za-z'-]/g, '').toLowerCase();
+  if (!source) return '';
+  let result = '';
+  let index = 0;
+  while (index < source.length) {
+    if (source[index] === '-' || source[index] === "'") { index += 1; continue; }
+    if (index > 0 && source[index] === 'h' && source[index - 1] === 'o') { index += 1; continue; }
+    if (index + 1 < source.length && source[index] === source[index + 1]
+      && /[bcdfghjklmpqrstvwxyz]/.test(source[index]) && source[index] !== 'n') {
+      result += 'っ'; index += 1; continue;
+    }
+    if (source[index] === 'm' && index + 1 < source.length && /[bmp]/.test(source[index + 1])) {
+      result += 'ん'; index += 1; continue;
+    }
+    if (source[index] === 'n' && (index === source.length - 1 || source[index + 1] === "'" || !/[aiueoy]/.test(source[index + 1]))) {
+      result += 'ん'; index += 1; if (source[index] === "'") index += 1; continue;
+    }
+    let matched = false;
+    for (const length of [3, 2, 1]) {
+      const kana = ROMAJI_TO_HIRAGANA.get(source.slice(index, index + length));
+      if (kana) { result += kana; index += length; matched = true; break; }
+    }
+    if (!matched) return '';
+  }
+  return result;
+}
+
+function japaneseSurnameSortKey(member) {
+  const surnameJa = String(member.nameJa || '').trim().split(/\s+/)[0] || '';
+  if (surnameJa && /^[\u3040-\u30ffー]+$/.test(surnameJa)) return katakanaToHiragana(surnameJa);
+  const tokens = String(member.nameEn || '').trim().split(/\s+/)
+    .map((token) => token.replace(/^[^A-Za-z]+|[^A-Za-z'-]+$/g, '')).filter(Boolean);
+  const uppercaseSurname = tokens.find((token) => /[A-Z]/.test(token) && token === token.toUpperCase() && /^[A-Z'-]+$/.test(token));
+  const japaneseLikeTokens = tokens.filter((token) => romajiToHiragana(token));
+  const surnameRomaji = uppercaseSurname || japaneseLikeTokens.at(-1) || tokens[0] || '';
+  return romajiToHiragana(surnameRomaji) || surnameRomaji.toLocaleLowerCase('en');
+}
+
+function foreignFirstNameSortKey(member) {
+  return String(member.nameJa || '').trim().split(/\s+/)[0].toLocaleLowerCase('en');
+}
+
 const boardPresets = {
   japan: { topColor: "#2E3F48", bottomColor: "#ECECEC" },
   bansei: { topColor: "#5D2F47", bottomColor: "#ECECEC" },
@@ -778,13 +854,16 @@ async function loadMembers() {
       }))
       .filter((member) => member.nameJa)
       .sort((a, b) => {
-        const aForeign = /^[\x00-\x7F]+$/.test(a.nameJa);
-        const bForeign = /^[\x00-\x7F]+$/.test(b.nameJa);
+        const aForeign = isForeignMember(a);
+        const bForeign = isForeignMember(b);
         if (aForeign !== bForeign) return aForeign ? 1 : -1;
-        const aKey = aForeign ? a.nameJa : (a.nameEn || a.nameJa);
-        const bKey = bForeign ? b.nameJa : (b.nameEn || b.nameJa);
-        return aKey.localeCompare(bKey, 'en', { sensitivity: 'base', numeric: true })
-          || a.nameJa.localeCompare(b.nameJa, 'ja');
+        if (!aForeign) {
+          return japaneseSurnameSortKey(a).localeCompare(japaneseSurnameSortKey(b), 'ja', { sensitivity: 'base', numeric: true })
+            || a.nameEn.localeCompare(b.nameEn, 'en', { sensitivity: 'base', numeric: true })
+            || a.nameJa.localeCompare(b.nameJa, 'ja', { sensitivity: 'base', numeric: true });
+        }
+        return foreignFirstNameSortKey(a).localeCompare(foreignFirstNameSortKey(b), 'en', { sensitivity: 'base', numeric: true })
+          || a.nameJa.localeCompare(b.nameJa, 'en', { sensitivity: 'base', numeric: true });
       });
     memberPhotoByName.clear();
     members.forEach((member) => {
