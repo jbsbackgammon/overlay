@@ -825,6 +825,8 @@ button, input, select { font: inherit; }
 .player-swap-field {
   display: flex;
   align-items: flex-end;
+  align-self: start;
+  padding-top: 21px;
 }
 
 .player-swap-field .swap-colors {
