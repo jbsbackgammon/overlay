@@ -1,0 +1,62 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Validate static assets
+        run: |
+          for file in index.html output.html stage.html overlay.js styles.css ads.json; do
+            test -s "$file" || { echo "Missing or empty: $file"; exit 1; }
+          done
+          test -d assets
+          test -d vendor
+          node --check overlay.js
+          python3 -m json.tool ads.json > /dev/null
+
+      - name: Prepare static website
+        run: |
+          mkdir -p _site
+          cp index.html output.html stage.html overlay.js styles.css ads.json _site/
+          cp -a assets vendor _site/
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
