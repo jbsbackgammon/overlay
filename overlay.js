@@ -16,6 +16,8 @@ const defaults = {
   panelMode: "gradient",
   panelColor: "#FFFFFF",
   accentColor: "#cf2933",
+  // Kept separately from the board/panel/player colors: common's secondary theme shade.
+  themeSubColor: "",
   topColor: "#cf2933",
   bottomColor: "#ffffff",
   personal: false,
@@ -163,6 +165,39 @@ const titleThemePresets = {
   "東京オープン": "#009F40",
   "名古屋オープン": "#0C284D"
 };
+
+// Common is the authoritative tournament master.  These existing tables above
+// remain as fallbacks when the shared brand script or JSON is unavailable.
+function commonTournament(name) {
+  const brand = window.JBSBrand;
+  if (!brand || !brand.getConfig?.()) return null;
+  return brand.getTournament(name);
+}
+
+function refreshTournamentOptions() {
+  const brand = window.JBSBrand;
+  const select = document.getElementById("titlePreset");
+  if (!brand?.getConfig?.() || !select) return;
+  const tournaments = brand.getTournaments();
+  if (!tournaments.length) return;
+  const previous = select.value;
+  select.replaceChildren(new Option("選択", ""));
+  tournaments.forEach((entry) => select.add(new Option(entry.name, entry.name)));
+  if ([...select.options].some((option) => option.value === previous)) select.value = previous;
+}
+
+async function loadCommonBrand() {
+  if (!window.JBSBrand?.load) return;
+  try {
+    await window.JBSBrand.load();
+    refreshTournamentOptions();
+    // Use the shared contrast rule without resetting a saved or manually
+    // edited title, edition or theme color when the download finishes.
+    render();
+  } catch (error) {
+    console.warn("JBS commonを取得できなかったため、既存の大会設定を使用します。", error);
+  }
+}
 
 const roundEnglishPresets = {
   "決勝": "FINAL",
@@ -383,6 +418,11 @@ function luminance(r, g, b) {
 }
 
 function contrastText(hex) {
+  // Threshold and ink colors are centrally maintained by common.
+  if (window.JBSBrand?.getConfig?.()) {
+    const shared = window.JBSBrand.getTextColor(hex);
+    if (shared) return shared;
+  }
   const { r, g, b } = hexToRgb(hex);
   return luminance(r, g, b) > 0.179 ? "#000000" : "#ffffff";
 }
@@ -401,7 +441,7 @@ function ordinal(number) {
 
 function englishEdition(value) {
   const normalized = value.replace(/[０-９]/g, (digit) => String.fromCharCode(digit.charCodeAt(0) - 0xFEE0));
-  const match = normalized.match(/^(.*?)第\s*(\d+)\s*回(.*)$/);
+  const match = normalized.match(/^(.*?)第\s*(\d+)\s*(?:回|期)(.*)$/);
   if (!match) return "";
   const prefix = match[1].trim();
   const suffix = match[3].trim();
@@ -413,6 +453,8 @@ function render() {
   if (!stage) return;
   if (state.rules && state.sponsors2) state.sponsors2 = false;
   stage.style.setProperty("--frame-color", state.frameColor);
+  // Expose the common sub color without changing existing board/panel styling.
+  stage.style.setProperty("--tournament-sub-color", state.themeSubColor || state.frameColor);
   $$(".open-output").forEach((button) => {
     button.style.setProperty("--button-theme", state.frameColor);
     button.style.setProperty("--button-top", state.topColor);
@@ -1101,14 +1143,26 @@ function bindEditor() {
       state[key] = select.value;
       $(`[data-field="${key}"]`).value = select.value;
       if (key === "title") {
-        state.titleEn = titleEnglishPresets[select.value] || "";
+        const shared = commonTournament(select.value);
+        state.titleEn = shared?.nameEn || titleEnglishPresets[select.value] || "";
         $("[data-field=titleEn]").value = state.titleEn;
-        const themeColor = titleThemePresets[select.value];
+        // Common's edition follows the current date in JST (including the
+        // July rollover for 盤聖戦 and 賽王戦). Do not alter editions offline.
+        if (shared?.edition) {
+          state.edition = shared.edition;
+          state.editionEn = englishEdition(shared.edition);
+          $("[data-field=edition]").value = state.edition;
+          $("[data-field=editionEn]").value = state.editionEn;
+        }
+        const themeColor = shared?.color || titleThemePresets[select.value];
         if (themeColor) {
           state.frameColor = themeColor;
           $$('[data-field="frameColor"]').forEach((input) => { input.value = themeColor; });
           $$('[data-color-for="frameColor"]').forEach((input) => { input.value = themeColor; });
         }
+        // Store the secondary color independently. Unlike the theme's main
+        // color it has no existing editable field / visible element in overlay.
+        state.themeSubColor = shared?.subColor || "";
         const boardKey = titleBoardPresets[select.value];
         const boardPreset = boardPresets[boardKey];
         if (boardPreset) {
@@ -1266,6 +1320,7 @@ loadSharedState();
 state.interval = 60000;
 render();
 bindEditor();
+loadCommonBrand();
 loadMembers();
 updateEnglishFields();
 loadSponsorImages().finally(startRotation);
