@@ -762,7 +762,15 @@ button, input, select { font: inherit; }
 
 .right-selects { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; }
 .right-selects > .field > select:first-of-type { height: 38px; }
-.title-fields[hidden] { display: none; }
+/* Keep the tournament editors in place even when right1 shows other media. */
+.title-fields.is-inactive label { opacity: .5; }
+.title-fields.is-inactive input:disabled,
+.title-fields.is-inactive select:disabled {
+  background-color: #f4f5f8;
+  border-color: #e2e5ea;
+  color: #8993a3;
+  cursor: not-allowed;
+}
 .thumbnail-picker:not([hidden]) { margin-top: 4px; }
 
 .guide-fields {

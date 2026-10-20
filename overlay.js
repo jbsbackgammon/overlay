@@ -668,7 +668,17 @@ function render() {
   $(".sponsor-rail").hidden = !state.sponsors;
   $(".sponsor-secondary").hidden = !state.sponsors2;
   const titleFields = $(".title-fields");
-  if (titleFields) titleFields.hidden = (state.right1Mode || "title") !== "title";
+  if (titleFields) {
+    // Keep the entire row in the layout, so changing right1 never shifts
+    // the stage preview vertically. Disable editing without clearing values.
+    const titleActive = (state.right1Mode || "title") === "title";
+    titleFields.hidden = false;
+    titleFields.classList.toggle("is-inactive", !titleActive);
+    titleFields.setAttribute("aria-disabled", String(!titleActive));
+    titleFields.querySelectorAll("input, select").forEach((control) => {
+      control.disabled = !titleActive;
+    });
+  }
   const titleCard = $(".title-card");
   if (titleCard) titleCard.hidden = (state.right1Mode || "title") === "none";
   renderThumbnails();
