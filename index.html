@@ -12,7 +12,7 @@
   <link rel="icon" href="https://jbsbackgammon.github.io/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=20261020-media-v3">
+  <link rel="stylesheet" href="styles.css?v=20261020-en-horizontal-v4">
 </head>
 <body>
   <div class="app">
@@ -35,8 +35,8 @@
         <button class="settings-action" id="exportPng" type="button">PNG書出</button>
       </div>
       <div class="event-fields">
-        <div class="field"><label for="topName">上選手名</label><div class="preset-input player-input"><select id="topMember" data-member-for="top" aria-label="上選手名の選択"><option value="">選択</option></select><input id="topName" data-field="topName"></div><input class="english-input" id="topNameEn" data-field="topNameEn" placeholder="English" hidden></div>
-        <div class="field"><label for="bottomName">下選手名</label><div class="preset-input player-input"><select id="bottomMember" data-member-for="bottom" aria-label="下選手名の選択"><option value="">選択</option></select><input id="bottomName" data-field="bottomName"></div><input class="english-input" id="bottomNameEn" data-field="bottomNameEn" placeholder="English" hidden></div>
+        <div class="field"><label for="topName">上選手名</label><div class="preset-input player-input"><select id="topMember" data-member-for="top" aria-label="上選手名の選択"><option value="">選択</option></select><input id="topName" data-field="topName"></div><input class="english-input" id="topNameEn" data-field="topNameEn" aria-label="上選手名（英語）" placeholder="English" hidden></div>
+        <div class="field"><label for="bottomName">下選手名</label><div class="preset-input player-input"><select id="bottomMember" data-member-for="bottom" aria-label="下選手名の選択"><option value="">選択</option></select><input id="bottomName" data-field="bottomName"></div><input class="english-input" id="bottomNameEn" data-field="bottomNameEn" aria-label="下選手名（英語）" placeholder="English" hidden></div>
         <div class="player-swap-field"><button type="button" id="swapPlayerNames" class="swap-colors"><span>上下</span><span>入替</span></button></div>
         <div class="display-toggles">
           <label class="sponsor-toggle" for="personal"><input type="checkbox" id="personal" data-field="personal"><span>選手映像</span></label>
@@ -54,9 +54,9 @@
       </div>
 
       <div class="title-fields">
-        <div class="field"><label for="edition">回次等</label><input id="edition" data-field="edition"><input class="english-input" id="editionEn" data-field="editionEn" placeholder="English" hidden></div>
-        <div class="field"><label for="title">大会名</label><div class="preset-input"><select id="titlePreset" data-preset-for="title" aria-label="大会名のプリセット"><option value="">選択</option><option>日本選手権</option><option>盤聖戦</option><option>名人戦</option><option>王位戦</option><option>賽王戦</option><option>棋聖戦</option><option>女王戦</option><option>新鋭戦</option><option>東京オープン</option><option>大阪オープン</option><option>名古屋オープン</option></select><input id="title" data-field="title"></div><input class="english-input" id="titleEn" data-field="titleEn" placeholder="English" hidden></div>
-        <div class="field"><label for="round">試合名</label><div class="preset-input"><select id="roundPreset" data-preset-for="round" aria-label="試合名のプリセット"><option value="">選択</option><option>決勝</option><option>準決勝</option><option>準々決勝</option><option>プレーオフ</option><option>１回戦</option><option>２回戦</option><option>３回戦</option></select><input id="round" data-field="round"></div><input class="english-input" id="roundEn" data-field="roundEn" placeholder="English" hidden></div>
+        <div class="field"><label for="edition">回次等</label><input id="edition" data-field="edition"><input class="english-input" id="editionEn" data-field="editionEn" aria-label="回次等（英語）" placeholder="English" hidden></div>
+        <div class="field"><label for="title">大会名</label><div class="preset-input"><select id="titlePreset" data-preset-for="title" aria-label="大会名のプリセット"><option value="">選択</option><option>日本選手権</option><option>盤聖戦</option><option>名人戦</option><option>王位戦</option><option>賽王戦</option><option>棋聖戦</option><option>女王戦</option><option>新鋭戦</option><option>東京オープン</option><option>大阪オープン</option><option>名古屋オープン</option></select><input id="title" data-field="title"></div><input class="english-input" id="titleEn" data-field="titleEn" aria-label="大会名（英語）" placeholder="English" hidden></div>
+        <div class="field"><label for="round">試合名</label><div class="preset-input"><select id="roundPreset" data-preset-for="round" aria-label="試合名のプリセット"><option value="">選択</option><option>決勝</option><option>準決勝</option><option>準々決勝</option><option>プレーオフ</option><option>１回戦</option><option>２回戦</option><option>３回戦</option></select><input id="round" data-field="round"></div><input class="english-input" id="roundEn" data-field="roundEn" aria-label="試合名（英語）" placeholder="English" hidden></div>
       </div>
 
       <div class="guide-fields" hidden>
