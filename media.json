@@ -1,0 +1,30 @@
+{
+  "thumbnails": [
+    {
+      "path": "assets/thumbnail/thumbnail_JBS 第15回_新鋭戦_決勝_北野雄大vs川島颯.png",
+      "name": "thumbnail_JBS 第15回_新鋭戦_決勝_北野雄大vs川島颯.png"
+    },
+    {
+      "path": "assets/thumbnail/thumbnail_JBS 第3回_女王戦_決勝_中村順子vs高橋和.png",
+      "name": "thumbnail_JBS 第3回_女王戦_決勝_中村順子vs高橋和.png"
+    }
+  ],
+  "ads": [
+    {
+      "path": "assets/ads/ad_kifume.png",
+      "name": "ad_kifume.png"
+    },
+    {
+      "path": "assets/ads/ad_popcorns.jpg",
+      "name": "ad_popcorns.jpg"
+    },
+    {
+      "path": "assets/ads/ad_shop.png",
+      "name": "ad_shop.png"
+    },
+    {
+      "path": "assets/ads/ad_wireshotel.png",
+      "name": "ad_wireshotel.png"
+    }
+  ]
+}

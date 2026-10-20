@@ -12,17 +12,17 @@
   <link rel="icon" href="https://jbsbackgammon.github.io/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=20261006-playerswap1">
+  <link rel="stylesheet" href="styles.css?v=20261020-media-v3">
 </head>
 <body class="output-page">
   <main id="stageMount"></main>
   <!-- Common defines JBSBrand; its data are fetched separately with a fallback. -->
   <script src="https://jbsbackgammon.github.io/common/brand.js"></script>
   <script>
-    fetch('stage.html?v=20261005-reference1').then(r => r.text()).then(html => {
+    fetch('stage.html?v=20261020-media-v3').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261020-common-v2';
+      script.src = 'overlay.js?v=20261020-media-v3';
       document.body.appendChild(script);
     });
   </script>

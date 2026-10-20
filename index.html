@@ -12,7 +12,7 @@
   <link rel="icon" href="https://jbsbackgammon.github.io/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=20261006-playerswap1">
+  <link rel="stylesheet" href="styles.css?v=20261020-media-v3">
 </head>
 <body>
   <div class="app">
@@ -47,10 +47,10 @@
       </div>
 
       <div class="right-selects">
-        <div class="field"><label for="right1Mode">右1</label><select id="right1Mode" data-field="right1Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="title" selected>大会名</option><option value="thumbnail">サムネイル</option></select><select class="thumbnail-picker" id="right1Thumbnail" data-field="right1Thumbnail" hidden><option value="">画像を選択</option></select><input class="thumbnail-upload" id="right1Upload" type="file" accept="image/*" hidden></div>
-        <div class="field"><label for="right2Mode">右2</label><select id="right2Mode" data-field="right2Mode"><option value="none" selected>表示無し</option><option value="reference">参考表示</option><option value="thumbnail">サムネイル</option></select><select class="thumbnail-picker" id="right2Thumbnail" data-field="right2Thumbnail" hidden><option value="">画像を選択</option></select><input class="thumbnail-upload" id="right2Upload" type="file" accept="image/*" hidden></div>
-        <div class="field"><label for="right3Mode">右3</label><select id="right3Mode" data-field="right3Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="sponsors" selected>広告</option></select></div>
-        <div class="field"><label for="right4Mode">右4</label><select id="right4Mode" data-field="right4Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="rules">ルール</option><option value="sponsors2">広告2枚</option><option value="sponsors2bottom">広告下のみ</option></select></div>
+        <div class="field"><label for="right1Mode">右1</label><select id="right1Mode" data-field="right1Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="title" selected>大会名</option><option value="thumbnail">サムネイル流し</option></select></div>
+        <div class="field"><label for="right2Mode">右2</label><select id="right2Mode" data-field="right2Mode"><option value="none" selected>表示無し</option><option value="reference">参考表示</option><option value="thumbnail">サムネイル流し</option></select></div>
+        <div class="field"><label for="right3Mode">右3</label><select id="right3Mode" data-field="right3Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="sponsors" selected>広告流し</option></select></div>
+        <div class="field"><label for="right4Mode">右4</label><select id="right4Mode" data-field="right4Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="rules">ルール</option><option value="sponsors2">広告流し</option><option value="sponsors2bottom">広告下のみ（従来機能）</option></select></div>
       </div>
 
       <div class="title-fields">
@@ -117,10 +117,10 @@
   <!-- Common defines JBSBrand; its data are fetched separately with a fallback. -->
   <script src="https://jbsbackgammon.github.io/common/brand.js"></script>
   <script>
-    fetch('stage.html?v=20261005-reference1').then(r => r.text()).then(html => {
+    fetch('stage.html?v=20261020-media-v3').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261020-common-v2';
+      script.src = 'overlay.js?v=20261020-media-v3';
       document.body.appendChild(script);
     });
   </script>

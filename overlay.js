@@ -43,7 +43,144 @@ const defaults = {
 
 const defaultPlayerPhoto = "assets/dummy.png";
 const memberPhotoByName = new Map();
-const thumbnailOptions = [];
+const mediaLibrary = { thumbnails: [], ads: [] };
+let thumbnailIndex = 0;
+let thumbnailTimer = null;
+const IMAGE_MODE_PREFIX = { thumbnail: "thumbnail:", sponsor: "sponsor:" };
+
+function mediaMode(mode, kind) {
+  if (kind === "thumbnail") return mode === "thumbnail" || String(mode).startsWith(IMAGE_MODE_PREFIX.thumbnail);
+  return mode === "sponsors" || mode === "sponsors2" || mode === "sponsors2bottom"
+    || String(mode).startsWith(IMAGE_MODE_PREFIX.sponsor);
+}
+
+function fixedMediaPath(mode, kind) {
+  const prefix = IMAGE_MODE_PREFIX[kind];
+  return typeof mode === "string" && mode.startsWith(prefix) ? mode.slice(prefix.length) : "";
+}
+
+function normalizeLegacyMediaModes(target) {
+  for (const slot of ["right1", "right2"]) {
+    const old = target[`${slot}Thumbnail`];
+    if (target[`${slot}Mode`] !== "thumbnail" || typeof old !== "string" || !old) continue;
+    // The former second dropdown selected a single thumbnail URL; preserve it.
+    try {
+      const url = new URL(old, document.baseURI);
+      const decoded = decodeURI(url.pathname);
+      const segment = decoded.indexOf("assets/thumbnail/");
+      if (segment >= 0) target[`${slot}Mode`] = `thumbnail:${decoded.slice(segment)}`;
+    } catch (_) { /* unsupported (e.g. a temporary blob URL): use slideshow */ }
+  }
+  return target;
+}
+
+function updateMediaOptions() {
+  const groups = [
+    ["right1Mode", mediaLibrary.thumbnails, IMAGE_MODE_PREFIX.thumbnail],
+    ["right2Mode", mediaLibrary.thumbnails, IMAGE_MODE_PREFIX.thumbnail],
+    ["right3Mode", mediaLibrary.ads, IMAGE_MODE_PREFIX.sponsor],
+    ["right4Mode", mediaLibrary.ads, IMAGE_MODE_PREFIX.sponsor]
+  ];
+  for (const [id, entries, prefix] of groups) {
+    const select = document.getElementById(id);
+    if (!select) continue;
+    const selected = state[id];
+    // Remove only manifest options; retain defaults, including the legacy bottom-only mode.
+    select.querySelectorAll('option[data-media-option]').forEach(option => option.remove());
+    entries.forEach((entry) => {
+      const option = new Option(entry.name, prefix + entry.path);
+      option.dataset.mediaOption = "true";
+      select.append(option);
+    });
+    // Keep the old right4 bottom-only mode available, after the fixed-image choices.
+    if (id === "right4Mode") {
+      const legacy = select.querySelector('option[value="sponsors2bottom"]');
+      if (legacy) select.append(legacy);
+    }
+    // Options for a previously selected but now removed file remain visible
+    // until the user changes their selection, rather than silently overwriting state.
+    if (selected && ![...select.options].some(option => option.value === selected)) {
+      if (selected.startsWith(prefix)) {
+        const missing = new Option(`（ファイルなし）${selected.slice(prefix.length).split("/").pop()}`, selected);
+        missing.dataset.mediaOption = "true";
+        select.append(missing);
+      }
+    }
+    select.value = selected;
+  }
+}
+
+function validateMediaEntries(list, folder) {
+  if (!Array.isArray(list)) return [];
+  const prefix = `assets/${folder}/`;
+  return list.filter(entry => entry && typeof entry.path === "string"
+      && entry.path.startsWith(prefix) && !entry.path.includes("..")
+      && /\.(?:png|jpe?g|webp|gif)$/i.test(entry.path))
+    .map(entry => ({ path: entry.path, name: entry.path.slice(prefix.length) }));
+}
+
+async function loadMediaLibrary() {
+  try {
+    const response = await fetch(`media.json?v=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`media.json: ${response.status}`);
+    const data = await response.json();
+    mediaLibrary.thumbnails = validateMediaEntries(data.thumbnails, "thumbnail");
+    mediaLibrary.ads = validateMediaEntries(data.ads, "ads")
+      .filter(entry => entry.name.toLowerCase() !== "jbs-logo.png");
+    updateMediaOptions();
+    buildSponsorCards();
+    startRotation();
+    thumbnailIndex = 0;
+    startThumbnailRotation();
+    render();
+  } catch (error) {
+    console.warn("画像一覧を取得できませんでした。現在の広告設定を維持します。", error);
+    // A missing manifest must not prevent the usual ads.json fallback.
+    loadSponsorImages().finally(startRotation);
+  }
+}
+
+function currentThumbnail(slot, offset = 0) {
+  const mode = state[`${slot}Mode`];
+  const fixedPath = fixedMediaPath(mode, "thumbnail");
+  if (fixedPath) return fixedPath;
+  if (mode !== "thumbnail") return "";
+  const images = mediaLibrary.thumbnails;
+  if (!images.length) return "";
+  return images[(thumbnailIndex + offset) % images.length].path;
+}
+
+function renderThumbnails() {
+  const rotating = ["right1", "right2"].filter(slot => state[`${slot}Mode`] === "thumbnail");
+  const titleCard = $(".title-card");
+  if (titleCard) {
+    const imagePath = currentThumbnail("right1", rotating.indexOf("right1"));
+    titleCard.style.backgroundImage = mediaMode(state.right1Mode, "thumbnail") && imagePath
+      ? `url(${JSON.stringify(imagePath)})` : "";
+  }
+  const thumbnail = $(".side-thumbnail");
+  if (thumbnail) {
+    const imagePath = currentThumbnail("right2", Math.max(0, rotating.indexOf("right2")));
+    thumbnail.hidden = !mediaMode(state.right2Mode, "thumbnail") || !imagePath;
+    if (imagePath && thumbnail.getAttribute("src") !== imagePath) thumbnail.src = imagePath;
+  }
+}
+
+function startThumbnailRotation() {
+  clearInterval(thumbnailTimer);
+  renderThumbnails();
+  if (!["right1", "right2"].some(slot => state[`${slot}Mode`] === "thumbnail")
+      || mediaLibrary.thumbnails.length < 2) return;
+  thumbnailTimer = setInterval(() => {
+    const count = ["right1", "right2"].filter(slot => state[`${slot}Mode`] === "thumbnail").length;
+    // When both slots use the entire library (currently two images), swap
+    // the pair instead of leaving an apparently stopped slideshow.
+    const step = count >= mediaLibrary.thumbnails.length ? 1 : count;
+    thumbnailIndex = (thumbnailIndex + step) % mediaLibrary.thumbnails.length;
+    renderThumbnails();
+  }, state.interval);
+}
+
 
 function isForeignMember(member) {
   const name = member.nameJa;
@@ -330,7 +467,7 @@ if ("video" in fromQuery) fromQuery.video = fromQuery.video !== "false";
 if ("rules" in fromQuery) fromQuery.rules = fromQuery.rules !== "false";
 if ("interval" in fromQuery) fromQuery.interval = Number(fromQuery.interval) || defaults.interval;
 
-let state = { ...defaults, ...(embeddedState || {}), ...fromQuery };
+let state = normalizeLegacyMediaModes({ ...defaults, ...(embeddedState || {}), ...fromQuery });
 if (!state.right1Mode) state.right1Mode = "title";
 let sponsorIndex = 0;
 let sponsorTimer;
@@ -355,7 +492,7 @@ function persistState() {
 
 function applyExternalState(nextState) {
   if (!nextState || typeof nextState !== "object" || Array.isArray(nextState)) return;
-  state = { ...defaults, ...nextState };
+  state = normalizeLegacyMediaModes({ ...defaults, ...nextState });
   if (!state.right1Mode) state.right1Mode = "title";
   syncEditorFromState();
 }
@@ -378,24 +515,6 @@ function fitStage() {
   const scale = wrap.clientWidth / 1920;
   stage.style.transform = `scale(${scale})`;
   wrap.style.height = `${1080 * scale}px`;
-}
-
-async function loadThumbnailOptions() {
-  try {
-    const response = await fetch("https://api.github.com/repos/jbsbackgammon/overlay/contents/assets/thumbnail");
-    if (!response.ok) return;
-    const files = await response.json();
-    ["right1Thumbnail", "right2Thumbnail"].forEach((id) => {
-      const select = $(`#${id}`);
-      if (!select) return;
-      files.filter((file) => file.type === "file" && /\.(png|jpe?g|webp)$/i.test(file.name)).forEach((file) => {
-        const option = document.createElement("option");
-        option.value = file.download_url;
-        option.textContent = file.name;
-        select.append(option);
-      });
-    });
-  } catch (_) {}
 }
 
 function hexToRgb(hex) {
@@ -462,15 +581,11 @@ function render() {
   });
   stage.classList.toggle("personal-mode", state.personal);
   stage.classList.toggle("player-photo-mode", state.playerPhoto);
-  stage.dataset.right1Mode = state.right1Mode || "title";
-  stage.dataset.right2Mode = state.right2Mode || "none";
+  stage.dataset.right1Mode = mediaMode(state.right1Mode, "thumbnail") ? "thumbnail" : (state.right1Mode || "title");
+  stage.dataset.right2Mode = mediaMode(state.right2Mode, "thumbnail") ? "thumbnail" : (state.right2Mode || "none");
   stage.dataset.right3Mode = state.right3Mode || "sponsors";
-  stage.dataset.right4Mode = state.right4Mode || "rules";
-  ["right1", "right2"].forEach((slot) => {
-    const mode = state[`${slot}Mode`] || "thumbnail";
-    const picker = $(`#${slot}Thumbnail`);
-    if (picker) picker.hidden = mode !== "thumbnail";
-  });
+  stage.dataset.right4Mode = fixedMediaPath(state.right4Mode, "sponsor")
+    ? "sponsors2bottom" : (state.right4Mode || "rules");
   const guideVerticalGap = Math.max(0, Number(state.guideVerticalGap) || 0);
   const guideStart12 = Number(state.guideStart12) || 0;
   const guideStart6 = Number(state.guideStart6) || 0;
@@ -556,11 +671,7 @@ function render() {
   if (titleFields) titleFields.hidden = (state.right1Mode || "title") !== "title";
   const titleCard = $(".title-card");
   if (titleCard) titleCard.hidden = (state.right1Mode || "title") === "none";
-  if (titleCard && (state.right1Mode || "title") === "thumbnail") {
-    titleCard.style.backgroundImage = state.right1Thumbnail ? `url("${state.right1Thumbnail}")` : "none";
-  } else if (titleCard) {
-    titleCard.style.backgroundImage = "";
-  }
+  renderThumbnails();
   $$(".personal-video").forEach((area) => { area.hidden = !(state.personal || state.playerPhoto); });
   ["top", "bottom"].forEach((side) => {
     const image = $(`.personal-video.${side} .personal-photo`);
@@ -577,18 +688,20 @@ function render() {
       image.src = requestedSrc;
     }
   });
-  $(".side-video-window").hidden = !["reference", "thumbnail"].includes(state.right2Mode || "none");
-  const thumbnail = $(".side-thumbnail");
-  if (thumbnail) {
-    const src = state.right2Thumbnail || "";
-    thumbnail.hidden = (state.right2Mode || "none") !== "thumbnail" || !src;
-    if (src && thumbnail.getAttribute("src") !== src) thumbnail.src = src;
+  $(".side-video-window").hidden = !["reference", "thumbnail"].includes(stage.dataset.right2Mode);
+  $(".rules-panel").hidden = state.right4Mode !== "rules";
+  $(".sponsor-rail").hidden = !mediaMode(state.right3Mode, "sponsor");
+  $(".sponsor-secondary").hidden = !mediaMode(state.right4Mode, "sponsor");
+  $(".slot-reference-3").hidden = state.right3Mode !== "reference";
+  $(".slot-reference-4").hidden = state.right4Mode !== "reference";
+  const primaryFixed = $(".primary-fixed-ad");
+  const fixedRight3 = fixedMediaPath(state.right3Mode, "sponsor");
+  if (primaryFixed) {
+    primaryFixed.hidden = !fixedRight3;
+    if (fixedRight3 && primaryFixed.getAttribute("src") !== fixedRight3) primaryFixed.src = fixedRight3;
   }
-  $(".rules-panel").hidden = (state.right4Mode || "rules") !== "rules";
-  $(".sponsor-rail").hidden = (state.right3Mode || "sponsors") !== "sponsors";
-  $(".sponsor-secondary").hidden = !["sponsors2", "sponsors2bottom"].includes(state.right4Mode || "rules");
-  $(".slot-reference-3").hidden = (state.right3Mode || "sponsors") !== "reference";
-  $(".slot-reference-4").hidden = (state.right4Mode || "rules") !== "reference";
+  const sponsorTrack = $(".sponsor-rail .sponsor-track");
+  if (sponsorTrack) sponsorTrack.hidden = Boolean(fixedRight3);
   const sponsors2Toggle = $("[data-field=sponsors2]");
   const rulesToggle = $("[data-field=rules]");
   const personalToggle = $("[data-field=personal]");
@@ -647,7 +760,7 @@ function rotateSponsor(index) {
 }
 
 function getActiveSponsorSlotCount() {
-  const primaryCount = (state.right3Mode || "sponsors") === "sponsors" ? 1 : 0;
+  const primaryCount = state.right3Mode === "sponsors" ? 1 : 0;
   const right4Mode = state.right4Mode || "rules";
   const secondaryCount = right4Mode === "sponsors2" ? 2 : right4Mode === "sponsors2bottom" ? 1 : 0;
   return primaryCount + secondaryCount;
@@ -656,10 +769,21 @@ function getActiveSponsorSlotCount() {
 function setupSecondarySponsors(index = sponsorIndex) {
   const cards = $$(".sponsor-track .sponsor-card:not(.sponsor-clone)");
   if (!cards.length) return;
-  const primaryOffset = (state.right3Mode || "sponsors") === "sponsors" ? 1 : 0;
+  const primaryOffset = state.right3Mode === "sponsors" ? 1 : 0;
   const right4Mode = state.right4Mode || "rules";
   const activeSlotIndexes = right4Mode === "sponsors2" ? [0, 1] : right4Mode === "sponsors2bottom" ? [1] : [];
+  const right4Fixed = fixedMediaPath(right4Mode, "sponsor");
   $$('[data-secondary-ad-slot]').forEach((slot, slotIndex) => {
+    if (right4Fixed) {
+      if (slotIndex === 1) {
+        const image = document.createElement("img");
+        image.className = "secondary-fixed-ad";
+        image.src = right4Fixed;
+        image.alt = "固定広告";
+        slot.replaceChildren(image);
+      } else slot.replaceChildren();
+      return;
+    }
     const secondaryTrack = document.createElement("div");
     secondaryTrack.className = "secondary-sponsor-track";
     const activePosition = Math.max(0, activeSlotIndexes.indexOf(slotIndex));
@@ -702,43 +826,46 @@ function rotateSecondarySponsors(index, loopsForward, rawIndex) {
   });
 }
 
+function buildSponsorCards() {
+  const track = $(".sponsor-track");
+  if (!track) return;
+  const cards = mediaLibrary.ads.map(ad => {
+    const card = document.createElement("article");
+    card.className = "sponsor-card sponsor-image-card";
+    const image = document.createElement("img");
+    image.className = "sponsor-image";
+    image.src = ad.path;
+    image.alt = ad.name;
+    image.decoding = "async";
+    card.append(image);
+    return card;
+  });
+  if (!cards.length) {
+    const fallback = document.createElement("article");
+    fallback.className = "sponsor-card sponsor-fallback";
+    const logo = document.createElement("img");
+    logo.className = "sponsor-fallback-logo";
+    logo.src = "assets/ads/jbs-logo.png";
+    logo.alt = "JBSロゴ";
+    fallback.append(logo);
+    cards.push(fallback);
+  }
+  track.replaceChildren(...cards);
+  sponsorIndex = 0;
+}
+
 async function loadSponsorImages() {
   try {
     const response = await fetch(`ads.json?v=${Date.now()}`, { cache: "no-store" });
     if (!response.ok) return;
     const ads = await response.json();
-    if (!Array.isArray(ads) || !ads.length) return;
-    const validAds = ads.filter((ad) => typeof ad?.image === "string" && ad.image.trim());
-    if (!validAds.length) return;
-    const track = $(".sponsor-track");
-    if (!track) return;
-    const cards = validAds.map((ad) => {
-      const card = document.createElement("article");
-      card.className = "sponsor-card sponsor-image-card";
-      const image = document.createElement("img");
-      image.className = "sponsor-image";
-      image.src = ad.image;
-      image.alt = typeof ad.alt === "string" ? ad.alt : "スポンサー広告";
-      image.decoding = "async";
-      card.append(image);
-      return card;
-    });
-    while (cards.length < 3) {
-      const fallback = document.createElement("article");
-      fallback.className = "sponsor-card sponsor-fallback";
-      const logo = document.createElement("img");
-      logo.className = "sponsor-fallback-logo";
-      logo.src = "assets/ads/jbs-logo.png";
-      logo.alt = "JBSロゴ";
-      fallback.append(logo);
-      cards.push(fallback);
-    }
-    track.replaceChildren(...cards);
-    sponsorIndex = 0;
-    setupSecondarySponsors(0);
-    rotateSponsor(0);
+    if (!Array.isArray(ads)) return;
+    mediaLibrary.ads = validateMediaEntries(
+      ads.filter(ad => typeof ad?.image === "string").map(ad => ({ path: ad.image })), "ads");
+    buildSponsorCards();
+    updateMediaOptions();
   } catch (_) {
-    /* ads.jsonが空または未配置の場合は仮広告を使用 */
+    /* ads.json が未配置の場合は元のJBSロゴを使用 */
   }
 }
 
@@ -758,7 +885,7 @@ function startRotation() {
   }
   setupSecondarySponsors(sponsorIndex);
   const cardCount = $$(".sponsor-track .sponsor-card:not(.sponsor-clone)").length;
-  if (getActiveSponsorSlotCount() >= cardCount) {
+  if (!getActiveSponsorSlotCount() || getActiveSponsorSlotCount() >= cardCount) {
     sponsorIndex = 0;
     rotateSponsor(0);
     return;
@@ -1051,8 +1178,10 @@ function syncEditorFromState() {
   const boardSelect = $("[data-board-preset]");
   if (boardSelect) boardSelect.value = state.boardPreset || "";
   updateEnglishFields();
+  updateMediaOptions();
   startLanguageRotation();
   startRotation();
+  startThumbnailRotation();
   render();
 }
 
@@ -1074,7 +1203,7 @@ function renderSavedSettings() {
     button.className = "saved-setting";
     button.textContent = settingLabel(entry);
     button.addEventListener("click", () => {
-      state = { ...defaults, ...entry.state };
+      state = normalizeLegacyMediaModes({ ...defaults, ...entry.state });
       persistState();
       syncEditorFromState();
       $("#settingsDialog").close();
@@ -1110,6 +1239,7 @@ function bindEditor() {
       $$(`[data-color-for="${key}"]`).forEach((peer) => { peer.value = value; });
       render();
       if (["sponsors", "sponsors2", "rules", "right3Mode", "right4Mode"].includes(key)) startRotation();
+      if (["right1Mode", "right2Mode"].includes(key)) startThumbnailRotation();
       if (key === "english") {
         updateEnglishFields();
         startLanguageRotation();
@@ -1257,24 +1387,12 @@ function bindEditor() {
 
   $("#exportPng")?.addEventListener("click", exportStageAsPng);
 
-  ["right1", "right2"].forEach((slot) => {
-    const upload = $(`#${slot}Upload`);
-    upload?.addEventListener("change", () => {
-      const file = upload.files?.[0];
-      if (!file) return;
-      state[`${slot}Thumbnail`] = URL.createObjectURL(file);
-      render();
-      persistState();
-    });
-  });
 
   $("#closeSettings")?.addEventListener("click", () => $("#settingsDialog")?.close());
   $("#settingsDialog")?.addEventListener("click", (event) => {
     if (event.target === event.currentTarget) event.currentTarget.close();
   });
 }
-
-loadThumbnailOptions();
 
 function loadSharedState() {
   if (!embeddedState && !Object.keys(fromQuery).length) {
@@ -1304,7 +1422,7 @@ function loadSharedState() {
         savedState.guideGoalStart = defaults.guideGoalStart;
         savedState.guidePointGap = defaults.guidePointGap;
       }
-      state = { ...state, ...savedState };
+      state = normalizeLegacyMediaModes({ ...state, ...savedState });
       if (!state.right1Mode) state.right1Mode = "title";
       if (usesOldGuideDefaults || usesOldTextDefaults) persistState();
       if (state.panelColor?.toUpperCase() === "#CFB064") {
@@ -1323,7 +1441,7 @@ bindEditor();
 loadCommonBrand();
 loadMembers();
 updateEnglishFields();
-loadSponsorImages().finally(startRotation);
+loadMediaLibrary();
 startLanguageRotation();
 startRuleRotation();
 setInterval(() => {
