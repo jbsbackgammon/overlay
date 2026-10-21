@@ -59,13 +59,6 @@
         <div class="field"><label for="round">試合名</label><div class="preset-input"><select id="roundPreset" data-preset-for="round" aria-label="試合名のプリセット"><option value="">選択</option><option>決勝</option><option>準決勝</option><option>準々決勝</option><option>プレーオフ</option><option>１回戦</option><option>２回戦</option><option>３回戦</option></select><input id="round" data-field="round"></div><input class="english-input" id="roundEn" data-field="roundEn" aria-label="試合名（英語）" placeholder="English" hidden></div>
       </div>
 
-      <div class="guide-fields" hidden>
-        <div class="field"><label for="guideVerticalGap">縦・選手エリアとの間隔</label><input type="number" id="guideVerticalGap" data-field="guideVerticalGap" min="0" max="400" step="1"></div>
-        <div class="field"><label for="guideStart12">横・12開始</label><input type="number" id="guideStart12" data-field="guideStart12" min="0" max="1920" step="1"></div>
-        <div class="field"><label for="guideStart6">横・6開始</label><input type="number" id="guideStart6" data-field="guideStart6" min="0" max="1920" step="1"></div>
-        <div class="field"><label for="guideGoalStart">横・ゴール開始</label><input type="number" id="guideGoalStart" data-field="guideGoalStart" min="0" max="1920" step="1"></div>
-        <div class="field"><label for="guidePointGap">横・マス間の間隔</label><input type="number" id="guidePointGap" data-field="guidePointGap" min="20" max="160" step="1"></div>
-      </div>
 
       <div class="color-row">
         <div class="field"><label for="frameColorText">テーマカラー</label><div class="color-control"><input type="color" id="frameColor" data-color-for="frameColor"><input id="frameColorText" class="hex-input" data-field="frameColor" maxlength="7" spellcheck="false"></div></div>
@@ -98,6 +91,14 @@
         <div class="field"><label for="bottomColorText">下選手カラー</label><div class="color-control"><input type="color" id="bottomColor" data-color-for="bottomColor"><input id="bottomColorText" class="hex-input" data-field="bottomColor" maxlength="7" spellcheck="false"></div></div>
         <div class="swap-field"><button type="button" id="swapPlayerColors" class="swap-colors"><span>上下</span><span>入替</span></button></div>
 
+      </div>
+
+      <div class="guide-fields" hidden>
+        <div class="field"><label for="guideVerticalGap">ガイド縦位置・選手エリアとの間隔</label><input type="number" id="guideVerticalGap" data-field="guideVerticalGap" min="0" max="400" step="1"></div>
+        <div class="field"><label for="guideStart12">ガイド横位置・12開始</label><input type="number" id="guideStart12" data-field="guideStart12" min="0" max="1920" step="1"></div>
+        <div class="field"><label for="guideStart6">ガイド横位置・6開始</label><input type="number" id="guideStart6" data-field="guideStart6" min="0" max="1920" step="1"></div>
+        <div class="field"><label for="guideGoalStart">ガイド横位置・ゴール開始</label><input type="number" id="guideGoalStart" data-field="guideGoalStart" min="0" max="1920" step="1"></div>
+        <div class="field"><label for="guidePointGap">ガイド横位置・マス間の間隔</label><input type="number" id="guidePointGap" data-field="guidePointGap" min="20" max="160" step="1"></div>
       </div>
 
     </aside>
