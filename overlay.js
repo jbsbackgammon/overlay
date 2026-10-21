@@ -41,6 +41,13 @@ const defaults = {
   interval: 60000
 };
 
+// Metallic panel presets. Keep "gradient" as the gold value for saved-setting compatibility.
+const PANEL_GRADIENTS = Object.freeze({
+  gradient: "linear-gradient(118deg, var(--gold-soft), var(--gold))",
+  silver: "linear-gradient(118deg, #EDF1F5, #A5ADB7)",
+  bronze: "linear-gradient(118deg, #E9C7A0, #B57A4F)"
+});
+
 const defaultPlayerPhoto = "assets/dummy.png";
 const memberPhotoByName = new Map();
 const mediaLibrary = { thumbnails: [], ads: [] };
@@ -602,10 +609,9 @@ function render() {
   const frameInk = contrastText(state.frameColor);
   stage.style.setProperty("--frame-ink", frameInk);
   stage.style.setProperty("--frame-shadow", frameInk === "#000000" ? "transparent" : "rgba(0,0,0,.42)");
-  stage.style.setProperty("--panel-background", state.panelMode === "gradient"
-    ? "linear-gradient(118deg, var(--gold-soft), var(--gold))"
-    : state.panelColor);
-  const panelInk = state.panelMode === "gradient" ? "#11100d" : contrastText(state.panelColor);
+  const metallicBackground = PANEL_GRADIENTS[state.panelMode];
+  stage.style.setProperty("--panel-background", metallicBackground || state.panelColor);
+  const panelInk = metallicBackground ? "#11100d" : contrastText(state.panelColor);
   stage.style.setProperty("--panel-ink", panelInk);
   stage.style.setProperty("--accent", state.accentColor);
   const automaticEditionEn = englishEdition(state.edition);
@@ -690,10 +696,14 @@ function render() {
   const panelActive = ["right1Mode", "right2Mode"].some((key) => state[key] === "title");
   const panelField = $(".panel-color-field");
   if (panelField) {
+    const colorEditable = panelActive && state.panelMode === "solid";
     panelField.classList.toggle("is-inactive", !panelActive);
+    panelField.classList.toggle("is-gradient", panelActive && !colorEditable);
     panelField.setAttribute("aria-disabled", String(!panelActive));
+    // The mode dropdown remains available whenever a tournament panel is shown.
+    // Only the color picker and hex field are disabled for metallic presets.
     panelField.querySelectorAll("input, select").forEach((control) => {
-      control.disabled = !panelActive;
+      control.disabled = control.id === "panelMode" ? !panelActive : !colorEditable;
     });
   }
   renderThumbnails();

@@ -12,7 +12,7 @@
   <link rel="icon" href="https://jbsbackgammon.github.io/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=20261021-preview-size-v9">
+  <link rel="stylesheet" href="styles.css?v=20261021-panel-metals-v10">
 </head>
 <body>
   <div class="app">
@@ -67,6 +67,8 @@
           <div class="panel-color-control">
             <select id="panelMode" data-field="panelMode" aria-label="パネルカラーの種類">
               <option value="gradient">金グラデ</option>
+              <option value="silver">銀グラデ</option>
+              <option value="bronze">銅グラデ</option>
               <option value="solid">単色</option>
             </select>
             <input type="color" id="panelColor" data-color-for="panelColor">
@@ -122,7 +124,7 @@
     fetch('stage.html?v=20261021-panel-right2-v6').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261021-panel-right2-v6';
+      script.src = 'overlay.js?v=20261021-panel-metals-v10';
       document.body.appendChild(script);
     });
   </script>
