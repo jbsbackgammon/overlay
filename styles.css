@@ -983,8 +983,8 @@ button, input, select { font: inherit; }
     minmax(0, calc((100% - 308px) / 3 + 56px))
     minmax(0, calc((100% - 308px) / 6))
     minmax(0, calc((100% - 308px) / 6 + 47px))
-    41px
-    minmax(0, calc((100% - 308px) / 6 + 47px));
+    minmax(0, calc((100% - 308px) / 6 + 47px))
+    41px;
   gap: 14px;
 }
 
@@ -1005,7 +1005,7 @@ button, input, select { font: inherit; }
 .swap-field {
   display: flex;
   align-items: flex-end;
-  grid-column: 5;
+  grid-column: 6;
   grid-row: 1;
   margin-left: -5px;
 }
