@@ -12,7 +12,7 @@
   <link rel="icon" href="https://jbsbackgammon.github.io/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=20261020-title-fields-v5">
+  <link rel="stylesheet" href="styles.css?v=20261021-panel-right2-v6">
 </head>
 <body>
   <div class="app">
@@ -48,7 +48,7 @@
 
       <div class="right-selects">
         <div class="field"><label for="right1Mode">右1</label><select id="right1Mode" data-field="right1Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="title" selected>大会名</option><option value="thumbnail">サムネイル流し</option></select></div>
-        <div class="field"><label for="right2Mode">右2</label><select id="right2Mode" data-field="right2Mode"><option value="none" selected>表示無し</option><option value="reference">参考表示</option><option value="thumbnail">サムネイル流し</option></select></div>
+        <div class="field"><label for="right2Mode">右2</label><select id="right2Mode" data-field="right2Mode"><option value="none" selected>表示無し</option><option value="reference">参考表示</option><option value="title">大会名</option><option value="thumbnail">サムネイル流し</option></select></div>
         <div class="field"><label for="right3Mode">右3</label><select id="right3Mode" data-field="right3Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="sponsors" selected>広告流し</option></select></div>
         <div class="field"><label for="right4Mode">右4</label><select id="right4Mode" data-field="right4Mode"><option value="none">表示無し</option><option value="reference">参考表示</option><option value="rules">ルール</option><option value="sponsors2">広告流し</option><option value="sponsors2bottom">広告下のみ（従来機能）</option></select></div>
       </div>
@@ -69,7 +69,7 @@
 
       <div class="color-row">
         <div class="field"><label for="frameColorText">テーマカラー</label><div class="color-control"><input type="color" id="frameColor" data-color-for="frameColor"><input id="frameColorText" class="hex-input" data-field="frameColor" maxlength="7" spellcheck="false"></div></div>
-        <div class="field">
+        <div class="field panel-color-field">
           <label for="panelMode">パネルカラー</label>
           <div class="panel-color-control">
             <select id="panelMode" data-field="panelMode" aria-label="パネルカラーの種類">
@@ -80,9 +80,6 @@
             <input id="panelColorText" class="hex-input" data-field="panelColor" maxlength="7" spellcheck="false">
           </div>
         </div>
-        <div class="field"><label for="topColorText">上選手カラー</label><div class="color-control"><input type="color" id="topColor" data-color-for="topColor"><input id="topColorText" class="hex-input" data-field="topColor" maxlength="7" spellcheck="false"></div></div>
-        <div class="swap-field"><button type="button" id="swapPlayerColors" class="swap-colors"><span>上下</span><span>入替</span></button></div>
-        <div class="field"><label for="bottomColorText">下選手カラー</label><div class="color-control"><input type="color" id="bottomColor" data-color-for="bottomColor"><input id="bottomColorText" class="hex-input" data-field="bottomColor" maxlength="7" spellcheck="false"></div></div>
         <div class="field">
           <label for="boardPreset">ボード</label>
           <div class="board-control">
@@ -97,6 +94,10 @@
             </select>
           </div>
         </div>
+        <div class="field"><label for="topColorText">上選手カラー</label><div class="color-control"><input type="color" id="topColor" data-color-for="topColor"><input id="topColorText" class="hex-input" data-field="topColor" maxlength="7" spellcheck="false"></div></div>
+        <div class="swap-field"><button type="button" id="swapPlayerColors" class="swap-colors"><span>上下</span><span>入替</span></button></div>
+        <div class="field"><label for="bottomColorText">下選手カラー</label><div class="color-control"><input type="color" id="bottomColor" data-color-for="bottomColor"><input id="bottomColorText" class="hex-input" data-field="bottomColor" maxlength="7" spellcheck="false"></div></div>
+
       </div>
 
     </aside>
@@ -117,10 +118,10 @@
   <!-- Common defines JBSBrand; its data are fetched separately with a fallback. -->
   <script src="https://jbsbackgammon.github.io/common/brand.js"></script>
   <script>
-    fetch('stage.html?v=20261020-media-v3').then(r => r.text()).then(html => {
+    fetch('stage.html?v=20261021-panel-right2-v6').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261020-title-fields-v5';
+      script.src = 'overlay.js?v=20261021-panel-right2-v6';
       document.body.appendChild(script);
     });
   </script>

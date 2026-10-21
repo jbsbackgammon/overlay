@@ -669,9 +669,9 @@ function render() {
   $(".sponsor-secondary").hidden = !state.sponsors2;
   const titleFields = $(".title-fields");
   if (titleFields) {
-    // Keep the entire row in the layout, so changing right1 never shifts
-    // the stage preview vertically. Disable editing without clearing values.
-    const titleActive = (state.right1Mode || "title") === "title";
+    // Keep the entire row in place; either title slot enables editing.
+    // Other modes disable inputs without clearing values or moving the preview.
+    const titleActive = ["right1Mode", "right2Mode"].some((key) => state[key] === "title");
     titleFields.hidden = false;
     titleFields.classList.toggle("is-inactive", !titleActive);
     titleFields.setAttribute("aria-disabled", String(!titleActive));
@@ -679,8 +679,23 @@ function render() {
       control.disabled = !titleActive;
     });
   }
-  const titleCard = $(".title-card");
+  const titleCard = $(".stage > .title-card");
   if (titleCard) titleCard.hidden = (state.right1Mode || "title") === "none";
+  // Right2 has its own 480x270 panel. Mirror the current tournament content
+  // (including text coloring and English display) without mutating right1.
+  const right2Title = $(".title-card-right2");
+  if (titleCard && right2Title) {
+    right2Title.replaceChildren(...Array.from(titleCard.children, node => node.cloneNode(true)));
+  }
+  const panelActive = ["right1Mode", "right2Mode"].some((key) => state[key] === "title");
+  const panelField = $(".panel-color-field");
+  if (panelField) {
+    panelField.classList.toggle("is-inactive", !panelActive);
+    panelField.setAttribute("aria-disabled", String(!panelActive));
+    panelField.querySelectorAll("input, select").forEach((control) => {
+      control.disabled = !panelActive;
+    });
+  }
   renderThumbnails();
   $$(".personal-video").forEach((area) => { area.hidden = !(state.personal || state.playerPhoto); });
   ["top", "bottom"].forEach((side) => {
