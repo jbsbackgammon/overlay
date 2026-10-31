@@ -952,6 +952,34 @@ button, input, select { font: inherit; }
 .preset-input input { border-radius: 0 9px 9px 0; }
 .player-input select { width: 100%; }
 
+/* Each player's square photo stays in the same row as the selector and name. */
+.player-entry-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 38px;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  height: 38px;
+}
+.player-entry-row .preset-input { min-width: 0; height: 38px; }
+.player-entry-row .preset-input select,
+.player-entry-row .preset-input input { height: 38px; min-width: 0; }
+.player-photo-picker {
+  appearance: none;
+  display: block;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #d3d9e2;
+  border-radius: 7px;
+  background: #f1f2f4;
+  cursor: pointer;
+}
+.player-photo-picker:hover { border-color: #7d8fa8; }
+.player-photo-picker:focus-visible { outline: 2px solid #5275aa; outline-offset: 2px; }
+.player-photo-preview { display: block; width: 100%; height: 100%; object-fit: cover; }
+
 .english-input[hidden] { display: none; }
 
 /* v4: Show Japanese and English inputs side-by-side, not on separate rows.
@@ -970,6 +998,11 @@ button, input, select { font: inherit; }
 .event-fields > .field > .english-input,
 .title-fields > .field > .english-input {
   min-width: 0;
+}
+/* In bilingual mode the Japanese column also contains the selector and photo.
+   Allocate enough room for the actual name without adding a second row. */
+.event-fields > .field:has(> .english-input:not([hidden])) {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 }
 /* Prevent the Japanese selector and input from overflowing their half. */
 .event-fields > .field .preset-input > input,

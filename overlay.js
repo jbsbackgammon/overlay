@@ -10,6 +10,8 @@ const defaults = {
   bottomName: "",
   topNameEn: "",
   bottomNameEn: "",
+  topPhoto: "",
+  bottomPhoto: "",
   english: false,
   boardPreset: "",
   frameColor: "#383838",
@@ -574,6 +576,84 @@ function englishEdition(value) {
   return [prefix, ordinal(Number(match[2])), suffix].filter(Boolean).join(" ");
 }
 
+// Uploaded images are small, persistent data URLs so the editor, saved settings,
+// JSON import/export and the same-browser output page use the same photo.
+function playerPhotoSource(side) {
+  return state[`${side}Photo`] || memberPhotoByName.get(state[`${side}Name`]) || defaultPlayerPhoto;
+}
+
+function setPlayerPhotoImage(image, requestedSrc) {
+  if (!image) return;
+  if (!image.dataset.photoErrorBound) {
+    image.addEventListener("error", () => {
+      if (!image.src.endsWith(`/${defaultPlayerPhoto}`)) image.src = defaultPlayerPhoto;
+    });
+    image.dataset.photoErrorBound = "true";
+  }
+  if (image.dataset.requestedSrc === requestedSrc) return;
+  image.dataset.requestedSrc = requestedSrc;
+  image.src = requestedSrc;
+}
+
+function updatePlayerPhotoImages() {
+  ["top", "bottom"].forEach((side) => {
+    const source = playerPhotoSource(side);
+    setPlayerPhotoImage($(`.personal-video.${side} .personal-photo`), source);
+    setPlayerPhotoImage($(`[data-photo-for="${side}"] .player-photo-preview`), source);
+  });
+}
+
+async function encodePlayerPhoto(file) {
+  if (!file.type.startsWith("image/")) throw new Error("画像ファイルを選択してください。");
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    const source = new Image();
+    source.src = objectUrl;
+    await source.decode();
+    if (!source.naturalWidth || !source.naturalHeight) throw new Error("画像を読み込めませんでした。");
+    const canvas = document.createElement("canvas");
+    canvas.width = 512;
+    canvas.height = 512;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("画像を処理できませんでした。");
+    const size = Math.min(source.naturalWidth, source.naturalHeight);
+    context.drawImage(source,
+      (source.naturalWidth - size) / 2, (source.naturalHeight - size) / 2, size, size,
+      0, 0, 512, 512);
+    const webp = canvas.toDataURL("image/webp", 0.8);
+    // JPEG is a compact fallback for browsers without WebP canvas encoding.
+    return webp.startsWith("data:image/webp,") || webp.startsWith("data:image/webp;")
+      ? webp : canvas.toDataURL("image/jpeg", 0.8);
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
+function bindPlayerPhotoUploads() {
+  $$('[data-photo-for]').forEach((button) => {
+    const side = button.dataset.photoFor;
+    const picker = $(`[data-photo-file="${side}"]`);
+    if (!picker) return;
+    button.addEventListener("click", () => picker.click());
+    picker.addEventListener("change", async () => {
+      const file = picker.files?.[0];
+      picker.value = "";
+      if (!file) return;
+      const key = `${side}Photo`;
+      const before = state[key];
+      try {
+        state[key] = await encodePlayerPhoto(file);
+        persistState();
+        render();
+      } catch (error) {
+        state[key] = before;
+        render();
+        alert(`選手写真を設定できませんでした。${error?.message || "別の画像をお試しください。"}`);
+      }
+    });
+  });
+}
+
 function render() {
   const stage = $(".stage");
   if (!stage) return;
@@ -708,21 +788,7 @@ function render() {
   }
   renderThumbnails();
   $$(".personal-video").forEach((area) => { area.hidden = !(state.personal || state.playerPhoto); });
-  ["top", "bottom"].forEach((side) => {
-    const image = $(`.personal-video.${side} .personal-photo`);
-    if (!image) return;
-    if (!image.dataset.fallbackBound) {
-      image.addEventListener("error", () => {
-        if (!image.src.endsWith(`/${defaultPlayerPhoto}`)) image.src = defaultPlayerPhoto;
-      });
-      image.dataset.fallbackBound = "true";
-    }
-    const requestedSrc = memberPhotoByName.get(state[`${side}Name`]) || defaultPlayerPhoto;
-    if (image.dataset.requestedSrc !== requestedSrc) {
-      image.dataset.requestedSrc = requestedSrc;
-      image.src = requestedSrc;
-    }
-  });
+  updatePlayerPhotoImages();
   $(".side-video-window").hidden = !["reference", "thumbnail"].includes(stage.dataset.right2Mode);
   $(".rules-panel").hidden = state.right4Mode !== "rules";
   $(".sponsor-rail").hidden = !mediaMode(state.right3Mode, "sponsor");
@@ -1094,6 +1160,7 @@ async function loadMembers() {
         const option = select.selectedOptions[0];
         state[`${side}Name`] = select.value;
         state[`${side}NameEn`] = option.dataset.nameEn || '';
+        state[`${side}Photo`] = ""; // Follow the newly selected member's photo.
         $(`[data-field="${side}Name"]`).value = state[`${side}Name`];
         $(`[data-field="${side}NameEn"]`).value = state[`${side}NameEn`];
         persistState();
@@ -1379,6 +1446,7 @@ function bindEditor() {
   $("#swapPlayerNames")?.addEventListener("click", () => {
     [state.topName, state.bottomName] = [state.bottomName, state.topName];
     [state.topNameEn, state.bottomNameEn] = [state.bottomNameEn, state.topNameEn];
+    [state.topPhoto, state.bottomPhoto] = [state.bottomPhoto, state.topPhoto];
     ["topName", "bottomName", "topNameEn", "bottomNameEn"].forEach((key) => {
       $$(`[data-field="${key}"]`).forEach((input) => { input.value = state[key] || ""; });
     });
@@ -1398,7 +1466,11 @@ function bindEditor() {
     const outputUrl = new URL("output.html", location.href);
     outputUrl.searchParams.set("channel", channel);
     outputUrl.searchParams.set("v", "20261005-obsfit1");
-    outputUrl.searchParams.set("state", encodeOutputState(state));
+    // Image data in a URL can exceed reverse-proxy and browser limits.
+    // For uploads, the output tab retrieves the already-persisted state instead.
+    if (!state.topPhoto && !state.bottomPhoto) {
+      outputUrl.searchParams.set("state", encodeOutputState(state));
+    }
     window.open(outputUrl.href, `jbs-overlay-output-${channel}`);
   });
 
@@ -1473,6 +1545,7 @@ loadSharedState();
 state.interval = 60000;
 render();
 bindEditor();
+bindPlayerPhotoUploads();
 loadCommonBrand();
 loadMembers();
 updateEnglishFields();
