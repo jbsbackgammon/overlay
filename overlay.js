@@ -831,7 +831,7 @@ function render() {
     const placeholder = $(`.slot-reference-${index + 3}`);
     if (placeholder) placeholder.hidden = modes[slot] !== "reference";
   });
-  $("[data-secondary-ad-slot]").forEach((slot, index) => {
+  $$("[data-secondary-ad-slot]").forEach((slot, index) => {
     slot.hidden = !mediaMode(index === 0 ? modes.right4 : modes.right5, "sponsor");
   });
   // A rule panel occupies two adjacent slots; the covered selector is shown
@@ -920,7 +920,7 @@ function setupSecondarySponsors(index = sponsorIndex) {
   if (!cards.length) return;
   const modes = effectiveRightModes();
   const activeSlots = [modes.right3, modes.right4, modes.right5];
-  $('[data-secondary-ad-slot]').forEach((slot, slotIndex) => {
+  $$('[data-secondary-ad-slot]').forEach((slot, slotIndex) => {
     const mode = slotIndex === 0 ? modes.right4 : modes.right5;
     const fixed = fixedMediaPath(mode, "sponsor");
     if (fixed) {
