@@ -55,7 +55,7 @@ const server = http.createServer((req, res) => {
       });
     });
     const status = html.match(/data-ui-smoke="([^"]+)"/)?.[1];
-    assert.ok(status?.startsWith('success-'), 'Real-browser UI smoke failed: ' + String(status));
+    assert.equal(status, 'success', 'Real-browser UI smoke failed: ' + String(status));
     console.log('Real-browser UI smoke succeeded (' + status + ').');
   } finally {
     server.close();
