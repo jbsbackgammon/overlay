@@ -1074,10 +1074,11 @@ button, input, select { font: inherit; }
   content: "";
   position: absolute;
   left: -7px;
-  top: 0;
-  bottom: 0;
+  top: 50%;
+  transform: translateY(-50%);
   width: 1px;
-  background: #d9dee6;
+  height: 26px;
+  background: #aeb5c0;
   pointer-events: none;
 }
 
