@@ -1040,6 +1040,22 @@ button, input, select { font: inherit; }
   gap: 14px;
 }
 
+/* Separate tournament panel styling from the board/player color group.
+   Place the divider at the midpoint of the existing 14px column gap. */
+.board-color-field {
+  position: relative;
+}
+.board-color-field::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #d9dee6;
+  pointer-events: none;
+}
+
 
 [data-board-preset] {
   background: #ffffff !important;
@@ -1290,4 +1306,6 @@ button, input, select { font: inherit; }
   .title-fields:has(> .field > .english-input:not([hidden])) {
     grid-template-columns: minmax(0, 1fr);
   }
+  /* Stacked color inputs have no shared vertical boundary. */
+  .board-color-field::before { display: none; }
 }

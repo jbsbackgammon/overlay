@@ -27,6 +27,10 @@ assert.ok(js.includes('modes.right4 === "rules45"'), 'Missing rules for right4 a
 assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(js.includes('brand.getEdition(name)'), 'Official editions must come from JBS common');
 assert.ok(editor.includes('class="panel-color-swatch"'), 'Panel color preview container is required');
+assert.ok(editor.includes('class="field board-color-field"') && editor.includes('<label for="boardPreset">ボードカラー</label>'),
+  'Board color field label or divider anchor is missing');
+assert.ok(read('styles.css').includes('.board-color-field::before'),
+  'Missing vertical divider between panel and board colors');
 assert.ok(js.includes('"--panel-swatch-background", metallicBackground || state.panelColor'),
   'Panel preview must use the same metallic gradient or solid color as the broadcast panel');
 assert.ok(js.includes('panelField.classList.toggle("is-gradient", Boolean(metallicBackground))'),
