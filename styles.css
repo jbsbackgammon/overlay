@@ -13,8 +13,9 @@
 html, body { margin: 0; min-height: 100%; }
 
 body {
-  background: #eef0f4;
-  color: #27364d;
+  /* UI tokens are loaded in the editor; output.html uses these same HSL fallbacks. */
+  background: var(--jbs-ui-page-bg, hsl(215 25% 95%));
+  color: var(--jbs-ui-text, hsl(215 25% 20%));
 }
 
 button, input, select { font: inherit; }
@@ -33,7 +34,7 @@ button, input, select { font: inherit; }
   display: grid;
   place-items: center;
   padding: 24px 24px 18px;
-  background: #eef0f4;
+  background: var(--jbs-ui-page-bg, hsl(215 25% 95%));
 }
 
 .stage-wrap {
