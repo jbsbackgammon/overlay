@@ -210,14 +210,16 @@ button, input, select { font: inherit; }
   white-space: nowrap;
 }
 
-/* Upper points use the bottom player color, while only the upper goal
-   uses the top player color. Separate fills prevent alpha blending. */
-.point-guide.top { background: transparent; }
-.point-guide.top .guide-half { background: var(--guide-background); }
-.point-guide.top .guide-goal {
-  background: var(--guide-goal-background);
-  color: var(--guide-goal-ink);
+/* The upper strip changes from bottom-player color to top-player color
+   exactly at the goal boundary, preserving the tint between point groups. */
+.point-guide.top {
+  background: linear-gradient(
+    to right,
+    var(--guide-background) var(--guide-goal-left),
+    var(--guide-goal-background) var(--guide-goal-left)
+  );
 }
+.point-guide.top .guide-goal { color: var(--guide-goal-ink); }
 
 .stage.personal-mode .player-dot { left: 350px; }
 .stage.personal-mode .player-name {
