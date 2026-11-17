@@ -1676,6 +1676,16 @@ function loadSharedState() {
   }
 }
 
+// The shared UI focus ring is reserved for keyboard navigation.
+// Native :focus-visible also matches mouse-focused text fields, so track
+// the most recent interaction explicitly. Pointer/touch input hides it.
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Tab") document.documentElement.setAttribute("data-jbsui-keyboard-focus", "");
+}, true);
+document.addEventListener("pointerdown", () => {
+  document.documentElement.removeAttribute("data-jbsui-keyboard-focus");
+}, true);
+
 loadSharedState();
 state.interval = 60000;
 render();
