@@ -28,7 +28,12 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=23'), 'Shared CSS v23 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=24'), 'Shared CSS v24 must be loaded');
+assert.ok(js.includes('event.key === "Tab"')
+  && js.includes('setAttribute("data-jbsui-keyboard-focus"')
+  && js.includes('removeAttribute("data-jbsui-keyboard-focus"')
+  && js.includes('addEventListener("pointerdown"'),
+  'Keyboard-only focus ring must be enabled by Tab and cleared on pointer/touch input');
 assert.ok(!/--(?:opacity-muted|shadow-primary)/.test(styles),
   'Retired long-form opacity and shadow token names must not remain');
 
