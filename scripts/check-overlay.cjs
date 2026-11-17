@@ -28,7 +28,12 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=27'), 'Shared CSS v27 must be loaded');
+const retiredColors = /--color-(?:20|40|80|90)\\b/;
+assert.ok(!retiredColors.test(styles), 'Overlay CSS must use the six-color palette only');
+const usedColors = [...styles.matchAll(/var\\(--color-(\\d+)\\b/g)].map((match) => Number(match[1]));
+assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
+  'Overlay CSS must not reference undefined palette values');
+assert.ok(editor.includes('common/ui.css?v=28'), 'Shared CSS v28 must be loaded');
 assert.ok(editor.includes('class="jbsui-preset-input"') || editor.includes('class="jbsui-preset-input player-input"'),
   'Preset selectors must use the shared input-group component');
 assert.ok(!styles.includes('.jbsui-preset-input select:focus'),
@@ -57,7 +62,7 @@ assert.ok(/\.channel-picker\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/
 assert.ok(/\[data-board-preset\]\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/s.test(styles),
   'Board color select must use weight 400 from common CSS');
 assert.ok(!styles.includes('background: var(--color-100) !important;')
-  && !styles.includes('color: var(--color-20) !important;'),
+  && !styles.includes('color: var(--color-25) !important;'),
   'Board preset must inherit the shared background and text colors');
 assert.ok((styles.match(/!important/g) || []).length === 2
   && styles.includes('transform: none !important;'),
@@ -109,7 +114,7 @@ assert.ok(!styles.includes('--jbsui-'), 'Retired prefixed style token remains');
 assert.ok(styles.includes('height: var(--height-input);')
   && styles.includes('width: var(--size-swatch);'), 'Shared 36px sizes missing');
 assert.ok(styles.includes('background: var(--color-95, hsl(215 25% 95%));')
-  && styles.includes('color: var(--color-20, hsl(215 25% 20%));'), 'Base colors missing');
+  && styles.includes('color: var(--color-25, hsl(215 25% 25%));'), 'Base colors missing');
 assert.ok(!js.includes('setProperty("--button-theme"'), 'Unused theme override remains');
 assert.ok(!styles.includes('\n.jbsui-preset-input {') && !styles.includes('\n.jbsui-preset-input select {'),
   'Shared preset select must not be redefined in overlay styles');
