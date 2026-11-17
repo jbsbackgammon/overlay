@@ -1373,7 +1373,7 @@ async function exportStageAsPng() {
     captureStage.style.transformOrigin = "top left";
     captureHost.append(captureStage);
     document.body.append(captureHost);
-    await Promise.all($("img", captureStage).map((image) => image.complete
+    await Promise.all([...captureStage.querySelectorAll("img")].map((image) => image.complete
       ? Promise.resolve()
       : new Promise((resolve) => {
         image.addEventListener("load", resolve, { once: true });
