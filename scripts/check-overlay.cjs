@@ -28,14 +28,14 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=6'), 'Shared JBS UI stylesheet missing');
-assert.ok(styles.includes('border-radius: var(--jbs-ui-radius-control);')
-  && styles.includes('border-radius: var(--jbs-ui-radius-button);')
-  && styles.includes('border-radius: var(--jbs-ui-radius-dialog);'),
-  'Overlay editor must use brand management corner radius tokens');
-assert.ok(!styles.includes('var(--jbs-ui-radius-preview)')
-  && !styles.includes('var(--jbs-ui-radius)'),
-  'Retired UI corner radius tokens must not remain');
+assert.ok(editor.includes('common/ui.css?v=7'), 'Shared JBS UI stylesheet missing');
+assert.ok(styles.includes('border-radius: var(--jbs-ui-radius);'),
+  'Rectangular editor components must use the single shared 4px radius token');
+for (const retired of ['--jbs-ui-radius-control', '--jbs-ui-radius-button',
+                      '--jbs-ui-radius-panel', '--jbs-ui-radius-dialog',
+                      '--jbs-ui-radius-preview']) {
+  assert.ok(!styles.includes(retired), 'Deprecated radius token found: ' + retired);
+}
 
 assert.ok(!styles.includes('var(--jbs-ui-font-13)') && !styles.includes('var(--jbs-ui-weight-label)'),
   'Editor must not reference retired typography tokens');
