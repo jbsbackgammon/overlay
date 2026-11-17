@@ -836,7 +836,9 @@ function render() {
   if (panelField) {
     const colorEditable = panelActive && state.panelMode === "solid";
     panelField.classList.toggle("is-inactive", !panelActive);
-    panelField.classList.toggle("is-gradient", panelActive && !colorEditable);
+    panelField.classList.toggle("is-gradient", Boolean(metallicBackground));
+    // Match the actual tournament panel's gold/silver/bronze gradient exactly.
+    panelField.style.setProperty("--panel-swatch-background", metallicBackground || state.panelColor);
     panelField.setAttribute("aria-disabled", String(!panelActive));
     // The mode dropdown remains available whenever a tournament panel is shown.
     // Only the color picker and hex field are disabled for metallic presets.

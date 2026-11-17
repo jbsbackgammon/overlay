@@ -787,10 +787,7 @@ button, input, select { font: inherit; }
   color: #8993a3;
   cursor: not-allowed;
 }
-.panel-color-field.is-inactive input[type="color"]:disabled,
-.panel-color-field.is-gradient input[type="color"]:disabled {
-  opacity: .45;
-}
+.panel-color-field.is-inactive .panel-color-swatch { opacity: .45; }
 .panel-color-field.is-gradient .hex-input:disabled {
   background-color: #f4f5f8;
   border-color: #e2e5ea;
@@ -1100,6 +1097,28 @@ button, input, select { font: inherit; }
 }
 
 .panel-color-control select { padding-left: 7px; padding-right: 5px; }
+
+/* The native color input cannot render gradients. Its shared 38px swatch
+   displays the exact panel gradient while the picker stays disabled. */
+.panel-color-swatch {
+  display: block;
+  width: 38px;
+  height: 38px;
+  overflow: hidden;
+  border: 1px solid #cbd3de;
+  border-radius: 7px;
+  background: var(--panel-swatch-background, #ffffff);
+}
+.panel-color-swatch > input[type="color"] {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+}
+.panel-color-field.is-gradient .panel-color-swatch > input[type="color"] {
+  opacity: 0;
+}
 
 .field input[type="color"] {
   width: 38px;

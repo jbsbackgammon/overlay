@@ -12,7 +12,7 @@
   <link rel="icon" href="https://jbsbackgammon.github.io/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=20261117-goal-natural-width-v22">
+  <link rel="stylesheet" href="styles.css?v=20261117-panel-gradient-swatch-v23">
 </head>
 <body>
   <div class="app">
@@ -67,7 +67,7 @@
         <div class="field panel-color-field">
           <label for="panelMode">大会名パネルカラー</label>
           <div class="panel-color-control">
-            <input type="color" id="panelColor" data-color-for="panelColor">
+            <span class="panel-color-swatch"><input type="color" id="panelColor" data-color-for="panelColor"></span>
             <select id="panelMode" data-field="panelMode" aria-label="大会名パネルカラーの種類">
               <option value="gradient">金グラデ</option>
               <option value="silver">銀グラデ</option>
@@ -126,7 +126,7 @@
     fetch('stage.html?v=20261117-five-right-slots-v15').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261117-goal-natural-width-v22';
+      script.src = 'overlay.js?v=20261117-panel-gradient-swatch-v23';
       document.body.appendChild(script);
     });
   </script>
