@@ -22,7 +22,10 @@ button, input, select { font: inherit; }
 .app {
   min-height: 100vh;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  /* Let the controls and preview retain their full heights instead of
+     compressing the control row into the viewport and obscuring the preview. */
+  grid-template-rows: auto auto;
+  align-content: start;
 }
 
 .stage-shell {

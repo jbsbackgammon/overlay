@@ -527,8 +527,26 @@ addEventListener("storage", (event) => {
 function fitStage() {
   const wrap = $(".stage-wrap");
   const stage = $(".stage");
-  if (!wrap || !stage) return;
-  const scale = wrap.clientWidth / 1920;
+  if (!wrap || !stage || document.body.classList.contains("output-page")) return;
+
+  // Fit the editor preview to BOTH the available width and viewport height.
+  // The broadcast output stays fixed at its original 1920 × 1080 pixels.
+  const shell = $(".stage-shell");
+  const controls = $(".control-panel");
+  if (!shell || !controls) return;
+  const shellStyle = getComputedStyle(shell);
+  const horizontalPadding = (parseFloat(shellStyle.paddingLeft) || 0) +
+    (parseFloat(shellStyle.paddingRight) || 0);
+  const verticalPadding = (parseFloat(shellStyle.paddingTop) || 0) +
+    (parseFloat(shellStyle.paddingBottom) || 0);
+  const maxWidth = Math.min(1200, Math.max(1, shell.clientWidth - horizontalPadding) * .92);
+  const viewportHeight = window.visualViewport?.height || window.innerHeight;
+  const availableHeight = viewportHeight - controls.getBoundingClientRect().bottom -
+    verticalPadding - 12;
+  // Keep an accessible minimum on very small screens; the page can scroll.
+  const fittedWidth = Math.min(maxWidth, Math.max(360, availableHeight * 16 / 9));
+  wrap.style.width = `${fittedWidth}px`;
+  const scale = fittedWidth / 1920;
   stage.style.transform = `scale(${scale})`;
   wrap.style.height = `${1080 * scale}px`;
 }
@@ -1591,7 +1609,15 @@ setInterval(() => {
   catch (_) { /* ignore malformed shared state */ }
 }, 1000);
 addEventListener("resize", fitStage);
+window.visualViewport?.addEventListener("resize", fitStage);
+// Guide options and responsive rows may change the controls' height without a
+// window resize. Refit the preview whenever that happens.
+if (typeof ResizeObserver !== "undefined") {
+  const controlPanel = $(".control-panel");
+  if (controlPanel) new ResizeObserver(fitStage).observe(controlPanel);
+}
 fitStage();
 document.fonts?.ready.then(() => {
   fitTitleTexts();
+  fitStage();
 });
