@@ -74,6 +74,13 @@ assert.ok(!styles.includes('transition: opacity'),
 
 assert.ok(styles.includes('height: var(--height-input);'),
   'Editor input and divider heights must share the input-height variable');
+assert.ok(editor.includes('id="swapPlayerNames" class="swap-colors player-name-swap">上下入替</button>'),
+  'Player swap button must show a single-line label');
+assert.ok(styles.includes('--width-editor-player-swap: 80px;')
+  && styles.includes('.player-swap-field .player-name-swap {')
+  && styles.includes('height: var(--height-input);')
+  && styles.includes('white-space: nowrap;'),
+  'Player swap must align to 36px inputs and use a wide, single-line button');
 for (const retired of ["--border-width","--button-height","--dialog-shadow","--divider-height","--font-12","--font-14","--font-16","--font-20","--font-24","--input-height","--label-height","--preset-select-width","--primary-shadow","--swatch-size","--weight-action","--weight-normal"]) {
   assert.ok(!styles.includes(retired), 'Retired naming must not remain: ' + retired);
 }
