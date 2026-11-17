@@ -28,17 +28,17 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=19'), 'Shared CSS v19 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=20'), 'Shared CSS v19 must be loaded');
 assert.ok(!/--(?:opacity-muted|shadow-primary)/.test(styles),
   'Retired long-form opacity and shadow token names must not remain');
 
 assert.ok(!/--(?:opacity-disabled|opacity-inactive|opacity-editor-swatch-inactive|shadow-dialog|shadow-editor-preview)/.test(styles),
   'Retired opacity and shadow tokens must not remain');
-assert.ok(!styles.includes('.title-fields.is-inactive label')
-  && !styles.includes('.panel-color-field.is-inactive label')
-  && !styles.includes('.panel-color-field.is-inactive .panel-color-swatch')
-  && !styles.includes('.title-fields.is-inactive input:disabled')
-  && !styles.includes('.panel-color-field.is-inactive input:disabled'),
+assert.ok(!styles.includes('.title-fields.jbsui-inactive label')
+  && !styles.includes('.panel-color-field.jbsui-inactive label')
+  && !styles.includes('.panel-color-field.jbsui-inactive .panel-color-swatch')
+  && !styles.includes('.title-fields.jbsui-inactive input:disabled')
+  && !styles.includes('.panel-color-field.jbsui-inactive input:disabled'),
   'Inactive editor states must be supplied by common UI');
 assert.ok((styles.match(/box-shadow: var\(--shadow\);/g) || []).length === 1,
   'Editor preview uses the shared shadow; dialog uses common UI shadow');
@@ -47,7 +47,7 @@ assert.ok(/\.channel-picker\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/
   'Stream selector must use weight 400 from common CSS');
 assert.ok(/\[data-board-preset\]\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/s.test(styles),
   'Board color select must use weight 400 from common CSS');
-assert.ok(!/\.jbs-ui\s+\.preset-input\s+select\s*\{/.test(styles),
+assert.ok(!/\.jbsui\s+\.jbsui-preset-input\s+select\s*\{/.test(styles),
   'Shared preset selector sizing must not be overridden by overlay CSS');
 assert.ok(js.includes('round: "１回戦",') && js.includes('roundEn: "Round of 64",'),
   'New editor sessions should default to first round in both languages');
@@ -81,43 +81,43 @@ for (const retired of ["--border-width","--button-height","--dialog-shadow","--d
 assert.ok(styles.includes('font-family: var(--font-family, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, sans-serif);'),
   'Editor must reference the shared font-family and preserve the output-page fallback order');
 assert.ok(styles.includes('border-radius: var(--radius);'), 'Editor radius token missing');
-assert.ok(!styles.includes('--jbs-ui-'), 'Retired prefixed style token remains');
+assert.ok(!styles.includes('--jbsui-'), 'Retired prefixed style token remains');
 assert.ok(styles.includes('height: var(--height-input);')
   && styles.includes('width: var(--size-swatch);'), 'Shared 36px sizes missing');
 assert.ok(styles.includes('background: var(--color-95, hsl(215 25% 95%));')
   && styles.includes('color: var(--color-20, hsl(215 25% 20%));'), 'Base colors missing');
 assert.ok(!js.includes('setProperty("--button-theme"'), 'Unused theme override remains');
-assert.ok(!styles.includes('\n.preset-input {') && !styles.includes('\n.preset-input select {'),
+assert.ok(!styles.includes('\n.jbsui-preset-input {') && !styles.includes('\n.jbsui-preset-input select {'),
   'Shared preset select must not be redefined in overlay styles');
 for (const field of ['topMember', 'bottomMember', 'titlePreset', 'roundPreset']) {
   assert.ok(editor.includes('id="' + field + '"'),
     'Existing preset selector must be kept: ' + field);
 }
-assert.ok(editor.includes('class="control-panel jbs-ui"'), 'Missing JBS editor scope');
-for (const component of ['jbs-ui-color-control', 'jbs-ui-color-swatch', 'jbs-ui-hex-input',
-  'jbs-ui-dialog', 'jbs-ui-dialog-head', 'jbs-ui-dialog-close']) {
+assert.ok(editor.includes('class="control-panel jbsui"'), 'Missing JBS editor scope');
+for (const component of ['jbsui-color-control', 'jbsui-color-swatch', 'jbsui-hex-input',
+  'jbsui-dialog', 'jbsui-dialog-head', 'jbsui-dialog-close']) {
   assert.ok(editor.includes(component), 'Missing shared UI component: ' + component);
 }
-for (const retired of ['.color-control {', '.field input[type="color"] {',
-  '.field input[type="color"]::-webkit', '.settings-dialog-head {', '.dialog-close {',
+for (const retired of ['.color-control {', '.jbsui-field input[type="color"] {',
+  '.jbsui-field input[type="color"]::-webkit', '.settings-dialog-head {', '.dialog-close {',
   '.settings-dialog::backdrop', '\n.panel-color-swatch > input[type="color"] {']) {
   assert.ok(!styles.includes(retired), 'Reusable UI style must not be duplicated: ' + retired);
 }
 
-for (const name of ['jbs-ui-button', 'jbs-ui-divider', 'jbs-ui-check']) {
+for (const name of ['jbsui-button', 'jbsui-divider', 'jbsui-check']) {
   assert.ok(editor.includes(name), 'Missing shared UI component: ' + name);
 }
-for (const duplicate of ['.settings-action {', '.action-separator {', '.sponsor-toggle {', '.field { display: grid;', '.field input, .field select {']) {
+for (const duplicate of ['.settings-action {', '.action-separator {', '.sponsor-toggle {', '.jbsui-field { display: grid;', '.jbsui-field input, .jbsui-field select {']) {
   assert.ok(!styles.includes(duplicate), 'Duplicated local style: ' + duplicate);
 }
 
 assert.ok(styles.includes('grid-template-rows: var(--height-label) var(--height-input);'),
   'Editor fields must align their label and control rows in bilingual mode');
-assert.ok(styles.includes('.title-fields > .field > .preset-input > select'),
+assert.ok(styles.includes('.title-fields > .jbsui-field > .jbsui-preset-input > select'),
   'Preset selects need the same height as Japanese and English inputs');
 assert.ok(js.includes('brand.getEdition(name)'), 'Official editions must come from JBS common');
-assert.ok(editor.includes('class="panel-color-swatch jbs-ui-color-swatch"'), 'Panel color preview must use the shared swatch');
-assert.ok(editor.includes('class="field board-color-field"') && editor.includes('<label for="boardPreset">ボードカラー</label>'),
+assert.ok(editor.includes('class="panel-color-swatch jbsui-color-swatch"'), 'Panel color preview must use the shared swatch');
+assert.ok(editor.includes('class="jbsui-field board-color-field"') && editor.includes('<label for="boardPreset">ボードカラー</label>'),
   'Board color field label or divider anchor is missing');
 assert.ok(read('styles.css').includes('.board-color-field::before'),
   'Missing vertical divider between panel and board colors');
