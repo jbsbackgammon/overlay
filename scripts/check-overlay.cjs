@@ -236,7 +236,8 @@ assert.ok(read('styles.css').includes('.board-color-field::before'),
   'Missing vertical divider between panel and board colors');
 assert.ok(styles.includes('.panel-color-control {') && styles.includes('align-items: end;'),
   'Panel color inputs must bottom-align with the board selector');
-assert.ok(styles.includes('.panel-color-field { margin-right: calc(var(--space-12) + var(--width-border)); }')
+assert.ok(styles.includes('.panel-color-field { margin-right: var(--space-4); }')
+  && styles.includes('padding-right: calc(var(--space-8) + var(--width-border));')
   && styles.includes('margin-left: calc(var(--space-4) + var(--width-border));')
   && styles.includes('left: calc(-1 * (var(--space-12) + var(--width-border)));')
   && styles.includes('bottom: 0;'),
