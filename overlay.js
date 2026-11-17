@@ -519,6 +519,20 @@ let fitFrame;
 let lastStoredState = embeddedState ? null : localStorage.getItem(storageKey);
 const savedSettingsKey = "jbs-overlay-saved-settings";
 let pendingPngDownload = null;
+let pendingThumbnailTransfer = null;
+
+// One-time handoff to the separately opened YouTube thumbnail editor.
+addEventListener("message", (event) => {
+  const handoff = pendingThumbnailTransfer;
+  if (!handoff || event.origin !== handoff.origin || event.source !== handoff.popup
+    || event.data?.type !== "jbs-thumbnail-ready" || event.data.token !== handoff.token) return;
+  pendingThumbnailTransfer = null;
+  handoff.popup.postMessage({
+    type: "jbs-overlay-thumbnail-data",
+    token: handoff.token,
+    fields: handoff.fields
+  }, handoff.origin);
+});
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -1571,6 +1585,42 @@ function bindEditor() {
 
   $("#exportPng")?.addEventListener("click", exportStageAsPng);
 
+  $("#createThumbnail")?.addEventListener("click", () => {
+    const token = window.crypto?.randomUUID?.().replace(/-/g, "")
+      || (Date.now().toString(36) + Math.random().toString(36).slice(2));
+    const url = new URL("https://jbsbackgammon.github.io/thumbnail/");
+    url.searchParams.set("from", "overlay");
+    url.searchParams.set("transfer", token);
+    // Shared member photos and custom uploads both remain available.
+    // Streaming "top" becomes thumbnail "left"; "bottom" becomes "right".
+    const master = commonTournament(state.title);
+    const masterColor = master?.color || titleThemePresets[state.title] || "";
+    const mainColor = String(state.frameColor || "");
+    const subColor = masterColor.toUpperCase() === mainColor.toUpperCase()
+      ? (state.themeSubColor || master?.subColor || "") : "";
+    const fields = {
+      edition: state.edition || "",
+      series: state.title || "",
+      stage: state.round || "",
+      leftName: state.topName || "",
+      leftRoman: state.topNameEn || "",
+      leftPhoto: state.topPhoto || memberPhotoByName.get(state.topName) || "",
+      rightName: state.bottomName || "",
+      rightRoman: state.bottomNameEn || "",
+      rightPhoto: state.bottomPhoto || memberPhotoByName.get(state.bottomName) || "",
+      mainColor,
+      subColor
+    };
+    // Open synchronously from the click so browsers allow the new window.
+    // The thumbnail page requests the fields after its member data is ready.
+    const popup = window.open(url.href, "jbs-overlay-thumbnail");
+    if (!popup) {
+      alert("サムネイル作成画面を開けませんでした。ブラウザのポップアップ許可をご確認ください。");
+      return;
+    }
+    pendingThumbnailTransfer = { popup, origin: url.origin, token, fields };
+    popup.focus?.();
+  });
 
   $("#closeSettings")?.addEventListener("click", () => $("#settingsDialog")?.close());
   $("#settingsDialog")?.addEventListener("click", (event) => {

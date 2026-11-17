@@ -12,7 +12,7 @@ const stage = read('stage.html');
 const badLoops = [...js.matchAll(/(?<!\$)\$\(\s*(?:"[^"\n]*"|'[^'\n]*')\s*\)\s*\.forEach\s*\(/g)];
 assert.equal(badLoops.length, 0, 'Use $$() instead of $() when iterating over matched elements');
 
-for (const id of ['openOutput', 'topMember', 'bottomMember', 'titlePreset', 'right1Mode', 'right2Mode', 'right3Mode', 'right4Mode', 'right5Mode']) {
+for (const id of ['openOutput', 'createThumbnail', 'topMember', 'bottomMember', 'titlePreset', 'right1Mode', 'right2Mode', 'right3Mode', 'right4Mode', 'right5Mode']) {
   assert.ok(editor.includes('id="' + id + '"'), 'Missing editor control: ' + id);
 }
 for (const number of [3, 4, 5]) {
@@ -69,6 +69,16 @@ assert.ok(js.includes('outputUrl.searchParams.set("channel", channel);'),
   'Output page must use the selected stream');
 assert.ok(js.includes('jbs-overlay-output-${channel}'),
   'Output tabs must remain separate for each stream');
+assert.ok(editor.includes('id="createThumbnail" type="button">サムネ作成</button>'),
+  'Thumbnail button is missing');
+assert.ok(js.includes('jbs-thumbnail-ready') && js.includes('jbs-overlay-thumbnail-data'),
+  'Cross-window thumbnail handshake is incomplete');
+assert.ok(js.includes('event.source !== handoff.popup') && js.includes('event.origin !== handoff.origin'),
+  'Thumbnail handoff must verify the requesting window and origin');
+assert.ok(js.includes('leftPhoto: state.topPhoto') && js.includes('rightPhoto: state.bottomPhoto'),
+  'Uploaded player photos must be transferred');
+assert.ok(js.includes('window.open(url.href, "jbs-overlay-thumbnail")'),
+  'Thumbnail editor must open in its own window');
 const version = editor.match(/overlay\.js\?v=([^"']+)/)?.[1];
 assert.ok(version && output.includes('overlay.js?v=' + version), 'Editor/output script version mismatch');
 console.log('Overlay initialization checks passed.');
