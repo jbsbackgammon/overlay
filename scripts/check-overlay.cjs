@@ -28,7 +28,7 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=13'), 'Shared CSS v13 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=14'), 'Shared CSS v14 must be loaded');
 assert.ok(/\.channel-picker\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/s.test(styles),
   'Stream selector must use weight 400 from common CSS');
 assert.ok(/\[data-board-preset\]\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/s.test(styles),
@@ -51,8 +51,12 @@ assert.deepEqual(embeddedLiterals, [],
 assert.ok(styles.includes('--size-editor-swap: 41px;')
   && styles.includes('--width-editor-color-budget: 318px;'),
   'Tool-specific layout constants must be centralized outside editor declarations');
-assert.ok(styles.includes('transition: opacity var(--duration-short) ease;'),
-  'Common interaction duration must be used');
+assert.ok(!styles.includes('--duration-short') && !styles.includes('--width-focus-outline'),
+  'Retired interaction tokens must not remain');
+assert.ok(styles.includes('outline: var(--width-focus-ring) solid var(--color-60); outline-offset: var(--width-focus-ring);'),
+  'Photo focus outline and offset must use shared 3px focus ring');
+assert.ok(!styles.includes('transition: opacity'),
+  'Photo label display must not retain unnecessary animation');
 
 assert.ok(styles.includes('height: var(--height-input);'),
   'Editor input and divider heights must share the input-height variable');

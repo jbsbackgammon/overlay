@@ -949,11 +949,10 @@ button, input, select { font: inherit; }
   font-weight: var(--font-weight-action);
   opacity: 0;
   pointer-events: none;
-  transition: opacity var(--duration-short) ease;
 }
 .player-photo-picker:hover::after,
 .player-photo-picker:focus-visible::after { opacity: 1; }
-.player-photo-picker:focus-visible { outline: var(--width-focus-outline) solid var(--color-60); outline-offset: var(--width-focus-outline); }
+.player-photo-picker:focus-visible { outline: var(--width-focus-ring) solid var(--color-60); outline-offset: var(--width-focus-ring); }
 .player-photo-preview { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 .english-input[hidden] { display: none; }
