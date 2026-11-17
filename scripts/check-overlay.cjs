@@ -43,22 +43,15 @@ assert.ok(js.includes('localStorage.setItem(savedSettingsKey, JSON.stringify(ent
   js.includes('dialog.showModal();') &&
   js.includes('saveCompleteTimer = setTimeout(() => dialog.close(), 2000);'),
   'Successful settings save must display a two-second modal confirmation');
-const settingLabelStart = js.indexOf('function settingLabel(entry) {');
-const settingLabelEnd = js.indexOf('\nfunction downloadJson()', settingLabelStart);
-assert.ok(settingLabelStart >= 0 && settingLabelEnd > settingLabelStart,
-  'Saved-setting label formatter must remain independently testable');
-const testSettingLabel = Function('formatSavedAt',
-  js.slice(settingLabelStart, settingLabelEnd) + '\nreturn settingLabel;')(() => '2026-11-17 14:49:00');
-assert.equal(testSettingLabel({
-  savedAt: '', state: { edition: 'JBS 第15回', title: '新鋭戦',
-    round: '決勝', topName: '上選手', bottomName: '下選手' }
-}), '2026-11-17 14:49:00・JBS 第15回_新鋭戦_決勝_上選手-下選手',
-'Saved-setting label must use underscores after edition and a hyphen between player names');
-assert.equal(testSettingLabel({
-  savedAt: '', state: { edition: 'JBS 第15回', title: '新鋭戦',
-    round: '決勝', topName: '', bottomName: '' }
-}), '2026-11-17 14:49:00・JBS 第15回_新鋭戦_決勝',
-'Saved-setting label must not append empty player separators');
+assert.ok(editor.includes('https://jbsbackgammon.github.io/common/naming.js?v=1'),
+  'Overlay must load the shared JBS naming library');
+assert.ok(js.includes('JBSNaming.formatSavedLabel({ savedAt: entry.savedAt, ...entry.state })')
+  && js.includes('JBSNaming.makeFileName({ prefix: "配信盤面", ...state })'),
+  'Saved settings list and JSON export must both use JBS common naming rules');
+assert.ok(!js.includes('function settingLabel(')
+  && !js.includes('function formatSavedAt(')
+  && !js.includes('配信盤面設定-'),
+  'Local naming rules and timestamp-based JSON filenames must be retired');
 assert.ok(editor.includes('class="open-output jbsui-button jbsui-button--primary"')
   && !/\.open-output\s*\{[^}]*font-size\s*:/s.test(styles),
   'Broadcast button must inherit the same 14px type size as all shared buttons');
@@ -243,7 +236,7 @@ assert.ok(read('styles.css').includes('.board-color-field::before'),
   'Missing vertical divider between panel and board colors');
 assert.ok(styles.includes('.panel-color-control {') && styles.includes('align-items: end;'),
   'Panel color inputs must bottom-align with the board selector');
-assert.ok(styles.includes('.panel-color-field { margin-right: var(--space-4); }')
+assert.ok(styles.includes('.panel-color-field { margin-right: calc(var(--space-12) + var(--width-border)); }')
   && styles.includes('margin-left: calc(var(--space-4) + var(--width-border));')
   && styles.includes('left: calc(-1 * (var(--space-12) + var(--width-border)));')
   && styles.includes('bottom: 0;'),
