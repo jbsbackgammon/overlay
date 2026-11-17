@@ -60,9 +60,10 @@ assert.ok(!styles.includes('select option {') && !styles.includes('select > opti
 assert.ok(!js.includes('function padNativeSelectOptions(select)')
   && !js.includes('selectPopupGutter'),
   'Browser-specific option label mutation must not interfere with input layout');
-assert.ok(styles.includes('minmax(var(--width-editor-player-min), 1.3fr)')
-  && styles.includes('minmax(var(--width-editor-event-min), .9fr)'),
-  'Player name fields must have priority over the display-toggle column');
+assert.ok(styles.includes('grid-template-columns: repeat(2, minmax(var(--width-editor-player-min), 1fr)) var(--width-editor-swap) max-content;')
+  && styles.includes('.display-toggles > .jbsui-check {')
+  && styles.includes('white-space: nowrap;'),
+  'Player input widths must adapt to the exact single-line width of display toggles');
 
 assert.ok(editor.includes('class="jbsui-preset-input"') || editor.includes('class="jbsui-preset-input player-input"'),
   'Preset selectors must use the shared input-group component');
