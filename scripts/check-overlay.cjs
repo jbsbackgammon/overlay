@@ -57,6 +57,13 @@ assert.ok(editor.includes('class="open-output jbsui-button jbsui-button--primary
   'Broadcast button must inherit the same 14px type size as all shared buttons');
 assert.ok(!styles.includes('select option {') && !styles.includes('select > option {'),
   'Dropdown list colors belong to common CSS, not per-tool CSS');
+assert.ok(js.includes('function padNativeSelectOptions(select)')
+  && js.includes('function restoreNativeSelectOptions(select)')
+  && js.includes('originalOptionLabels = new WeakMap()')
+  && js.includes('option.value = originalValue;')
+  && js.includes('target.closest(".jbsui")'),
+  'Opened native select lists need symmetrical spacing without altering option values');
+
 assert.ok(editor.includes('class="jbsui-preset-input"') || editor.includes('class="jbsui-preset-input player-input"'),
   'Preset selectors must use the shared input-group component');
 assert.ok(!styles.includes('.jbsui-preset-input select:focus'),
