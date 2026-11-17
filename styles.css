@@ -853,7 +853,7 @@ button, input, select { font: inherit; }
   height: var(--jbs-ui-button-height);
   padding: 0 var(--jbs-ui-space-24) 0 var(--jbs-ui-space-16);
   border: var(--jbs-ui-border-width) solid var(--jbs-ui-border);
-  border-radius: var(--jbs-ui-radius);
+  border-radius: var(--jbs-ui-radius-control);
   background-color: var(--jbs-ui-surface);
   color: var(--jbs-ui-text);
   font-weight: var(--jbs-ui-weight-action);
@@ -910,7 +910,7 @@ button, input, select { font: inherit; }
   padding: 0;
   overflow: hidden;
   border: var(--jbs-ui-border-width) solid var(--jbs-ui-border);
-  border-radius: var(--jbs-ui-radius-preview);
+  border-radius: var(--jbs-ui-radius-control);
   background: var(--jbs-ui-photo-bg);
   cursor: pointer;
 }
@@ -1025,7 +1025,7 @@ button, input, select { font: inherit; }
   place-content: center;
   line-height: 1.15;
   border: var(--jbs-ui-border-width) solid var(--jbs-ui-border);
-  border-radius: var(--jbs-ui-radius);
+  border-radius: var(--jbs-ui-radius-button);
   background: var(--jbs-ui-button-bg);
   color: var(--jbs-ui-text);
   font-size: var(--jbs-ui-font-12);
@@ -1061,7 +1061,7 @@ button, input, select { font: inherit; }
   height: var(--jbs-ui-input-height);
   overflow: hidden;
   border: var(--jbs-ui-border-width) solid var(--jbs-ui-border);
-  border-radius: var(--jbs-ui-radius-preview);
+  border-radius: var(--jbs-ui-radius-control);
   background: var(--panel-swatch-background, var(--jbs-ui-surface));
 }
 .panel-color-swatch > input[type="color"] {
@@ -1080,7 +1080,7 @@ button, input, select { font: inherit; }
   height: var(--jbs-ui-swatch-size);
   padding: 0;
   border-color: var(--jbs-ui-border);
-  border-radius: var(--jbs-ui-radius-preview);
+  border-radius: var(--jbs-ui-radius-control);
   overflow: hidden;
   background: transparent;
   cursor: pointer;
@@ -1089,7 +1089,7 @@ button, input, select { font: inherit; }
 .field input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
 .field input[type="color"]::-webkit-color-swatch {
   border: 0;
-  border-radius: 6px;
+  border-radius: 0;
 }
 
 .hex-input {

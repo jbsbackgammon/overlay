@@ -28,7 +28,15 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=5'), 'Shared JBS UI stylesheet missing');
+assert.ok(editor.includes('common/ui.css?v=6'), 'Shared JBS UI stylesheet missing');
+assert.ok(styles.includes('border-radius: var(--jbs-ui-radius-control);')
+  && styles.includes('border-radius: var(--jbs-ui-radius-button);')
+  && styles.includes('border-radius: var(--jbs-ui-radius-dialog);'),
+  'Overlay editor must use brand management corner radius tokens');
+assert.ok(!styles.includes('var(--jbs-ui-radius-preview)')
+  && !styles.includes('var(--jbs-ui-radius)'),
+  'Retired UI corner radius tokens must not remain');
+
 assert.ok(!styles.includes('var(--jbs-ui-font-13)') && !styles.includes('var(--jbs-ui-weight-label)'),
   'Editor must not reference retired typography tokens');
 assert.ok(styles.includes('height: var(--jbs-ui-input-height);') && styles.includes('width: var(--jbs-ui-swatch-size);'),
