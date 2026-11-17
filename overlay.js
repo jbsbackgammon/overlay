@@ -851,7 +851,7 @@ function render() {
     panelField.classList.toggle("jbsui-inactive", !panelActive);
     panelField.classList.toggle("is-gradient", Boolean(metallicBackground));
     // Match the actual tournament panel's gold/silver/bronze gradient exactly.
-    panelField.style.setProperty("--panel-swatch-background", metallicBackground || state.panelColor);
+    panelField.style.setProperty("--color-swatch-background", metallicBackground || state.panelColor);
     panelField.setAttribute("aria-disabled", String(!panelActive));
     // The mode dropdown remains available whenever a tournament panel is shown.
     // Only the color picker and hex field are disabled for metallic presets.
