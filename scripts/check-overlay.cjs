@@ -62,8 +62,8 @@ const embeddedLiterals = editingStyles.split('\n').filter(line =>
 );
 assert.deepEqual(embeddedLiterals, [],
   'Editor CSS properties must use named tokens, not embedded pixel/color/timing values');
-assert.ok(styles.includes('--size-editor-swap: 41px;')
-  && styles.includes('--width-editor-color-budget: 318px;'),
+assert.ok(styles.includes('--width-editor-swap: 80px;')
+  && styles.includes('--width-editor-color-budget: 357px;'),
   'Tool-specific layout constants must be centralized outside editor declarations');
 assert.ok(!styles.includes('--duration-short') && !styles.includes('--width-focus-outline'),
   'Retired interaction tokens must not remain');
@@ -76,11 +76,11 @@ assert.ok(styles.includes('height: var(--height-input);'),
   'Editor input and divider heights must share the input-height variable');
 assert.ok(editor.includes('id="swapPlayerNames" class="swap-colors player-name-swap">上下入替</button>'),
   'Player swap button must show a single-line label');
-assert.ok(styles.includes('--width-editor-player-swap: 80px;')
-  && styles.includes('.player-swap-field .player-name-swap {')
+assert.ok(editor.includes('id="swapPlayerColors" class="swap-colors">上下入替</button>')
+  && styles.includes('--width-editor-swap: 80px;')
   && styles.includes('height: var(--height-input);')
   && styles.includes('white-space: nowrap;'),
-  'Player swap must align to 36px inputs and use a wide, single-line button');
+  'Both swap buttons must align to 36px inputs and stay on one line');
 for (const retired of ["--border-width","--button-height","--dialog-shadow","--divider-height","--font-12","--font-14","--font-16","--font-20","--font-24","--input-height","--label-height","--preset-select-width","--primary-shadow","--swatch-size","--weight-action","--weight-normal"]) {
   assert.ok(!styles.includes(retired), 'Retired naming must not remain: ' + retired);
 }
