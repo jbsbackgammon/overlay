@@ -39,20 +39,20 @@ jobs:
             test -s "$file" || { echo "Missing or empty: $file"; exit 1; }
           done
           test -d assets
-          test -d vendor
           node --check overlay.js
           node --check scripts/generate-media.cjs
+          node --check scripts/smoke-browser.cjs
           node scripts/check-overlay.cjs
           python3 -m json.tool ads.json > /dev/null
 
-      - name: Browser PNG smoke test
-        run: node scripts/smoke-png-browser.cjs
+      - name: Browser UI smoke test
+        run: node scripts/smoke-browser.cjs
 
       - name: Prepare static website
         run: |
           mkdir -p _site
           cp index.html output.html stage.html overlay.js styles.css ads.json _site/
-          cp -a assets vendor _site/
+          cp -a assets _site/
           node scripts/generate-media.cjs _site/media.json
 
       - name: Configure Pages
