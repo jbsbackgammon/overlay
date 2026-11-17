@@ -139,12 +139,18 @@ assert.ok(styles.includes('.title-fields > .jbsui-field > .jbsui-preset-input > 
   'Preset selects need the same height as Japanese and English inputs');
 assert.ok(js.includes('brand.getEdition(name)'), 'Official editions must come from JBS common');
 assert.ok(editor.includes('class="panel-color-swatch jbsui-color-swatch"'), 'Panel color preview must use the shared swatch');
+assert.ok(js.includes('gradient: "linear-gradient(') && js.includes('silver: "linear-gradient(')
+  && js.includes('bronze: "linear-gradient('),
+  'All three metallic choices must keep their preview gradients');
 assert.ok(editor.includes('class="jbsui-field board-color-field"') && editor.includes('<label for="boardPreset">ボードカラー</label>'),
   'Board color field label or divider anchor is missing');
 assert.ok(read('styles.css').includes('.board-color-field::before'),
   'Missing vertical divider between panel and board colors');
-assert.ok(js.includes('"--panel-swatch-background", metallicBackground || state.panelColor'),
-  'Panel preview must use the same metallic gradient or solid color as the broadcast panel');
+assert.ok(js.includes('"--color-swatch-background", metallicBackground || state.panelColor'),
+  'Panel preview must use the common swatch background variable for solid and metallic modes');
+assert.ok(!styles.includes('--panel-swatch-background')
+  && !js.includes('--panel-swatch-background'),
+  'Retired overlay-only swatch variable must not override the common component');
 assert.ok(js.includes('panelField.classList.toggle("is-gradient", Boolean(metallicBackground))'),
   'Gradient selection must activate the swatch display');
 assert.ok(read('styles.css').includes('.panel-color-field.is-gradient .panel-color-swatch > input[type="color"]'),
