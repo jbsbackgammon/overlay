@@ -34,7 +34,6 @@
         <span class="action-separator jbsui-divider" aria-hidden="true"></span>
         <button class="settings-action jbsui-button" id="saveSettings" type="button">設定保存</button>
         <button class="settings-action jbsui-button" id="exportJson" type="button">JSON出力</button>
-        <button class="settings-action jbsui-button" id="exportPng" type="button">PNG出力</button>
         <span class="action-separator jbsui-divider" aria-hidden="true"></span>
         <button class="settings-action jbsui-button" id="createThumbnail" type="button">サムネ作成</button>
       </div>
@@ -120,15 +119,13 @@
     <div class="saved-settings" id="savedSettings"></div>
   </dialog>
 
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="vendor/html-to-image.js?v=1.11.13"></script>
   <!-- Common defines JBSBrand; its data are fetched separately with a fallback. -->
   <script src="https://jbsbackgammon.github.io/common/brand.js"></script>
   <script>
     fetch('stage.html?v=20261117-upper-13-24-v16').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261117-png-isolated-v41';
+      script.src = 'overlay.js?v=20261117-no-png-v42';
       document.body.appendChild(script);
     });
   </script>
