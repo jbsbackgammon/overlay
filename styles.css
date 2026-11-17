@@ -927,7 +927,7 @@ button, input, select { font: inherit; }
 /* Match the top action-row divider: a 1px rule, 36px tall,
    with 12px clear space on both sides. Keep it aligned with the
    input controls rather than vertically centering it across labels. */
-.panel-color-field { margin-right: var(--space-4); }
+.panel-color-field { margin-right: calc(var(--space-12) + var(--width-border)); }
 .board-color-field {
   position: relative;
   margin-left: calc(var(--space-4) + var(--width-border));
