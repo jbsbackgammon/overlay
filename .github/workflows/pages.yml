@@ -45,6 +45,9 @@ jobs:
           node scripts/check-overlay.cjs
           python3 -m json.tool ads.json > /dev/null
 
+      - name: Browser PNG smoke test
+        run: node scripts/smoke-png-browser.cjs
+
       - name: Prepare static website
         run: |
           mkdir -p _site
