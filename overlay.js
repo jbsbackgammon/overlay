@@ -1,7 +1,6 @@
 /* The OBS canvas retains its fixed full-resolution dimensions. */
 const STAGE_WIDTH = 1920;
 const STAGE_HEIGHT = 1080;
-const pad2 = (value) => String(value).padStart(2, "0");
 
 const defaultJapanBoardColors = Object.freeze({ topColor: "#2E3F48", bottomColor: "#ECECEC" });
 
@@ -1174,21 +1173,9 @@ function startRuleRotation() {
   ruleTimer = setInterval(() => rotateRule(ruleIndex + 1), 30000);
 }
 
-function formatSavedAt(value) {
-  const date = new Date(value);
-  return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())} ${pad2(date.getHours())}:${pad2(date.getMinutes())}:${pad2(date.getSeconds())}`;
-}
-
 function readSavedSettings() {
   try { return JSON.parse(localStorage.getItem(savedSettingsKey)) || []; }
   catch (_) { return []; }
-}
-
-function settingLabel(entry) {
-  const saved = entry.state;
-  const players = [saved.topName, saved.bottomName].filter(Boolean).join("-");
-  const details = [saved.edition, saved.title, saved.round, players].filter(Boolean).join("_");
-  return [formatSavedAt(entry.savedAt), details].filter(Boolean).join("・");
 }
 
 function downloadJson() {
@@ -1196,8 +1183,7 @@ function downloadJson() {
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  const now = new Date();
-  link.download = `配信盤面設定-${now.getFullYear()}${pad2(now.getMonth() + 1)}${pad2(now.getDate())}-${pad2(now.getHours())}${pad2(now.getMinutes())}${pad2(now.getSeconds())}.json`;
+  link.download = JBSNaming.makeFileName({ prefix: "配信盤面", ...state });
   link.href = url;
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -1325,7 +1311,7 @@ function renderSavedSettings() {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "saved-setting";
-    button.textContent = settingLabel(entry);
+    button.textContent = JBSNaming.formatSavedLabel({ savedAt: entry.savedAt, ...entry.state });
     button.addEventListener("click", () => {
       state = normalizeLegacyMediaModes({ ...defaults, ...entry.state });
       persistState();
