@@ -28,7 +28,21 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=11'), 'Shared CSS v11 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=12'), 'Shared CSS v12 must be loaded');
+const editingStyles = styles.slice(styles.indexOf('.control-panel {'), styles.indexOf('.output-page {'))
+  .replace(/\/\*[\s\S]*?\*\//g, '');
+const embeddedLiterals = editingStyles.split('\n').filter(line =>
+  /\b\d+(?:\.\d+)?(?:px|em|rem|ms|s)\b|rgba\s*\(|#[0-9a-f]{3,8}\b/i.test(line)
+  && !/^\s*@media\s*\(/.test(line)
+);
+assert.deepEqual(embeddedLiterals, [],
+  'Editor CSS properties must use named tokens, not embedded pixel/color/timing values');
+assert.ok(styles.includes('--size-editor-swap: 41px;')
+  && styles.includes('--width-editor-color-budget: 318px;'),
+  'Tool-specific layout constants must be centralized outside editor declarations');
+assert.ok(styles.includes('transition: opacity var(--duration-short) ease;'),
+  'Common interaction duration must be used');
+
 assert.ok(styles.includes('height: var(--height-input);'),
   'Editor input and divider heights must share the input-height variable');
 for (const retired of ["--border-width","--button-height","--dialog-shadow","--divider-height","--font-12","--font-14","--font-16","--font-20","--font-24","--input-height","--label-height","--preset-select-width","--primary-shadow","--swatch-size","--weight-action","--weight-normal"]) {

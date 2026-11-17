@@ -1,11 +1,33 @@
 :root {
   color-scheme: light;
-  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, sans-serif;
+  font-family: var(--font-family, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, sans-serif);
   --ink: #11100d;
   --gold: #cfb064;
   --gold-soft: #e5d2a0;
   --charcoal: #353535;
   --accent: #cf2933;
+  /* Overlay editor layout only. Generic design values live in common/ui.css. */
+  --width-editor-panel-min: 220px;
+  --width-editor-panel-wide-min: 420px;
+  --width-editor-player-min: 150px;
+  --width-editor-event-min: 320px;
+  --size-editor-swap: 41px;
+  --width-editor-channel-min: 112px;
+  --width-editor-primary-min: 170px;
+  --width-editor-color-budget: 318px;
+  --width-editor-color-extra: 47px;
+  --width-editor-color-panel-extra: 56px;
+  --width-editor-dialog-max: 920px;
+  --height-editor-dialog-max: 680px;
+  --height-editor-saved-list-max: 570px;
+  --width-editor-preview-max: 1200px;
+  --width-editor-preview: 92%;
+  --shadow-editor-preview: 0 18px 48px color-mix(in srgb, var(--color-20) 18%, transparent);
+  --alpha-editor-photo-overlay: 72%;
+  --alpha-editor-dialog-backdrop: 48%;
+  --opacity-editor-swatch-inactive: .45;
+  --line-height-editor-swap: 1.15;
+  --letter-spacing-editor-hex: .035em;
 }
 
 * { box-sizing: border-box; }
@@ -33,15 +55,15 @@ button, input, select { font: inherit; }
   min-width: 0;
   display: grid;
   place-items: center;
-  padding: 24px 24px 16px;
-  background: var(--color-95, hsl(215 25% 95%));
+  padding: var(--space-24) var(--space-24) var(--space-16);
+  background: var(--color-95);
 }
 
 .stage-wrap {
-  width: 92%;
-  max-width: 1200px;
+  width: var(--width-editor-preview);
+  max-width: var(--width-editor-preview-max);
   aspect-ratio: 16 / 9;
-  box-shadow: 0 18px 48px rgba(38,51,70,.18);
+  box-shadow: var(--shadow-editor-preview);
   overflow: hidden;
 }
 
@@ -742,7 +764,7 @@ button, input, select { font: inherit; }
 
 .control-panel {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(420px, 2fr);
+  grid-template-columns: minmax(var(--width-editor-panel-min), 1fr) minmax(var(--width-editor-panel-wide-min), 2fr);
   gap: var(--space-8) var(--space-16);
   padding: var(--space-16) var(--space-24);
   border-top: var(--width-border) solid var(--color-90);
@@ -752,7 +774,7 @@ button, input, select { font: inherit; }
 .event-fields {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) 41px minmax(320px, 2fr);
+  grid-template-columns: minmax(var(--width-editor-player-min), 1fr) minmax(var(--width-editor-player-min), 1fr) var(--size-editor-swap) minmax(var(--width-editor-event-min), 2fr);
   gap: var(--space-16);
   align-items: end;
 }
@@ -796,7 +818,7 @@ button, input, select { font: inherit; }
 @media (max-width: 600px) { .right-selects { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .right-selects > .field > select:first-of-type { height: var(--height-input); }
 /* Preserve the editor row when neither right slot displays the tournament. */
-.title-fields.is-inactive label { opacity: .5; }
+.title-fields.is-inactive label { opacity: var(--opacity-inactive); }
 .title-fields.is-inactive input:disabled,
 .title-fields.is-inactive select:disabled {
   background-color: var(--color-95);
@@ -804,7 +826,7 @@ button, input, select { font: inherit; }
   color: var(--color-60);
   cursor: not-allowed;
 }
-.panel-color-field.is-inactive label { opacity: .5; }
+.panel-color-field.is-inactive label { opacity: var(--opacity-inactive); }
 .panel-color-field.is-inactive input:disabled,
 .panel-color-field.is-inactive select:disabled {
   background-color: var(--color-95);
@@ -812,14 +834,14 @@ button, input, select { font: inherit; }
   color: var(--color-60);
   cursor: not-allowed;
 }
-.panel-color-field.is-inactive .panel-color-swatch { opacity: .45; }
+.panel-color-field.is-inactive .panel-color-swatch { opacity: var(--opacity-editor-swatch-inactive); }
 .panel-color-field.is-gradient .hex-input:disabled {
   background-color: var(--color-95);
   border-color: var(--color-90);
   color: var(--color-60);
   cursor: not-allowed;
 }
-.thumbnail-picker:not([hidden]) { margin-top: 4px; }
+.thumbnail-picker:not([hidden]) { margin-top: var(--space-4); }
 
 .guide-fields {
   grid-column: 1 / -1;
@@ -849,7 +871,7 @@ button, input, select { font: inherit; }
 }
 
 .channel-picker select {
-  min-width: 112px;
+  min-width: var(--width-editor-channel-min);
   height: var(--height-button);
   padding: 0 var(--space-24) 0 var(--space-16);
   border: var(--width-border) solid var(--color-80);
@@ -883,8 +905,8 @@ button, input, select { font: inherit; }
 }
 
 .open-output {
-  min-width: 170px;
-  padding: 0 24px;
+  min-width: var(--width-editor-primary-min);
+  padding: 0 var(--space-24);
 }
 
 /* Preset selector and joined input styles live in common/ui.css. */
@@ -922,17 +944,17 @@ button, input, select { font: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, .72);
+  background: color-mix(in srgb, var(--color-20) var(--alpha-editor-photo-overlay), transparent);
   color: var(--color-100);
   font-size: var(--font-size-12);
   font-weight: var(--font-weight-action);
   opacity: 0;
   pointer-events: none;
-  transition: opacity .15s ease;
+  transition: opacity var(--duration-short) ease;
 }
 .player-photo-picker:hover::after,
 .player-photo-picker:focus-visible::after { opacity: 1; }
-.player-photo-picker:focus-visible { outline: 2px solid var(--color-60); outline-offset: 2px; }
+.player-photo-picker:focus-visible { outline: var(--width-focus-outline) solid var(--color-60); outline-offset: var(--width-focus-outline); }
 .player-photo-preview { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 .english-input[hidden] { display: none; }
@@ -969,12 +991,12 @@ button, input, select { font: inherit; }
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns:
-    minmax(0, calc((100% - 318px) / 6 + 47px))
-    minmax(0, calc((100% - 318px) / 3 + 56px))
-    minmax(0, calc((100% - 318px) / 6))
-    minmax(0, calc((100% - 318px) / 6 + 47px))
-    minmax(0, calc((100% - 318px) / 6 + 47px))
-    41px;
+    minmax(0, calc((100% - var(--width-editor-color-budget)) / 6 + var(--width-editor-color-extra)))
+    minmax(0, calc((100% - var(--width-editor-color-budget)) / 3 + var(--width-editor-color-panel-extra)))
+    minmax(0, calc((100% - var(--width-editor-color-budget)) / 6))
+    minmax(0, calc((100% - var(--width-editor-color-budget)) / 6 + var(--width-editor-color-extra)))
+    minmax(0, calc((100% - var(--width-editor-color-budget)) / 6 + var(--width-editor-color-extra)))
+    var(--size-editor-swap);
   gap: var(--space-16);
 }
 
@@ -989,7 +1011,7 @@ button, input, select { font: inherit; }
   left: calc(-1 * var(--space-8));
   top: 50%;
   transform: translateY(-50%);
-  width: 1px;
+  width: var(--width-border);
   height: var(--height-input);
   background: var(--color-80);
   pointer-events: none;
@@ -1018,12 +1040,12 @@ button, input, select { font: inherit; }
 }
 
 .swap-colors {
-  width: 41px;
-  height: 41px;
+  width: var(--size-editor-swap);
+  height: var(--size-editor-swap);
   padding: var(--space-4);
   display: grid;
   place-content: center;
-  line-height: 1.15;
+  line-height: var(--line-height-editor-swap);
   border: var(--width-border) solid var(--color-80);
   border-radius: var(--radius);
   background: var(--color-95);
@@ -1098,12 +1120,12 @@ button, input, select { font: inherit; }
   max-width: none;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums;
-  letter-spacing: .035em;
+  letter-spacing: var(--letter-spacing-editor-hex);
 }
 
 .settings-dialog {
-  width: min(920px, calc(100vw - var(--space-24) - var(--space-24)));
-  max-height: min(680px, calc(100vh - var(--space-24) - var(--space-24)));
+  width: min(var(--width-editor-dialog-max), calc(100vw - var(--space-24) - var(--space-24)));
+  max-height: min(var(--height-editor-dialog-max), calc(100vh - var(--space-24) - var(--space-24)));
   padding: 0;
   border: 0;
   border-radius: var(--radius);
@@ -1112,7 +1134,7 @@ button, input, select { font: inherit; }
   box-shadow: var(--shadow-dialog);
 }
 
-.settings-dialog::backdrop { background: color-mix(in srgb, var(--color-20) 48%, transparent); }
+.settings-dialog::backdrop { background: color-mix(in srgb, var(--color-20) var(--alpha-editor-dialog-backdrop), transparent); }
 
 .settings-dialog-head {
   display: flex;
@@ -1139,7 +1161,7 @@ button, input, select { font: inherit; }
 .saved-settings {
   display: grid;
   gap: 0;
-  max-height: 570px;
+  max-height: var(--height-editor-saved-list-max);
   padding: var(--space-16);
   overflow: auto;
 }
@@ -1187,7 +1209,7 @@ button, input, select { font: inherit; }
   .control-panel { grid-template-columns: 1fr; }
   .event-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .color-row { grid-column: 1; }
-  .stage-shell { padding: 12px; }
+  .stage-shell { padding: var(--space-12); }
 }
 
 @media (max-width: 680px) {
@@ -1213,7 +1235,7 @@ button, input, select { font: inherit; }
 /* Preserve usable bilingual widths in the smaller editor layout. */
 @media (max-width: 1200px) {
   .event-fields {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) 41px;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) var(--size-editor-swap);
   }
   .event-fields > .player-swap-field { grid-column: 3; grid-row: 1; }
   .event-fields > .display-toggles {
@@ -1230,7 +1252,7 @@ button, input, select { font: inherit; }
   }
 }
 @media (max-width: 820px) {
-  .event-fields { grid-template-columns: minmax(0, 1fr) 41px; }
+  .event-fields { grid-template-columns: minmax(0, 1fr) var(--size-editor-swap); }
   .event-fields > .field:first-child { grid-column: 1; grid-row: 1; }
   .event-fields > .field:nth-child(2) { grid-column: 1; grid-row: 2; }
   .event-fields > .player-swap-field {
