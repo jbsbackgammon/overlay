@@ -1174,9 +1174,9 @@ function readSavedSettings() {
 
 function settingLabel(entry) {
   const saved = entry.state;
-  return [formatSavedAt(entry.savedAt), saved.edition, saved.title, saved.round, saved.topName, saved.bottomName]
-    .filter(Boolean)
-    .join("・");
+  const players = [saved.topName, saved.bottomName].filter(Boolean).join("-");
+  const details = [saved.edition, saved.title, saved.round, players].filter(Boolean).join("_");
+  return [formatSavedAt(entry.savedAt), details].filter(Boolean).join("・");
 }
 
 function downloadJson() {
