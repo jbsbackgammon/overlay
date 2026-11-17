@@ -927,7 +927,7 @@ button, input, select { font: inherit; }
 /* Match the top action-row divider: a 1px rule, 36px tall,
    with 12px clear space on both sides. Keep it aligned with the
    input controls rather than vertically centering it across labels. */
-.panel-color-field { margin-right: calc(var(--space-12) + var(--width-border)); }
+.panel-color-field { margin-right: var(--space-4); }
 .board-color-field {
   position: relative;
   margin-left: calc(var(--space-4) + var(--width-border));
@@ -972,6 +972,7 @@ button, input, select { font: inherit; }
   grid-template-columns: var(--size-swatch) minmax(0, 1fr) minmax(0, 1fr);
   align-items: end;
   gap: var(--space-8);
+  padding-right: calc(var(--space-8) + var(--width-border));
 }
 
 .panel-color-control select { padding-left: var(--space-8); padding-right: var(--space-4); }
