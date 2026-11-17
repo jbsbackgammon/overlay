@@ -64,8 +64,10 @@ assert.ok((styles.match(/!important/g) || []).length === 2
   'Only the output scaling override may use important (plus its documentation)');
 assert.ok(!/\.jbsui\s+\.jbsui-preset-input\s+select\s*\{/.test(styles),
   'Shared preset selector sizing must not be overridden by overlay CSS');
-assert.ok(js.includes('round: "１回戦",') && js.includes('roundEn: "Round of 64",'),
-  'New editor sessions should default to first round in both languages');
+assert.ok(js.includes('round: "決勝",') && js.includes('roundEn: "FINAL",'),
+  'New editor sessions should default to the final in both languages');
+assert.ok(js.includes('"決勝": "FINAL"'),
+  'Japanese final must match the English preset label');
 assert.ok(js.includes('migrateOldEmptyRound') && js.includes('roundMigrationKey'),
   'Old blank defaults should migrate only once without clobbering user settings');
 
