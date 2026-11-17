@@ -830,7 +830,7 @@ function render() {
     // Other modes disable inputs without clearing values or moving the preview.
     const titleActive = ["right1Mode", "right2Mode"].some((key) => state[key] === "title");
     titleFields.hidden = false;
-    titleFields.classList.toggle("is-inactive", !titleActive);
+    titleFields.classList.toggle("jbsui-inactive", !titleActive);
     titleFields.setAttribute("aria-disabled", String(!titleActive));
     titleFields.querySelectorAll("input, select").forEach((control) => {
       control.disabled = !titleActive;
@@ -848,7 +848,7 @@ function render() {
   const panelField = $(".panel-color-field");
   if (panelField) {
     const colorEditable = panelActive && state.panelMode === "solid";
-    panelField.classList.toggle("is-inactive", !panelActive);
+    panelField.classList.toggle("jbsui-inactive", !panelActive);
     panelField.classList.toggle("is-gradient", Boolean(metallicBackground));
     // Match the actual tournament panel's gold/silver/bronze gradient exactly.
     panelField.style.setProperty("--panel-swatch-background", metallicBackground || state.panelColor);
