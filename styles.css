@@ -61,7 +61,7 @@ button, input, select { font: inherit; }
   width: var(--width-editor-preview);
   max-width: var(--width-editor-preview-max);
   aspect-ratio: 16 / 9;
-  box-shadow: var(--shadow-primary);
+  box-shadow: var(--shadow);
   overflow: hidden;
 }
 
@@ -816,7 +816,7 @@ button, input, select { font: inherit; }
 @media (max-width: 600px) { .right-selects { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .right-selects > .field > select:first-of-type { height: var(--height-input); }
 /* Preserve the editor row when neither right slot displays the tournament. */
-.title-fields.is-inactive label { opacity: var(--opacity-muted); }
+.title-fields.is-inactive label { opacity: var(--opacity); }
 .title-fields.is-inactive input:disabled,
 .title-fields.is-inactive select:disabled {
   background-color: var(--color-95);
@@ -824,7 +824,7 @@ button, input, select { font: inherit; }
   color: var(--color-60);
   cursor: not-allowed;
 }
-.panel-color-field.is-inactive label { opacity: var(--opacity-muted); }
+.panel-color-field.is-inactive label { opacity: var(--opacity); }
 .panel-color-field.is-inactive input:disabled,
 .panel-color-field.is-inactive select:disabled {
   background-color: var(--color-95);
@@ -832,7 +832,7 @@ button, input, select { font: inherit; }
   color: var(--color-60);
   cursor: not-allowed;
 }
-.panel-color-field.is-inactive .panel-color-swatch { opacity: var(--opacity-muted); }
+.panel-color-field.is-inactive .panel-color-swatch { opacity: var(--opacity); }
 .panel-color-field.is-gradient .hex-input:disabled {
   background-color: var(--color-95);
   border-color: var(--color-90);
@@ -1127,7 +1127,7 @@ button, input, select { font: inherit; }
   border-radius: var(--radius);
   background: var(--color-100);
   color: var(--color-20);
-  box-shadow: var(--shadow-primary);
+  box-shadow: var(--shadow);
 }
 
 .settings-dialog::backdrop { background: color-mix(in srgb, var(--color-20) var(--alpha-editor-dialog-backdrop), transparent); }
