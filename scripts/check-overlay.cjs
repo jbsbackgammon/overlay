@@ -115,7 +115,7 @@ assert.ok(js.includes('migrateOldEmptyRound') && js.includes('roundMigrationKey'
 assert.ok(!js.includes('savedState.round === "準決勝"'),
   'Valid saved semifinals must not be replaced with the default final');
 assert.ok(js.includes('const STAGE_WIDTH = 1920;') && js.includes('const STAGE_HEIGHT = 1080;'),
-  'Preview scaling and both PNG renderers must share one canvas size');
+  'OBS canvas and editor preview must share one resolution');
 assert.ok(js.includes('design.getPropertyValue("--width-editor-preview-max")')
   && js.includes('design.getPropertyValue("--width-editor-preview")')
   && js.includes('design.getPropertyValue("--space-12")')
@@ -266,16 +266,13 @@ assert.ok(js.includes('outputUrl.searchParams.set("channel", channel);'),
   'Output page must use the selected stream');
 assert.ok(js.includes('jbs-overlay-output-${channel}'),
   'Output tabs must remain separate for each stream');
-assert.ok(js.includes('async function captureStagePngBlob(stage)')
-  && js.includes('const blob = await captureStagePngBlob(captureStage);')
-  && js.includes('const captureStage = stage.cloneNode(true);')
-  && js.includes('captureHost?.remove();')
-  && !js.includes('stage.style.transform = "none";'),
-  'PNG export must capture an isolated full-size stage and preserve the live preview');
-assert.ok(js.includes('if (blob?.size > 0) return blob;')
-  && js.includes('if (typeof window.html2canvas === "function")')
-  && js.includes('html2canvas fallback failed'),
-  'A failed SVG/PNG renderer must retry with html2canvas');
+assert.ok(!editor.includes('id="exportPng"')
+  && !editor.includes('html2canvas')
+  && !editor.includes('vendor/html-to-image.js')
+  && !js.includes('captureStagePngBlob')
+  && !js.includes('exportStageAsPng')
+  && !js.includes('pendingPngDownload'),
+  'Removed PNG export must not leave unused UI, scripts or state');
 
 assert.ok(editor.includes('id="createThumbnail" type="button">サムネ作成</button>'),
   'Thumbnail button is missing');
@@ -329,62 +326,4 @@ assert.ok(cssVersion && output.includes('styles.css?v=' + cssVersion),
 const stageVersion = editor.match(/stage\.html\?v=([^"']+)/)?.[1];
 assert.ok(stageVersion && output.includes('stage.html?v=' + stageVersion),
   'Editor and OBS output must load the same stage markup version');
-// Exercise the actual PNG capture helper with stubbed browser renderers.
-// The previous implementation failed immediately rather than attempting
-// html2canvas whenever html-to-image was present but threw an exception.
-const sourceStart = js.indexOf('async function captureStagePngBlob(stage) {');
-const sourceEnd = js.indexOf('\nasync function exportStageAsPng() {', sourceStart);
-assert.ok(sourceStart >= 0 && sourceEnd > sourceStart,
-  'PNG capture helper must be independently testable');
-const captureSource = js.slice(sourceStart, sourceEnd);
-const makeCapture = (browser) => Function('window', 'console', 'STAGE_WIDTH', 'STAGE_HEIGHT',
-  captureSource + '\nreturn captureStagePngBlob;')(browser, { warn() {}, error() {} }, 1920, 1080);
-
-async function testPngCapture() {
-  const stage = { id: 'stage-test' };
-  const png = new Blob(['png-content'], { type: 'image/png' });
-
-  let fallbackCalls = 0;
-  const primary = makeCapture({
-    htmlToImage: { toBlob: async () => png },
-    html2canvas: async () => { fallbackCalls++; throw new Error('unexpected fallback'); }
-  });
-  assert.equal(await primary(stage), png, 'Successful SVG export must not invoke fallback');
-  assert.equal(fallbackCalls, 0, 'Successful SVG export must not render twice');
-
-  for (const failingRenderer of [
-    async () => { throw new Error('SVG renderer blocked'); },
-    async () => null
-  ]) {
-    let canvasCalls = 0;
-    const retry = makeCapture({
-      htmlToImage: { toBlob: failingRenderer },
-      html2canvas: async (node, options) => {
-        assert.equal(node, stage);
-        assert.equal(options.width, 1920);
-        assert.equal(options.height, 1080);
-        assert.equal(options.useCORS, true);
-        canvasCalls++;
-        return { toBlob(callback, type) { assert.equal(type, 'image/png'); callback(png); } };
-      }
-    });
-    assert.equal(await retry(stage), png, 'Fallback must produce a valid PNG blob');
-    assert.equal(canvasCalls, 1, 'Fallback must run exactly once after SVG failure');
-  }
-
-  const fallbackOnly = makeCapture({
-    html2canvas: async () => ({ toBlob(callback) { callback(png); } })
-  });
-  assert.equal(await fallbackOnly(stage), png, 'Fallback must work if primary is unavailable');
-
-  const allFailed = makeCapture({
-    htmlToImage: { toBlob: async () => { throw new Error('first failed'); } },
-    html2canvas: async () => { throw new Error('second failed'); }
-  });
-  await assert.rejects(() => allFailed(stage), /All PNG renderers failed/,
-    'Both renderer failures must be reported instead of silently pretending success');
-}
-
-testPngCapture()
-  .then(() => console.log('Overlay initialization and PNG fallback checks passed.'))
-  .catch((error) => { console.error(error); process.exitCode = 1; });
+console.log('Overlay static and state-management checks passed.');
