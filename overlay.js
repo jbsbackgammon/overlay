@@ -1,3 +1,5 @@
+const defaultJapanBoardColors = Object.freeze({ topColor: "#2E3F48", bottomColor: "#ECECEC" });
+
 const defaults = {
   edition: "JBS 第　回",
   // Tracks editions sourced from common; empty means the edition is manually managed.
@@ -15,15 +17,15 @@ const defaults = {
   topPhoto: "",
   bottomPhoto: "",
   english: false,
-  boardPreset: "",
+  boardPreset: "japan",
   frameColor: "#383838",
   panelMode: "gradient",
   panelColor: "#FFFFFF",
   accentColor: "#cf2933",
   // Kept separately from the board/panel/player colors: common's secondary theme shade.
   themeSubColor: "",
-  topColor: "#cf2933",
-  bottomColor: "#ffffff",
+  topColor: defaultJapanBoardColors.topColor,
+  bottomColor: defaultJapanBoardColors.bottomColor,
   personal: false,
   playerPhoto: false,
   guide: false,
@@ -93,6 +95,9 @@ function normalizeLegacyMediaModes(target) {
       if (segment >= 0) target[`${slot}Mode`] = `thumbnail:${decoded.slice(segment)}`;
     } catch (_) { /* unsupported (e.g. a temporary blob URL): use slideshow */ }
   }
+  // The former empty preset is no longer offered. Keep any customized
+  // player colors when restoring older saved settings.
+  if (!boardPresets[target.boardPreset]) target.boardPreset = defaults.boardPreset;
   return target;
 }
 
@@ -277,7 +282,7 @@ function foreignFirstNameSortKey(member) {
 }
 
 const boardPresets = {
-  japan: { topColor: "#2E3F48", bottomColor: "#ECECEC" },
+  japan: defaultJapanBoardColors,
   bansei: { topColor: "#5D2F47", bottomColor: "#ECECEC" },
   meijin: { topColor: "#56676C", bottomColor: "#ECECEC" },
   oui: { topColor: "#3B3F2F", bottomColor: "#ECECEC" },
@@ -809,11 +814,15 @@ function render() {
   $(".player-dot.bottom").style.setProperty("--player-color", state.bottomColor);
   const topGuide = $(".point-guide.top");
   const bottomGuide = $(".point-guide.bottom");
-  topGuide.style.setProperty("--guide-color", state.topColor);
-  const topGuideInk = contrastText(state.topColor);
+  // Upper points 13–24 belong to the bottom player; only the goal
+  // is colored for the top player. Lower guide colors remain unchanged.
+  topGuide.style.setProperty("--guide-color", state.bottomColor);
+  const topGuideInk = contrastText(state.bottomColor);
   topGuide.style.setProperty("--guide-ink", topGuideInk);
-  topGuide.style.setProperty("--guide-background", rgba(state.topColor, 0.7));
+  topGuide.style.setProperty("--guide-background", rgba(state.bottomColor, 0.7));
   topGuide.style.setProperty("--guide-border", rgba(topGuideInk, 0.34));
+  topGuide.style.setProperty("--guide-goal-ink", contrastText(state.topColor));
+  topGuide.style.setProperty("--guide-goal-background", rgba(state.topColor, 0.7));
   bottomGuide.style.setProperty("--guide-color", state.bottomColor);
   const bottomGuideInk = contrastText(state.bottomColor);
   bottomGuide.style.setProperty("--guide-ink", bottomGuideInk);
