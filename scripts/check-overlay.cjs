@@ -28,9 +28,9 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-const retiredColors = /--color-(?:20|40|80|90)\\b/;
+const retiredColors = /--color-(?:20|40|80|90)\b/;
 assert.ok(!retiredColors.test(styles), 'Overlay CSS must use the six-color palette only');
-const usedColors = [...styles.matchAll(/var\\(--color-(\\d+)\\b/g)].map((match) => Number(match[1]));
+const usedColors = [...styles.matchAll(/var\(--color-(\d+)\b/g)].map((match) => Number(match[1]));
 assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
   'Overlay CSS must not reference undefined palette values');
 assert.ok(editor.includes('common/ui.css?v=28'), 'Shared CSS v28 must be loaded');
