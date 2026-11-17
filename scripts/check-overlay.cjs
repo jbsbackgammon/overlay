@@ -33,7 +33,9 @@ assert.ok(!retiredColors.test(styles), 'Overlay CSS must use the six-color palet
 const usedColors = [...styles.matchAll(/var\(--color-(\d+)\b/g)].map((match) => Number(match[1]));
 assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
   'Overlay CSS must not reference undefined palette values');
-assert.ok(editor.includes('common/ui.css?v=28'), 'Shared CSS v28 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=29'), 'Shared CSS v29 must be loaded');
+assert.ok(!styles.includes('select option {') && !styles.includes('select > option {'),
+  'Dropdown list colors belong to common CSS, not per-tool CSS');
 assert.ok(editor.includes('class="jbsui-preset-input"') || editor.includes('class="jbsui-preset-input player-input"'),
   'Preset selectors must use the shared input-group component');
 assert.ok(!styles.includes('.jbsui-preset-input select:focus'),
