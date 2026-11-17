@@ -12,12 +12,12 @@
   <link rel="icon" href="https://jbsbackgammon.github.io/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
-  <link rel="stylesheet" href="https://jbsbackgammon.github.io/common/ui.css?v=19">
-  <link rel="stylesheet" href="styles.css?v=20261117-shared-ui-v45">
+  <link rel="stylesheet" href="https://jbsbackgammon.github.io/common/ui.css?v=20">
+  <link rel="stylesheet" href="styles.css?v=20261117-jbsui-v46">
 </head>
 <body>
   <div class="app">
-    <aside class="control-panel jbs-ui">
+    <aside class="control-panel jbsui">
       <div class="top-actions">
         <label class="channel-picker" for="channelSelect">
           <select id="channelSelect" aria-label="編集する配信">
@@ -26,61 +26,61 @@
             <option value="3">配信3</option>
           </select>
         </label>
-        <button class="open-output jbs-ui-button jbs-ui-button--primary" id="openOutput">配信本番</button>
-        <span class="action-separator jbs-ui-divider" aria-hidden="true"></span>
-        <button class="settings-action jbs-ui-button" id="loadSettings" type="button">設定呼出</button>
-        <button class="settings-action jbs-ui-button" id="importJson" type="button">JSON取込</button>
+        <button class="open-output jbsui-button jbsui-button--primary" id="openOutput">配信本番</button>
+        <span class="action-separator jbsui-divider" aria-hidden="true"></span>
+        <button class="settings-action jbsui-button" id="loadSettings" type="button">設定呼出</button>
+        <button class="settings-action jbsui-button" id="importJson" type="button">JSON取込</button>
         <input id="importJsonFile" type="file" accept="application/json,.json" hidden>
-        <span class="action-separator jbs-ui-divider" aria-hidden="true"></span>
-        <button class="settings-action jbs-ui-button" id="saveSettings" type="button">設定保存</button>
-        <button class="settings-action jbs-ui-button" id="exportJson" type="button">JSON出力</button>
-        <button class="settings-action jbs-ui-button" id="exportPng" type="button">PNG出力</button>
-        <span class="action-separator jbs-ui-divider" aria-hidden="true"></span>
-        <button class="settings-action jbs-ui-button" id="createThumbnail" type="button">サムネ作成</button>
+        <span class="action-separator jbsui-divider" aria-hidden="true"></span>
+        <button class="settings-action jbsui-button" id="saveSettings" type="button">設定保存</button>
+        <button class="settings-action jbsui-button" id="exportJson" type="button">JSON出力</button>
+        <button class="settings-action jbsui-button" id="exportPng" type="button">PNG出力</button>
+        <span class="action-separator jbsui-divider" aria-hidden="true"></span>
+        <button class="settings-action jbsui-button" id="createThumbnail" type="button">サムネ作成</button>
       </div>
       <div class="event-fields">
-        <div class="field"><label for="topName">上選手</label><div class="player-entry-row"><button type="button" class="player-photo-picker" data-photo-for="top" aria-label="上選手の写真をアップロード" title="クリックして写真をアップロード"><img class="player-photo-preview" src="assets/dummy.png" alt=""></button><div class="preset-input player-input"><select id="topMember" data-member-for="top" aria-label="上選手名の選択"><option value="">選択</option></select><input id="topName" data-field="topName"></div><input type="file" data-photo-file="top" accept="image/*" hidden aria-label="上選手の写真ファイル"></div><input class="english-input" id="topNameEn" data-field="topNameEn" aria-label="上選手名（英語）" placeholder="English" hidden></div>
-        <div class="field"><label for="bottomName">下選手</label><div class="player-entry-row"><button type="button" class="player-photo-picker" data-photo-for="bottom" aria-label="下選手の写真をアップロード" title="クリックして写真をアップロード"><img class="player-photo-preview" src="assets/dummy.png" alt=""></button><div class="preset-input player-input"><select id="bottomMember" data-member-for="bottom" aria-label="下選手名の選択"><option value="">選択</option></select><input id="bottomName" data-field="bottomName"></div><input type="file" data-photo-file="bottom" accept="image/*" hidden aria-label="下選手の写真ファイル"></div><input class="english-input" id="bottomNameEn" data-field="bottomNameEn" aria-label="下選手名（英語）" placeholder="English" hidden></div>
+        <div class="jbsui-field"><label for="topName">上選手</label><div class="player-entry-row"><button type="button" class="player-photo-picker" data-photo-for="top" aria-label="上選手の写真をアップロード" title="クリックして写真をアップロード"><img class="player-photo-preview" src="assets/dummy.png" alt=""></button><div class="jbsui-preset-input player-input"><select id="topMember" data-member-for="top" aria-label="上選手名の選択"><option value="">選択</option></select><input id="topName" data-field="topName"></div><input type="file" data-photo-file="top" accept="image/*" hidden aria-label="上選手の写真ファイル"></div><input class="english-input" id="topNameEn" data-field="topNameEn" aria-label="上選手名（英語）" placeholder="English" hidden></div>
+        <div class="jbsui-field"><label for="bottomName">下選手</label><div class="player-entry-row"><button type="button" class="player-photo-picker" data-photo-for="bottom" aria-label="下選手の写真をアップロード" title="クリックして写真をアップロード"><img class="player-photo-preview" src="assets/dummy.png" alt=""></button><div class="jbsui-preset-input player-input"><select id="bottomMember" data-member-for="bottom" aria-label="下選手名の選択"><option value="">選択</option></select><input id="bottomName" data-field="bottomName"></div><input type="file" data-photo-file="bottom" accept="image/*" hidden aria-label="下選手の写真ファイル"></div><input class="english-input" id="bottomNameEn" data-field="bottomNameEn" aria-label="下選手名（英語）" placeholder="English" hidden></div>
         <div class="player-swap-field"><button type="button" id="swapPlayerNames" class="swap-colors"><span>上下</span><span>入替</span></button></div>
         <div class="display-toggles">
-          <label class="sponsor-toggle jbs-ui-check" for="personal"><input type="checkbox" id="personal" data-field="personal"><span>選手映像</span></label>
-          <label class="sponsor-toggle jbs-ui-check" for="playerPhoto"><input type="checkbox" id="playerPhoto" data-field="playerPhoto"><span>選手写真</span></label>
-          <label class="sponsor-toggle jbs-ui-check" for="english"><input type="checkbox" id="english" data-field="english"><span>英語</span></label>
-          <label class="sponsor-toggle jbs-ui-check" for="guide"><input type="checkbox" id="guide" data-field="guide"><span>ガイド</span></label>
+          <label class="sponsor-toggle jbsui-check" for="personal"><input type="checkbox" id="personal" data-field="personal"><span>選手映像</span></label>
+          <label class="sponsor-toggle jbsui-check" for="playerPhoto"><input type="checkbox" id="playerPhoto" data-field="playerPhoto"><span>選手写真</span></label>
+          <label class="sponsor-toggle jbsui-check" for="english"><input type="checkbox" id="english" data-field="english"><span>英語</span></label>
+          <label class="sponsor-toggle jbsui-check" for="guide"><input type="checkbox" id="guide" data-field="guide"><span>ガイド</span></label>
         </div>
       </div>
 
       <div class="right-selects">
-        <div class="field"><label for="right1Mode">右1</label><select id="right1Mode" data-field="right1Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="title" selected>大会パネル</option><option value="thumbnail">サムネイル流し</option></select></div>
-        <div class="field"><label for="right2Mode">右2</label><select id="right2Mode" data-field="right2Mode"><option value="none" selected>表示無し</option><option value="reference">ガイド表示</option><option value="title">大会パネル</option><option value="thumbnail">サムネイル流し</option></select></div>
-        <div class="field"><label for="right3Mode">右3</label><select id="right3Mode" data-field="right3Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="rules34">ルール（右3・右4）</option><option value="sponsors" selected>広告流し</option></select></div>
-        <div class="field"><label for="right4Mode">右4</label><select id="right4Mode" data-field="right4Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="rules34" disabled>ルール（右3・右4）</option><option value="rules45">ルール（右4・右5）</option><option value="sponsors">広告流し</option></select></div>
-        <div class="field"><label for="right5Mode">右5</label><select id="right5Mode" data-field="right5Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="rules45" disabled>ルール（右4・右5）</option><option value="sponsors">広告流し</option></select></div>
+        <div class="jbsui-field"><label for="right1Mode">右1</label><select id="right1Mode" data-field="right1Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="title" selected>大会パネル</option><option value="thumbnail">サムネイル流し</option></select></div>
+        <div class="jbsui-field"><label for="right2Mode">右2</label><select id="right2Mode" data-field="right2Mode"><option value="none" selected>表示無し</option><option value="reference">ガイド表示</option><option value="title">大会パネル</option><option value="thumbnail">サムネイル流し</option></select></div>
+        <div class="jbsui-field"><label for="right3Mode">右3</label><select id="right3Mode" data-field="right3Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="rules34">ルール（右3・右4）</option><option value="sponsors" selected>広告流し</option></select></div>
+        <div class="jbsui-field"><label for="right4Mode">右4</label><select id="right4Mode" data-field="right4Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="rules34" disabled>ルール（右3・右4）</option><option value="rules45">ルール（右4・右5）</option><option value="sponsors">広告流し</option></select></div>
+        <div class="jbsui-field"><label for="right5Mode">右5</label><select id="right5Mode" data-field="right5Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="rules45" disabled>ルール（右4・右5）</option><option value="sponsors">広告流し</option></select></div>
       </div>
 
       <div class="title-fields">
-        <div class="field"><label for="edition">回次等</label><input id="edition" data-field="edition"><input class="english-input" id="editionEn" data-field="editionEn" aria-label="回次等（英語）" placeholder="English" hidden></div>
-        <div class="field"><label for="title">大会名</label><div class="preset-input"><select id="titlePreset" data-preset-for="title" aria-label="大会名のプリセット"><option value="">選択</option><option>日本選手権</option><option>盤聖戦</option><option>名人戦</option><option>王位戦</option><option>賽王戦</option><option>棋聖戦</option><option>女王戦</option><option>新鋭戦</option><option>東京オープン</option><option>大阪オープン</option><option>名古屋オープン</option></select><input id="title" data-field="title"></div><input class="english-input" id="titleEn" data-field="titleEn" aria-label="大会名（英語）" placeholder="English" hidden></div>
-        <div class="field"><label for="round">試合名</label><div class="preset-input"><select id="roundPreset" data-preset-for="round" aria-label="試合名のプリセット"><option value="">選択</option><option>決勝</option><option>準決勝</option><option>準々決勝</option><option>３回戦</option><option>２回戦</option><option>１回戦</option><option>プレーオフ</option></select><input id="round" data-field="round"></div><input class="english-input" id="roundEn" data-field="roundEn" aria-label="試合名（英語）" placeholder="English" hidden></div>
+        <div class="jbsui-field"><label for="edition">回次等</label><input id="edition" data-field="edition"><input class="english-input" id="editionEn" data-field="editionEn" aria-label="回次等（英語）" placeholder="English" hidden></div>
+        <div class="jbsui-field"><label for="title">大会名</label><div class="jbsui-preset-input"><select id="titlePreset" data-preset-for="title" aria-label="大会名のプリセット"><option value="">選択</option><option>日本選手権</option><option>盤聖戦</option><option>名人戦</option><option>王位戦</option><option>賽王戦</option><option>棋聖戦</option><option>女王戦</option><option>新鋭戦</option><option>東京オープン</option><option>大阪オープン</option><option>名古屋オープン</option></select><input id="title" data-field="title"></div><input class="english-input" id="titleEn" data-field="titleEn" aria-label="大会名（英語）" placeholder="English" hidden></div>
+        <div class="jbsui-field"><label for="round">試合名</label><div class="jbsui-preset-input"><select id="roundPreset" data-preset-for="round" aria-label="試合名のプリセット"><option value="">選択</option><option>決勝</option><option>準決勝</option><option>準々決勝</option><option>３回戦</option><option>２回戦</option><option>１回戦</option><option>プレーオフ</option></select><input id="round" data-field="round"></div><input class="english-input" id="roundEn" data-field="roundEn" aria-label="試合名（英語）" placeholder="English" hidden></div>
       </div>
 
 
       <div class="color-row">
-        <div class="field"><label for="frameColorText">テーマカラー</label><div class="color-control jbs-ui-color-control"><input type="color" id="frameColor" data-color-for="frameColor"><input id="frameColorText" class="hex-input jbs-ui-hex-input" data-field="frameColor" maxlength="7" spellcheck="false"></div></div>
-        <div class="field panel-color-field">
+        <div class="jbsui-field"><label for="frameColorText">テーマカラー</label><div class="color-control jbsui-color-control"><input type="color" id="frameColor" data-color-for="frameColor"><input id="frameColorText" class="hex-input jbsui-hex-input" data-field="frameColor" maxlength="7" spellcheck="false"></div></div>
+        <div class="jbsui-field panel-color-field">
           <label for="panelMode">大会パネルカラー</label>
           <div class="panel-color-control">
-            <span class="panel-color-swatch jbs-ui-color-swatch"><input type="color" id="panelColor" data-color-for="panelColor"></span>
+            <span class="panel-color-swatch jbsui-color-swatch"><input type="color" id="panelColor" data-color-for="panelColor"></span>
             <select id="panelMode" data-field="panelMode" aria-label="大会パネルカラーの種類">
               <option value="gradient">金グラデ</option>
               <option value="silver">銀グラデ</option>
               <option value="bronze">銅グラデ</option>
               <option value="solid">単色</option>
             </select>
-            <input id="panelColorText" class="hex-input jbs-ui-hex-input" data-field="panelColor" maxlength="7" spellcheck="false">
+            <input id="panelColorText" class="hex-input jbsui-hex-input" data-field="panelColor" maxlength="7" spellcheck="false">
           </div>
         </div>
-        <div class="field board-color-field">
+        <div class="jbsui-field board-color-field">
           <label for="boardPreset">ボードカラー</label>
           <div class="board-control">
             <select id="boardPreset" data-board-preset>
@@ -94,18 +94,18 @@
             </select>
           </div>
         </div>
-        <div class="field"><label for="topColorText">上選手カラー</label><div class="color-control player-color-control jbs-ui-color-control"><input type="color" id="topColor" data-color-for="topColor"><input id="topColorText" class="hex-input jbs-ui-hex-input" data-field="topColor" maxlength="7" spellcheck="false"></div></div>
-        <div class="field"><label for="bottomColorText">下選手カラー</label><div class="color-control player-color-control jbs-ui-color-control"><input type="color" id="bottomColor" data-color-for="bottomColor"><input id="bottomColorText" class="hex-input jbs-ui-hex-input" data-field="bottomColor" maxlength="7" spellcheck="false"></div></div>
+        <div class="jbsui-field"><label for="topColorText">上選手カラー</label><div class="color-control player-color-control jbsui-color-control"><input type="color" id="topColor" data-color-for="topColor"><input id="topColorText" class="hex-input jbsui-hex-input" data-field="topColor" maxlength="7" spellcheck="false"></div></div>
+        <div class="jbsui-field"><label for="bottomColorText">下選手カラー</label><div class="color-control player-color-control jbsui-color-control"><input type="color" id="bottomColor" data-color-for="bottomColor"><input id="bottomColorText" class="hex-input jbsui-hex-input" data-field="bottomColor" maxlength="7" spellcheck="false"></div></div>
         <div class="swap-field"><button type="button" id="swapPlayerColors" class="swap-colors"><span>上下</span><span>入替</span></button></div>
 
       </div>
 
       <div class="guide-fields" hidden>
-        <div class="field"><label for="guideVerticalGap">ガイド縦位置・選手エリアとの間隔</label><input type="number" id="guideVerticalGap" data-field="guideVerticalGap" min="0" max="400" step="1"></div>
-        <div class="field"><label for="guideStart12">ガイド横位置・12開始</label><input type="number" id="guideStart12" data-field="guideStart12" min="0" max="1920" step="1"></div>
-        <div class="field"><label for="guideStart6">ガイド横位置・6開始</label><input type="number" id="guideStart6" data-field="guideStart6" min="0" max="1920" step="1"></div>
-        <div class="field"><label for="guideGoalStart">ガイド横位置・ゴール開始</label><input type="number" id="guideGoalStart" data-field="guideGoalStart" min="0" max="1920" step="1"></div>
-        <div class="field"><label for="guidePointGap">ガイド横位置・マス間の間隔</label><input type="number" id="guidePointGap" data-field="guidePointGap" min="20" max="160" step="1"></div>
+        <div class="jbsui-field"><label for="guideVerticalGap">ガイド縦位置・選手エリアとの間隔</label><input type="number" id="guideVerticalGap" data-field="guideVerticalGap" min="0" max="400" step="1"></div>
+        <div class="jbsui-field"><label for="guideStart12">ガイド横位置・12開始</label><input type="number" id="guideStart12" data-field="guideStart12" min="0" max="1920" step="1"></div>
+        <div class="jbsui-field"><label for="guideStart6">ガイド横位置・6開始</label><input type="number" id="guideStart6" data-field="guideStart6" min="0" max="1920" step="1"></div>
+        <div class="jbsui-field"><label for="guideGoalStart">ガイド横位置・ゴール開始</label><input type="number" id="guideGoalStart" data-field="guideGoalStart" min="0" max="1920" step="1"></div>
+        <div class="jbsui-field"><label for="guidePointGap">ガイド横位置・マス間の間隔</label><input type="number" id="guidePointGap" data-field="guidePointGap" min="20" max="160" step="1"></div>
       </div>
 
     </aside>
@@ -113,10 +113,10 @@
     <section class="stage-shell" id="stageMount" aria-label="配信画面プレビュー"></section>
   </div>
 
-  <dialog class="settings-dialog jbs-ui-dialog" id="settingsDialog" aria-labelledby="settingsDialogTitle">
-    <div class="jbs-ui-dialog-head">
+  <dialog class="settings-dialog jbsui-dialog" id="settingsDialog" aria-labelledby="settingsDialogTitle">
+    <div class="jbsui-dialog-head">
       <h2 id="settingsDialogTitle">保存した設定</h2>
-      <button type="button" id="closeSettings" class="jbs-ui-dialog-close" aria-label="閉じる">×</button>
+      <button type="button" id="closeSettings" class="jbsui-dialog-close" aria-label="閉じる">×</button>
     </div>
     <div class="saved-settings" id="savedSettings"></div>
   </dialog>
@@ -129,7 +129,7 @@
     fetch('stage.html?v=20261117-five-right-slots-v15').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261117-first-round-v30';
+      script.src = 'overlay.js?v=20261117-jbsui-v31';
       document.body.appendChild(script);
     });
   </script>
