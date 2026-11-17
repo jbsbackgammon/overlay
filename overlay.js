@@ -530,6 +530,7 @@ let sponsorIndex = 0;
 let sponsorTimer;
 let languageTimer;
 let ruleTimer;
+let saveCompleteTimer;
 let languageMode = "ja";
 let ruleIndex = 0;
 let fitFrame;
@@ -1498,9 +1499,20 @@ function bindEditor() {
   });
 
   $("#saveSettings")?.addEventListener("click", () => {
-    const entries = readSavedSettings();
-    entries.unshift({ savedAt: new Date().toISOString(), state: { ...state } });
-    localStorage.setItem(savedSettingsKey, JSON.stringify(entries.slice(0, 100)));
+    try {
+      const entries = readSavedSettings();
+      entries.unshift({ savedAt: new Date().toISOString(), state: { ...state } });
+      localStorage.setItem(savedSettingsKey, JSON.stringify(entries.slice(0, 100)));
+      const dialog = $("#saveCompleteDialog");
+      if (dialog) {
+        clearTimeout(saveCompleteTimer);
+        if (!dialog.open) dialog.showModal();
+        saveCompleteTimer = setTimeout(() => dialog.close(), 2000);
+      }
+    } catch (error) {
+      console.error("設定保存に失敗しました。", error);
+      alert("設定を保存できませんでした。ブラウザの保存設定を確認してください。");
+    }
   });
 
   $("#exportJson")?.addEventListener("click", downloadJson);
