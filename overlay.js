@@ -1,3 +1,8 @@
+/* The OBS canvas and PNG capture share one fixed output resolution. */
+const STAGE_WIDTH = 1920;
+const STAGE_HEIGHT = 1080;
+const pad2 = (value) => String(value).padStart(2, "0");
+
 const defaultJapanBoardColors = Object.freeze({ topColor: "#2E3F48", bottomColor: "#ECECEC" });
 
 const defaults = {
@@ -587,11 +592,11 @@ function fitStage() {
   const availableHeight = viewportHeight - controls.getBoundingClientRect().bottom -
     verticalPadding - 12;
   // Keep an accessible minimum on very small screens; the page can scroll.
-  const fittedWidth = Math.min(maxWidth, Math.max(360, availableHeight * 16 / 9));
+  const fittedWidth = Math.min(maxWidth, Math.max(360, availableHeight * STAGE_WIDTH / STAGE_HEIGHT));
   wrap.style.width = `${fittedWidth}px`;
-  const scale = fittedWidth / 1920;
+  const scale = fittedWidth / STAGE_WIDTH;
   stage.style.transform = `scale(${scale})`;
-  wrap.style.height = `${1080 * scale}px`;
+  wrap.style.height = `${STAGE_HEIGHT * scale}px`;
 }
 
 function hexToRgb(hex) {
@@ -1152,8 +1157,7 @@ function startRuleRotation() {
 
 function formatSavedAt(value) {
   const date = new Date(value);
-  const pad = (number) => String(number).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())} ${pad2(date.getHours())}:${pad2(date.getMinutes())}:${pad2(date.getSeconds())}`;
 }
 
 function readSavedSettings() {
@@ -1174,8 +1178,7 @@ function downloadJson() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   const now = new Date();
-  const pad = (number) => String(number).padStart(2, "0");
-  link.download = `配信盤面設定-${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.json`;
+  link.download = `配信盤面設定-${now.getFullYear()}${pad2(now.getMonth() + 1)}${pad2(now.getDate())}-${pad2(now.getHours())}${pad2(now.getMinutes())}${pad2(now.getSeconds())}.json`;
   link.href = url;
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -1274,17 +1277,17 @@ async function captureStagePngBlob(stage) {
   if (window.htmlToImage?.toBlob) {
     try {
       const blob = await window.htmlToImage.toBlob(stage, {
-        width: 1920,
-        height: 1080,
-        canvasWidth: 1920,
-        canvasHeight: 1080,
+        width: STAGE_WIDTH,
+        height: STAGE_HEIGHT,
+        canvasWidth: STAGE_WIDTH,
+        canvasHeight: STAGE_HEIGHT,
         pixelRatio: 1,
         cacheBust: false,
         skipFonts: true,
         backgroundColor: "transparent",
         style: {
-          width: "1920px",
-          height: "1080px",
+          width: `${STAGE_WIDTH}px`,
+          height: `${STAGE_HEIGHT}px`,
           transform: "none",
           transformOrigin: "top left"
         }
@@ -1300,8 +1303,8 @@ async function captureStagePngBlob(stage) {
   if (typeof window.html2canvas === "function") {
     try {
       const canvas = await window.html2canvas(stage, {
-        width: 1920,
-        height: 1080,
+        width: STAGE_WIDTH,
+        height: STAGE_HEIGHT,
         scale: 1,
         backgroundColor: null,
         useCORS: true,
@@ -1362,8 +1365,7 @@ async function exportStageAsPng() {
     stage.style.transform = "none";
     const blob = await captureStagePngBlob(stage);
     const now = new Date();
-    const pad = (number) => String(number).padStart(2, "0");
-    const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+    const stamp = `${now.getFullYear()}${pad2(now.getMonth() + 1)}${pad2(now.getDate())}-${pad2(now.getHours())}${pad2(now.getMinutes())}${pad2(now.getSeconds())}`;
     const downloadUrl = URL.createObjectURL(blob);
     pendingPngDownload = {
       filename: `配信盤面-${stamp}.png`,
@@ -1666,14 +1668,15 @@ function loadSharedState() {
       }
       // Do not overwrite an intentionally cleared round in subsequent sessions.
       if (!localStorage.getItem(roundMigrationKey)) localStorage.setItem(roundMigrationKey, "1");
+      // Only migrate explicit legacy placeholders. A manually selected
+      // semifinal is valid and must never be silently rewritten to the final.
       const usesOldTextDefaults = savedState && (
         savedState.edition === "JBS 第54回"
-        || savedState.round === "準決勝"
-        || savedState.topName === ""
-        || savedState.bottomName === ""
+        || savedState.round === "（未選択）"
+        || savedState.topName === "（未入力）"
+        || savedState.bottomName === "（未入力）"
       );
       if (savedState?.edition === "JBS 第54回") savedState.edition = defaults.edition;
-      if (savedState?.round === "準決勝") savedState.round = defaults.round;
       if (savedState?.round === "（未選択）") savedState.round = defaults.round;
       if (savedState?.topName === "（未入力）") savedState.topName = "";
       if (savedState?.bottomName === "（未入力）") savedState.bottomName = "";
