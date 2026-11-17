@@ -100,7 +100,7 @@ for (const component of ['jbs-ui-color-control', 'jbs-ui-color-swatch', 'jbs-ui-
 }
 for (const retired of ['.color-control {', '.field input[type="color"] {',
   '.field input[type="color"]::-webkit', '.settings-dialog-head {', '.dialog-close {',
-  '.settings-dialog::backdrop', '.panel-color-swatch > input[type="color"]']) {
+  '.settings-dialog::backdrop', '\n.panel-color-swatch > input[type="color"] {']) {
   assert.ok(!styles.includes(retired), 'Reusable UI style must not be duplicated: ' + retired);
 }
 
