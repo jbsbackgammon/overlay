@@ -23,7 +23,6 @@
   --width-editor-preview-max: 1200px;
   --width-editor-preview: 92%;
   --alpha-editor-photo-overlay: 72%;
-  --alpha-editor-dialog-backdrop: 48%;
   --line-height-editor-swap: 1.15;
   --letter-spacing-editor-hex: .035em;
 }
@@ -816,29 +815,6 @@ button, input, select { font: inherit; }
 @media (max-width: 600px) { .right-selects { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .right-selects > .field > select:first-of-type { height: var(--height-input); }
 /* Preserve the editor row when neither right slot displays the tournament. */
-.title-fields.is-inactive label { opacity: var(--opacity); }
-.title-fields.is-inactive input:disabled,
-.title-fields.is-inactive select:disabled {
-  background-color: var(--color-95);
-  border-color: var(--color-90);
-  color: var(--color-60);
-  cursor: not-allowed;
-}
-.panel-color-field.is-inactive label { opacity: var(--opacity); }
-.panel-color-field.is-inactive input:disabled,
-.panel-color-field.is-inactive select:disabled {
-  background-color: var(--color-95);
-  border-color: var(--color-90);
-  color: var(--color-60);
-  cursor: not-allowed;
-}
-.panel-color-field.is-inactive .panel-color-swatch { opacity: var(--opacity); }
-.panel-color-field.is-gradient .hex-input:disabled {
-  background-color: var(--color-95);
-  border-color: var(--color-90);
-  color: var(--color-60);
-  cursor: not-allowed;
-}
 .thumbnail-picker:not([hidden]) { margin-top: var(--space-4); }
 
 .guide-fields {
@@ -1055,13 +1031,7 @@ button, input, select { font: inherit; }
 
 .swap-colors:hover { background: var(--color-90); }
 
-/* All color and photo previews sit to the left of their associated controls. */
-.color-control {
-  display: grid;
-  grid-template-columns: var(--size-swatch) minmax(0, 1fr);
-  gap: var(--space-8);
-}
-
+/* Common color-input layout is provided by jbs-ui-color-control. */
 /* Tournament panel: color preview, mode selector, then HEX input. */
 .panel-color-control {
   display: grid;
@@ -1074,84 +1044,17 @@ button, input, select { font: inherit; }
 /* The native color input cannot render gradients. Its shared 36px swatch
    displays the exact panel gradient while the picker stays disabled. */
 .panel-color-swatch {
-  display: block;
-  width: var(--size-swatch);
-  height: var(--height-input);
-  overflow: hidden;
-  border: var(--width-border) solid var(--color-80);
-  border-radius: var(--radius);
   background: var(--panel-swatch-background, var(--color-100));
-}
-.panel-color-swatch > input[type="color"] {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  border-radius: 0;
 }
 .panel-color-field.is-gradient .panel-color-swatch > input[type="color"] {
   opacity: 0;
 }
 
-.field input[type="color"] {
-  width: var(--size-swatch);
-  height: var(--size-swatch);
-  padding: 0;
-  border-color: var(--color-80);
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: transparent;
-  cursor: pointer;
-}
-
-.field input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-.field input[type="color"]::-webkit-color-swatch {
-  border: 0;
-  border-radius: 0;
-}
-
-.hex-input {
-  width: 100% !important;
-  min-width: 0;
-  max-width: none;
-  text-transform: uppercase;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: var(--letter-spacing-editor-hex);
-}
+.hex-input { letter-spacing: var(--letter-spacing-editor-hex); }
 
 .settings-dialog {
   width: min(var(--width-editor-dialog-max), calc(100vw - var(--space-24) - var(--space-24)));
   max-height: min(var(--height-editor-dialog-max), calc(100vh - var(--space-24) - var(--space-24)));
-  padding: 0;
-  border: 0;
-  border-radius: var(--radius);
-  background: var(--color-100);
-  color: var(--color-20);
-  box-shadow: var(--shadow);
-}
-
-.settings-dialog::backdrop { background: color-mix(in srgb, var(--color-20) var(--alpha-editor-dialog-backdrop), transparent); }
-
-.settings-dialog-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-16) var(--space-24);
-  border-bottom: var(--width-border) solid var(--color-90);
-}
-
-.settings-dialog-head h2 { margin: 0; font-size: var(--font-size-20); font-weight: var(--font-weight-action); }
-
-.dialog-close {
-  width: var(--height-button);
-  height: var(--height-button);
-  border: 0;
-  border-radius: 50%;
-  background: var(--color-95);
-  color: var(--color-20);
-  font-size: var(--font-size-24);
-  line-height: 1;
-  cursor: pointer;
 }
 
 .saved-settings {
