@@ -210,9 +210,16 @@ function startThumbnailRotation() {
 }
 
 
+// An already romanized player name is display-ready in both language modes.
+// The member master may use nameEn for a country code (e.g. USA), not a name.
+function isLatinName(value) {
+  const name = String(value || "");
+  return /\p{Script=Latin}/u.test(name)
+    && !/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u.test(name);
+}
+
 function isForeignMember(member) {
-  const name = member.nameJa;
-  return /[A-Za-z]/.test(name) && !/[\u3040-\u30ff\u3400-\u9fff]/.test(name);
+  return isLatinName(member.nameJa);
 }
 
 function katakanaToHiragana(value) {
@@ -780,7 +787,12 @@ function render() {
     const editionEnInput = $("[data-field=editionEn]");
     if (editionEnInput) editionEnInput.value = automaticEditionEn;
   }
-  const shown = (key) => state.english && languageMode === "en" ? (state[`${key}En`] || state[key]) : state[key];
+  const shown = (key) => {
+    const original = state[key];
+    const isPlayerName = key === "topName" || key === "bottomName";
+    if (isPlayerName && isLatinName(original)) return original;
+    return state.english && languageMode === "en" ? (state[`${key}En`] || original) : original;
+  };
   $("[data-output=edition]").textContent = shown("edition");
   const titleOutput = $("[data-output=title]");
   const shownTitle = shown("title");
