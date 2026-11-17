@@ -49,8 +49,8 @@ for (const retired of ["--border-width","--button-height","--dialog-shadow","--d
   assert.ok(!styles.includes(retired), 'Retired naming must not remain: ' + retired);
 }
 
-assert.ok(styles.includes('font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, sans-serif;'),
-  'Overlay fallback font order must prioritize Hiragino before Yu Gothic');
+assert.ok(styles.includes('font-family: var(--font-family, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, sans-serif);'),
+  'Editor must reference the shared font-family and preserve the output-page fallback order');
 assert.ok(styles.includes('border-radius: var(--radius);'), 'Editor radius token missing');
 assert.ok(!styles.includes('--jbs-ui-'), 'Retired prefixed style token remains');
 assert.ok(styles.includes('height: var(--height-input);')
