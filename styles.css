@@ -853,6 +853,7 @@ button, input, select { font: inherit; }
   color: var(--color-20);
   cursor: pointer;
 }
+.channel-picker select:not(:disabled):hover { background-color: var(--color-95); }
 
 .display-toggles {
   grid-column: 4 / -1;
@@ -922,7 +923,6 @@ button, input, select { font: inherit; }
 }
 .player-photo-picker:hover::after,
 .player-photo-picker:focus-visible::after { opacity: 1; }
-.player-photo-picker:focus-visible { outline: var(--width-focus-ring) solid var(--color-60); outline-offset: var(--width-focus-ring); }
 .player-photo-preview { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 .english-input[hidden] { display: none; }
@@ -986,18 +986,9 @@ button, input, select { font: inherit; }
 }
 
 
-[data-board-preset] {
-  background: var(--color-100) !important;
-  color: var(--color-20) !important;
-  font-weight: var(--font-weight-normal);
-  cursor: pointer;
-}
-
-.board-control {
-  display: block;
-}
-
-.board-control select { width: 100%; }
+/* Board selector retains its normal font weight; common UI owns its
+   background, border, hover and keyboard focus styles. */
+[data-board-preset] { font-weight: var(--font-weight-normal); }
 
 .swap-field {
   display: flex;
@@ -1095,6 +1086,8 @@ button, input, select { font: inherit; }
   overflow: hidden;
 }
 
+/* The output must ignore the inline preview scaling set by the script.
+   This is the only necessary !important in the overlay stylesheet. */
 .output-page .stage { transform: none !important; }
 
 @media (max-width: 1200px) {
