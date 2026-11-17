@@ -13,7 +13,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
   <link rel="stylesheet" href="https://jbsbackgammon.github.io/common/ui.css?v=26">
-  <link rel="stylesheet" href="styles.css?v=20261117-common-select-v51">
+  <link rel="stylesheet" href="styles.css?v=20261117-guide-goal-v52">
 </head>
 <body>
   <div class="app">
@@ -84,7 +84,6 @@
           <label for="boardPreset">ボードカラー</label>
           <div class="board-control">
             <select id="boardPreset" data-board-preset>
-              <option value="">選択</option>
               <option value="japan">日本選手権</option>
               <option value="bansei">盤聖戦</option>
               <option value="meijin">名人戦</option>
@@ -126,10 +125,10 @@
   <!-- Common defines JBSBrand; its data are fetched separately with a fallback. -->
   <script src="https://jbsbackgammon.github.io/common/brand.js"></script>
   <script>
-    fetch('stage.html?v=20261117-five-right-slots-v15').then(r => r.text()).then(html => {
+    fetch('stage.html?v=20261117-upper-13-24-v16').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261117-default-final-v34';
+      script.src = 'overlay.js?v=20261117-export-guide-board-v35';
       document.body.appendChild(script);
     });
   </script>
