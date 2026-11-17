@@ -33,7 +33,7 @@ html, body { margin: 0; min-height: 100%; }
 body {
   /* UI tokens are loaded in the editor; output.html uses these same HSL fallbacks. */
   background: var(--color-95, hsl(215 25% 95%));
-  color: var(--color-20, hsl(215 25% 20%));
+  color: var(--color-25, hsl(215 25% 25%));
 }
 
 button, input, select { font: inherit; }
@@ -774,7 +774,7 @@ button, input, select { font: inherit; }
   grid-template-columns: minmax(var(--width-editor-panel-min), 1fr) minmax(var(--width-editor-panel-wide-min), 2fr);
   gap: var(--space-8) var(--space-16);
   padding: var(--space-16) var(--space-24);
-  border-top: var(--width-border) solid var(--color-90);
+  border-top: var(--width-border) solid var(--color-95);
   background: var(--color-100);
 }
 
@@ -848,7 +848,7 @@ button, input, select { font: inherit; }
   display: flex;
   align-items: center;
   gap: var(--space-12);
-  color: var(--color-40);
+  color: var(--color-45);
   font-size: var(--font-size-14);
   font-weight: var(--font-weight-normal);
   white-space: nowrap;
@@ -907,7 +907,7 @@ button, input, select { font: inherit; }
   height: var(--size-swatch);
   padding: 0;
   overflow: hidden;
-  border: var(--width-border) solid var(--color-80);
+  border: var(--width-border) solid var(--color-85);
   border-radius: var(--radius);
   background: var(--color-95);
   cursor: pointer;
@@ -920,7 +920,7 @@ button, input, select { font: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--color-20) var(--alpha-editor-photo-overlay), transparent);
+  background: color-mix(in srgb, var(--color-25) var(--alpha-editor-photo-overlay), transparent);
   color: var(--color-100);
   font-size: var(--font-size-12);
   font-weight: var(--font-weight-action);
@@ -987,7 +987,7 @@ button, input, select { font: inherit; }
   transform: translateY(-50%);
   width: var(--width-border);
   height: var(--height-input);
-  background: var(--color-80);
+  background: var(--color-85);
   pointer-events: none;
 }
 
@@ -1011,16 +1011,16 @@ button, input, select { font: inherit; }
   display: grid;
   place-content: center;
   white-space: nowrap;
-  border: var(--width-border) solid var(--color-80);
+  border: var(--width-border) solid var(--color-85);
   border-radius: var(--radius);
   background: var(--color-95);
-  color: var(--color-20);
+  color: var(--color-25);
   font-size: var(--font-size-14);
   font-weight: var(--font-weight-action);
   cursor: pointer;
 }
 
-.swap-colors:hover { background: var(--color-90); }
+.swap-colors:hover { background: var(--color-85); }
 
 /* Common color-input layout is provided by jbsui-color-control. */
 /* Tournament panel: color preview, mode selector, then HEX input. */
@@ -1057,10 +1057,10 @@ button, input, select { font: inherit; }
   width: 100%;
   padding: var(--space-12);
   border: 0;
-  border-bottom: var(--width-border) solid var(--color-90);
+  border-bottom: var(--width-border) solid var(--color-95);
   border-radius: 0;
   background: transparent;
-  color: var(--color-20);
+  color: var(--color-25);
   text-align: left;
   font-size: var(--font-size-14);
   font-weight: var(--font-weight-action);
@@ -1068,8 +1068,8 @@ button, input, select { font: inherit; }
 }
 
 .saved-setting:last-child { border-bottom: 0; }
-.saved-setting:hover { background: var(--color-90); }
-.saved-settings-empty { margin: var(--space-16); color: var(--color-40); text-align: center; }
+.saved-setting:hover { background: var(--color-85); }
+.saved-settings-empty { margin: var(--space-16); color: var(--color-45); text-align: center; }
 
 .output-page {
   width: 1920px;
