@@ -12,11 +12,12 @@
   <link rel="icon" href="https://jbsbackgammon.github.io/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=20261117-board-divider-v29">
+  <link rel="stylesheet" href="https://jbsbackgammon.github.io/common/ui.css?v=1">
+  <link rel="stylesheet" href="styles.css?v=20261117-jbs-ui-v30">
 </head>
 <body>
   <div class="app">
-    <aside class="control-panel">
+    <aside class="control-panel jbs-ui">
       <div class="top-actions">
         <label class="channel-picker" for="channelSelect">
           <select id="channelSelect" aria-label="編集する配信">
@@ -25,27 +26,27 @@
             <option value="3">配信3</option>
           </select>
         </label>
-        <button class="open-output" id="openOutput">配信本番</button>
-        <span class="action-separator" aria-hidden="true"></span>
-        <button class="settings-action" id="loadSettings" type="button">設定呼出</button>
-        <button class="settings-action" id="importJson" type="button">JSON取込</button>
+        <button class="open-output jbs-ui-button jbs-ui-button--primary" id="openOutput">配信本番</button>
+        <span class="action-separator jbs-ui-divider" aria-hidden="true"></span>
+        <button class="settings-action jbs-ui-button" id="loadSettings" type="button">設定呼出</button>
+        <button class="settings-action jbs-ui-button" id="importJson" type="button">JSON取込</button>
         <input id="importJsonFile" type="file" accept="application/json,.json" hidden>
-        <span class="action-separator" aria-hidden="true"></span>
-        <button class="settings-action" id="saveSettings" type="button">設定保存</button>
-        <button class="settings-action" id="exportJson" type="button">JSON出力</button>
-        <button class="settings-action" id="exportPng" type="button">PNG出力</button>
-        <span class="action-separator" aria-hidden="true"></span>
-        <button class="settings-action" id="createThumbnail" type="button">サムネ作成</button>
+        <span class="action-separator jbs-ui-divider" aria-hidden="true"></span>
+        <button class="settings-action jbs-ui-button" id="saveSettings" type="button">設定保存</button>
+        <button class="settings-action jbs-ui-button" id="exportJson" type="button">JSON出力</button>
+        <button class="settings-action jbs-ui-button" id="exportPng" type="button">PNG出力</button>
+        <span class="action-separator jbs-ui-divider" aria-hidden="true"></span>
+        <button class="settings-action jbs-ui-button" id="createThumbnail" type="button">サムネ作成</button>
       </div>
       <div class="event-fields">
         <div class="field"><label for="topName">上選手</label><div class="player-entry-row"><button type="button" class="player-photo-picker" data-photo-for="top" aria-label="上選手の写真をアップロード" title="クリックして写真をアップロード"><img class="player-photo-preview" src="assets/dummy.png" alt=""></button><div class="preset-input player-input"><select id="topMember" data-member-for="top" aria-label="上選手名の選択"><option value="">選択</option></select><input id="topName" data-field="topName"></div><input type="file" data-photo-file="top" accept="image/*" hidden aria-label="上選手の写真ファイル"></div><input class="english-input" id="topNameEn" data-field="topNameEn" aria-label="上選手名（英語）" placeholder="English" hidden></div>
         <div class="field"><label for="bottomName">下選手</label><div class="player-entry-row"><button type="button" class="player-photo-picker" data-photo-for="bottom" aria-label="下選手の写真をアップロード" title="クリックして写真をアップロード"><img class="player-photo-preview" src="assets/dummy.png" alt=""></button><div class="preset-input player-input"><select id="bottomMember" data-member-for="bottom" aria-label="下選手名の選択"><option value="">選択</option></select><input id="bottomName" data-field="bottomName"></div><input type="file" data-photo-file="bottom" accept="image/*" hidden aria-label="下選手の写真ファイル"></div><input class="english-input" id="bottomNameEn" data-field="bottomNameEn" aria-label="下選手名（英語）" placeholder="English" hidden></div>
         <div class="player-swap-field"><button type="button" id="swapPlayerNames" class="swap-colors"><span>上下</span><span>入替</span></button></div>
         <div class="display-toggles">
-          <label class="sponsor-toggle" for="personal"><input type="checkbox" id="personal" data-field="personal"><span>選手映像</span></label>
-          <label class="sponsor-toggle" for="playerPhoto"><input type="checkbox" id="playerPhoto" data-field="playerPhoto"><span>選手写真</span></label>
-          <label class="sponsor-toggle" for="english"><input type="checkbox" id="english" data-field="english"><span>英語</span></label>
-          <label class="sponsor-toggle" for="guide"><input type="checkbox" id="guide" data-field="guide"><span>ガイド</span></label>
+          <label class="sponsor-toggle jbs-ui-check" for="personal"><input type="checkbox" id="personal" data-field="personal"><span>選手映像</span></label>
+          <label class="sponsor-toggle jbs-ui-check" for="playerPhoto"><input type="checkbox" id="playerPhoto" data-field="playerPhoto"><span>選手写真</span></label>
+          <label class="sponsor-toggle jbs-ui-check" for="english"><input type="checkbox" id="english" data-field="english"><span>英語</span></label>
+          <label class="sponsor-toggle jbs-ui-check" for="guide"><input type="checkbox" id="guide" data-field="guide"><span>ガイド</span></label>
         </div>
       </div>
 
