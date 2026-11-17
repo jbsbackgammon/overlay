@@ -471,7 +471,7 @@ const ruleSlides = [
 ];
 
 const query = new URLSearchParams(location.search);
-const channel = query.get("channel") === "2" ? "2" : "1";
+const channel = ["1", "2", "3"].includes(query.get("channel")) ? query.get("channel") : "1";
 const storageKey = channel === "1" ? "jbs-overlay-state" : `jbs-overlay-state-${channel}`;
 const stateChannelName = `jbs-overlay-live-${channel}`;
 const stateChannel = typeof BroadcastChannel === "function" ? new BroadcastChannel(stateChannelName) : null;

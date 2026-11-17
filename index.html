@@ -22,6 +22,7 @@
           <select id="channelSelect" aria-label="編集する配信">
             <option value="1">配信1</option>
             <option value="2">配信2</option>
+            <option value="3">配信3</option>
           </select>
         </label>
         <button class="open-output" id="openOutput">配信本番</button>
@@ -125,7 +126,7 @@
     fetch('stage.html?v=20261117-five-right-slots-v15').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261117-common-edition-v18';
+      script.src = 'overlay.js?v=20261117-channel3-v21';
       document.body.appendChild(script);
     });
   </script>
