@@ -13,7 +13,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
   <link rel="stylesheet" href="https://jbsbackgammon.github.io/common/ui.css?v=21">
-  <link rel="stylesheet" href="styles.css?v=20261117-jbsui-v46">
+  <link rel="stylesheet" href="styles.css?v=20261117-player-swap-v47">
 </head>
 <body>
   <div class="app">
@@ -41,7 +41,7 @@
       <div class="event-fields">
         <div class="jbsui-field"><label for="topName">上選手</label><div class="player-entry-row"><button type="button" class="player-photo-picker" data-photo-for="top" aria-label="上選手の写真をアップロード" title="クリックして写真をアップロード"><img class="player-photo-preview" src="assets/dummy.png" alt=""></button><div class="jbsui-preset-input player-input"><select id="topMember" data-member-for="top" aria-label="上選手名の選択"><option value="">選択</option></select><input id="topName" data-field="topName"></div><input type="file" data-photo-file="top" accept="image/*" hidden aria-label="上選手の写真ファイル"></div><input class="english-input" id="topNameEn" data-field="topNameEn" aria-label="上選手名（英語）" placeholder="English" hidden></div>
         <div class="jbsui-field"><label for="bottomName">下選手</label><div class="player-entry-row"><button type="button" class="player-photo-picker" data-photo-for="bottom" aria-label="下選手の写真をアップロード" title="クリックして写真をアップロード"><img class="player-photo-preview" src="assets/dummy.png" alt=""></button><div class="jbsui-preset-input player-input"><select id="bottomMember" data-member-for="bottom" aria-label="下選手名の選択"><option value="">選択</option></select><input id="bottomName" data-field="bottomName"></div><input type="file" data-photo-file="bottom" accept="image/*" hidden aria-label="下選手の写真ファイル"></div><input class="english-input" id="bottomNameEn" data-field="bottomNameEn" aria-label="下選手名（英語）" placeholder="English" hidden></div>
-        <div class="player-swap-field"><button type="button" id="swapPlayerNames" class="swap-colors"><span>上下</span><span>入替</span></button></div>
+        <div class="player-swap-field"><button type="button" id="swapPlayerNames" class="swap-colors player-name-swap">上下入替</button></div>
         <div class="display-toggles">
           <label class="sponsor-toggle jbsui-check" for="personal"><input type="checkbox" id="personal" data-field="personal"><span>選手映像</span></label>
           <label class="sponsor-toggle jbsui-check" for="playerPhoto"><input type="checkbox" id="playerPhoto" data-field="playerPhoto"><span>選手写真</span></label>
