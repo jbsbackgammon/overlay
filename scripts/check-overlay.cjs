@@ -159,10 +159,11 @@ assert.ok(js.includes('boardPreset: "japan"') && js.includes('japan: defaultJapa
 assert.ok(stage.includes('first"><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span>')
   && stage.includes('second"><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span>'),
   'Upper guide must display 13 through 24');
-assert.ok(styles.includes('.point-guide.top .guide-goal')
+assert.ok(styles.includes('var(--guide-background) var(--guide-goal-left)')
+  && styles.includes('var(--guide-goal-background) var(--guide-goal-left)')
   && js.includes('"--guide-goal-background", rgba(state.topColor, 0.7)')
   && js.includes('"--guide-background", rgba(state.bottomColor, 0.7)'),
-  'Upper points use bottom color while upper goal uses top color');
+  'Upper points use bottom color while upper goal uses top color without gaps');
 assert.ok(read('styles.css').includes('.board-color-field::before'),
   'Missing vertical divider between panel and board colors');
 assert.ok(js.includes('"--color-swatch-background", metallicBackground || state.panelColor'),
