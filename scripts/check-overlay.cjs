@@ -34,6 +34,22 @@ const usedColors = [...styles.matchAll(/var\(--color-(\d+)\b/g)].map((match) => 
 assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
   'Overlay CSS must not reference undefined palette values');
 assert.ok(editor.includes('common/ui.css?v=31'), 'Shared CSS v31 must be loaded');
+const settingLabelStart = js.indexOf('function settingLabel(entry) {');
+const settingLabelEnd = js.indexOf('\nfunction downloadJson()', settingLabelStart);
+assert.ok(settingLabelStart >= 0 && settingLabelEnd > settingLabelStart,
+  'Saved-setting label formatter must remain independently testable');
+const testSettingLabel = Function('formatSavedAt',
+  js.slice(settingLabelStart, settingLabelEnd) + '\nreturn settingLabel;')(() => '2026-11-17 14:49:00');
+assert.equal(testSettingLabel({
+  savedAt: '', state: { edition: 'JBS 第15回', title: '新鋭戦',
+    round: '決勝', topName: '上選手', bottomName: '下選手' }
+}), '2026-11-17 14:49:00・JBS 第15回_新鋭戦_決勝_上選手-下選手',
+'Saved-setting label must use underscores after edition and a hyphen between player names');
+assert.equal(testSettingLabel({
+  savedAt: '', state: { edition: 'JBS 第15回', title: '新鋭戦',
+    round: '決勝', topName: '', bottomName: '' }
+}), '2026-11-17 14:49:00・JBS 第15回_新鋭戦_決勝',
+'Saved-setting label must not append empty player separators');
 assert.ok(editor.includes('class="open-output jbsui-button jbsui-button--primary"')
   && !/\.open-output\s*\{[^}]*font-size\s*:/s.test(styles),
   'Broadcast button must inherit the same 14px type size as all shared buttons');
