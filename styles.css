@@ -11,11 +11,10 @@
   --width-editor-panel-wide-min: 420px;
   --width-editor-player-min: 150px;
   --width-editor-event-min: 320px;
-  --size-editor-swap: 41px;
-  --width-editor-player-swap: 80px;
+  --width-editor-swap: 80px;
   --width-editor-channel-min: 112px;
   --width-editor-primary-min: 170px;
-  --width-editor-color-budget: 318px;
+  --width-editor-color-budget: 357px;
   --width-editor-color-extra: 47px;
   --width-editor-color-panel-extra: 56px;
   --width-editor-dialog-max: 920px;
@@ -24,7 +23,6 @@
   --width-editor-preview-max: 1200px;
   --width-editor-preview: 92%;
   --alpha-editor-photo-overlay: 72%;
-  --line-height-editor-swap: 1.15;
   --letter-spacing-editor-hex: .035em;
 }
 
@@ -772,7 +770,7 @@ button, input, select { font: inherit; }
 .event-fields {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: minmax(var(--width-editor-player-min), 1fr) minmax(var(--width-editor-player-min), 1fr) var(--width-editor-player-swap) minmax(var(--width-editor-event-min), 2fr);
+  grid-template-columns: minmax(var(--width-editor-player-min), 1fr) minmax(var(--width-editor-player-min), 1fr) var(--width-editor-swap) minmax(var(--width-editor-event-min), 2fr);
   gap: var(--space-16);
   align-items: end;
 }
@@ -874,13 +872,6 @@ button, input, select { font: inherit; }
   height: var(--height-input);
 }
 
-.player-swap-field .player-name-swap {
-  width: 100%;
-  height: var(--height-input);
-  padding: 0 var(--space-8);
-  font-size: var(--font-size-14);
-  white-space: nowrap;
-}
 
 .open-output {
   min-width: var(--width-editor-primary-min);
@@ -973,7 +964,7 @@ button, input, select { font: inherit; }
     minmax(0, calc((100% - var(--width-editor-color-budget)) / 6))
     minmax(0, calc((100% - var(--width-editor-color-budget)) / 6 + var(--width-editor-color-extra)))
     minmax(0, calc((100% - var(--width-editor-color-budget)) / 6 + var(--width-editor-color-extra)))
-    var(--size-editor-swap);
+    var(--width-editor-swap);
   gap: var(--space-16);
 }
 
@@ -1017,22 +1008,20 @@ button, input, select { font: inherit; }
 }
 
 .swap-colors {
-  width: var(--size-editor-swap);
-  height: var(--size-editor-swap);
-  padding: var(--space-4);
+  width: var(--width-editor-swap);
+  height: var(--height-input);
+  padding: 0 var(--space-8);
   display: grid;
   place-content: center;
-  line-height: var(--line-height-editor-swap);
+  white-space: nowrap;
   border: var(--width-border) solid var(--color-80);
   border-radius: var(--radius);
   background: var(--color-95);
   color: var(--color-20);
-  font-size: var(--font-size-12);
+  font-size: var(--font-size-14);
   font-weight: var(--font-weight-action);
   cursor: pointer;
 }
-
-.swap-colors span { display: block; }
 
 .swap-colors:hover { background: var(--color-90); }
 
@@ -1139,7 +1128,7 @@ button, input, select { font: inherit; }
 /* Preserve usable bilingual widths in the smaller editor layout. */
 @media (max-width: 1200px) {
   .event-fields {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) var(--width-editor-player-swap);
+    grid-template-columns: repeat(2, minmax(0, 1fr)) var(--width-editor-swap);
   }
   .event-fields > .player-swap-field { grid-column: 3; grid-row: 1; }
   .event-fields > .display-toggles {
@@ -1156,7 +1145,7 @@ button, input, select { font: inherit; }
   }
 }
 @media (max-width: 820px) {
-  .event-fields { grid-template-columns: minmax(0, 1fr) var(--width-editor-player-swap); }
+  .event-fields { grid-template-columns: minmax(0, 1fr) var(--width-editor-swap); }
   .event-fields > .jbsui-field:first-child { grid-column: 1; grid-row: 1; }
   .event-fields > .jbsui-field:nth-child(2) { grid-column: 1; grid-row: 2; }
   .event-fields > .player-swap-field {
