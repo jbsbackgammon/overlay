@@ -304,6 +304,12 @@ assert.equal(migrateSavedState({ round: '（未選択）' }, true).state.round,
 
 const version = editor.match(/overlay\.js\?v=([^"']+)/)?.[1];
 assert.ok(version && output.includes('overlay.js?v=' + version), 'Editor/output script version mismatch');
+const cssVersion = editor.match(/styles\.css\?v=([^"']+)/)?.[1];
+assert.ok(cssVersion && output.includes('styles.css?v=' + cssVersion),
+  'Editor and OBS output must load the same CSS version');
+const stageVersion = editor.match(/stage\.html\?v=([^"']+)/)?.[1];
+assert.ok(stageVersion && output.includes('stage.html?v=' + stageVersion),
+  'Editor and OBS output must load the same stage markup version');
 // Exercise the actual PNG capture helper with stubbed browser renderers.
 // The previous implementation failed immediately rather than attempting
 // html2canvas whenever html-to-image was present but threw an exception.
