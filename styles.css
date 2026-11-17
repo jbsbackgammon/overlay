@@ -758,6 +758,30 @@ button, input, select { font: inherit; }
 
 .event-fields > .field { min-width: 0; }
 
+/* The English toggle adds a second input column. Keep every label and
+   input row at the same fixed height so Japanese and English controls
+   do not shift vertically when the second column appears. */
+.event-fields > .field,
+.title-fields > .field {
+  grid-template-rows: 18px 38px;
+  align-content: start;
+}
+.event-fields > .field > label,
+.title-fields > .field > label {
+  line-height: 18px;
+}
+.event-fields > .field > .english-input,
+.title-fields > .field > .english-input,
+.title-fields > .field > input:not(.english-input),
+.title-fields > .field > .preset-input {
+  height: 38px;
+  min-height: 0;
+}
+.title-fields > .field > .preset-input > input,
+.title-fields > .field > .preset-input > select {
+  height: 38px;
+}
+
 .title-fields,
 .right-selects {
   grid-column: 1 / -1;

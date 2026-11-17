@@ -12,7 +12,7 @@
   <link rel="icon" href="https://jbsbackgammon.github.io/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=20261117-board-color-divider-v24">
+  <link rel="stylesheet" href="styles.css?v=20261117-bilingual-alignment-v25">
 </head>
 <body>
   <div class="app">
@@ -48,8 +48,8 @@
       </div>
 
       <div class="right-selects">
-        <div class="field"><label for="right1Mode">右1</label><select id="right1Mode" data-field="right1Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="title" selected>大会名パネル</option><option value="thumbnail">サムネイル流し</option></select></div>
-        <div class="field"><label for="right2Mode">右2</label><select id="right2Mode" data-field="right2Mode"><option value="none" selected>表示無し</option><option value="reference">ガイド表示</option><option value="title">大会名パネル</option><option value="thumbnail">サムネイル流し</option></select></div>
+        <div class="field"><label for="right1Mode">右1</label><select id="right1Mode" data-field="right1Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="title" selected>大会パネル</option><option value="thumbnail">サムネイル流し</option></select></div>
+        <div class="field"><label for="right2Mode">右2</label><select id="right2Mode" data-field="right2Mode"><option value="none" selected>表示無し</option><option value="reference">ガイド表示</option><option value="title">大会パネル</option><option value="thumbnail">サムネイル流し</option></select></div>
         <div class="field"><label for="right3Mode">右3</label><select id="right3Mode" data-field="right3Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="rules34">ルール（右3・右4）</option><option value="sponsors" selected>広告流し</option></select></div>
         <div class="field"><label for="right4Mode">右4</label><select id="right4Mode" data-field="right4Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="rules34" disabled>ルール（右3・右4）</option><option value="rules45">ルール（右4・右5）</option><option value="sponsors">広告流し</option></select></div>
         <div class="field"><label for="right5Mode">右5</label><select id="right5Mode" data-field="right5Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="rules45" disabled>ルール（右4・右5）</option><option value="sponsors">広告流し</option></select></div>
@@ -65,10 +65,10 @@
       <div class="color-row">
         <div class="field"><label for="frameColorText">テーマカラー</label><div class="color-control"><input type="color" id="frameColor" data-color-for="frameColor"><input id="frameColorText" class="hex-input" data-field="frameColor" maxlength="7" spellcheck="false"></div></div>
         <div class="field panel-color-field">
-          <label for="panelMode">大会名パネルカラー</label>
+          <label for="panelMode">大会パネルカラー</label>
           <div class="panel-color-control">
             <span class="panel-color-swatch"><input type="color" id="panelColor" data-color-for="panelColor"></span>
-            <select id="panelMode" data-field="panelMode" aria-label="大会名パネルカラーの種類">
+            <select id="panelMode" data-field="panelMode" aria-label="大会パネルカラーの種類">
               <option value="gradient">金グラデ</option>
               <option value="silver">銀グラデ</option>
               <option value="bronze">銅グラデ</option>

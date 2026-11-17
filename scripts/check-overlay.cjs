@@ -25,6 +25,13 @@ assert.ok(js.includes('"right5Mode", mediaLibrary.ads'), 'Missing right5 image o
 assert.ok(js.includes('modes.right3 === "rules34"'), 'Missing rules for right3 and right4');
 assert.ok(js.includes('modes.right4 === "rules45"'), 'Missing rules for right4 and right5');
 assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
+assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
+assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
+const styles = read('styles.css');
+assert.ok(styles.includes('grid-template-rows: 18px 38px;'),
+  'Editor fields must align their label and control rows in bilingual mode');
+assert.ok(styles.includes('.title-fields > .field > .preset-input > select'),
+  'Preset selects need the same height as Japanese and English inputs');
 assert.ok(js.includes('brand.getEdition(name)'), 'Official editions must come from JBS common');
 assert.ok(editor.includes('class="panel-color-swatch"'), 'Panel color preview container is required');
 assert.ok(editor.includes('class="field board-color-field"') && editor.includes('<label for="boardPreset">ボードカラー</label>'),
