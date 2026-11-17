@@ -970,6 +970,7 @@ button, input, select { font: inherit; }
 .panel-color-control {
   display: grid;
   grid-template-columns: var(--size-swatch) minmax(0, 1fr) minmax(0, 1fr);
+  align-items: end;
   gap: var(--space-8);
 }
 
