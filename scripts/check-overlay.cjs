@@ -32,11 +32,11 @@ assert.ok(editor.includes('class="control-panel jbs-ui"'), 'Missing JBS editor s
 for (const name of ['jbs-ui-button', 'jbs-ui-divider', 'jbs-ui-check']) {
   assert.ok(editor.includes(name), 'Missing shared UI component: ' + name);
 }
+const styles = read('styles.css');
 for (const duplicate of ['.settings-action {', '.action-separator {', '.sponsor-toggle {', '.field { display: grid;', '.field input, .field select {']) {
   assert.ok(!styles.includes(duplicate), 'Duplicated local style: ' + duplicate);
 }
 
-const styles = read('styles.css');
 assert.ok(styles.includes('grid-template-rows: var(--jbs-ui-label-height) var(--jbs-ui-input-height);'),
   'Editor fields must align their label and control rows in bilingual mode');
 assert.ok(styles.includes('.title-fields > .field > .preset-input > select'),
