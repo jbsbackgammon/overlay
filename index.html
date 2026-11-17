@@ -13,7 +13,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
   <link rel="stylesheet" href="https://jbsbackgammon.github.io/common/ui.css?v=31">
-  <link rel="stylesheet" href="styles.css?v=20261118-color-divider-v56">
+  <link rel="stylesheet" href="styles.css?v=20261118-save-complete-v57">
 </head>
 <body>
   <div class="app">
@@ -118,6 +118,9 @@
     </div>
     <div class="saved-settings" id="savedSettings"></div>
   </dialog>
+  <dialog class="save-complete-dialog jbsui-dialog" id="saveCompleteDialog" aria-label="保存完了">
+    <p role="status">保存完了</p>
+  </dialog>
 
   <!-- Common defines JBSBrand; its data are fetched separately with a fallback. -->
   <script src="https://jbsbackgammon.github.io/common/brand.js"></script>
@@ -125,7 +128,7 @@
     fetch('stage.html?v=20261117-upper-13-24-v16').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261117-latin-player-v43';
+      script.src = 'overlay.js?v=20261118-save-complete-v44';
       document.body.appendChild(script);
     });
   </script>
