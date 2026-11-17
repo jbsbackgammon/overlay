@@ -734,12 +734,6 @@ function render() {
   if (!stage) return;
   if (state.rules && state.sponsors2) state.sponsors2 = false;
   stage.style.setProperty("--frame-color", state.frameColor);
-  // Expose the common sub color without changing existing board/panel styling.
-  stage.style.setProperty("--tournament-sub-color", state.themeSubColor || state.frameColor);
-  $$(".open-output").forEach((button) => {
-    button.style.setProperty("--button-top", state.topColor);
-    button.style.setProperty("--button-bottom", state.bottomColor);
-  });
   stage.classList.toggle("personal-mode", state.personal);
   stage.classList.toggle("player-photo-mode", state.playerPhoto);
   stage.dataset.right1Mode = mediaMode(state.right1Mode, "thumbnail") ? "thumbnail" : (state.right1Mode || "title");
@@ -769,7 +763,6 @@ function render() {
   stage.style.setProperty("--panel-background", metallicBackground || state.panelColor);
   const panelInk = metallicBackground ? "#11100d" : contrastText(state.panelColor);
   stage.style.setProperty("--panel-ink", panelInk);
-  stage.style.setProperty("--accent", state.accentColor);
   const automaticEditionEn = englishEdition(state.edition);
   if (automaticEditionEn) {
     state.editionEn = automaticEditionEn;
@@ -805,9 +798,10 @@ function render() {
   const shownRound = shown("round");
   roundOutput.textContent = shownRound;
   const isFinal = state.round.trim() === "決勝" || shownRound.trim().toUpperCase() === "FINAL";
-  roundOutput.style.color = isFinal
+  // One stage-level color drives both the original and mirrored right2 panel.
+  stage.style.setProperty("--round-text-color", isFinal
     ? (panelInk.toUpperCase() === "#FFFFFF" ? "#FF6670" : "#CF2933")
-    : "var(--panel-ink)";
+    : panelInk);
   $("[data-output=topName]").textContent = shown("topName");
   $("[data-output=bottomName]").textContent = shown("bottomName");
   $(".player-dot.top").style.setProperty("--player-color", state.topColor);
@@ -816,14 +810,12 @@ function render() {
   const bottomGuide = $(".point-guide.bottom");
   // Upper points 13–24 belong to the bottom player; only the goal
   // is colored for the top player. Lower guide colors remain unchanged.
-  topGuide.style.setProperty("--guide-color", state.bottomColor);
   const topGuideInk = contrastText(state.bottomColor);
   topGuide.style.setProperty("--guide-ink", topGuideInk);
   topGuide.style.setProperty("--guide-background", rgba(state.bottomColor, 0.7));
   topGuide.style.setProperty("--guide-border", rgba(topGuideInk, 0.34));
   topGuide.style.setProperty("--guide-goal-ink", contrastText(state.topColor));
   topGuide.style.setProperty("--guide-goal-background", rgba(state.topColor, 0.7));
-  bottomGuide.style.setProperty("--guide-color", state.bottomColor);
   const bottomGuideInk = contrastText(state.bottomColor);
   bottomGuide.style.setProperty("--guide-ink", bottomGuideInk);
   bottomGuide.style.setProperty("--guide-background", rgba(state.bottomColor, 0.7));
