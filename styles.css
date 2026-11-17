@@ -745,7 +745,7 @@ button, input, select { font: inherit; }
   grid-template-columns: minmax(220px, 1fr) minmax(420px, 2fr);
   gap: var(--space-8) var(--space-16);
   padding: var(--space-16) var(--space-24);
-  border-top: var(--border-width) solid var(--color-90);
+  border-top: var(--width-border) solid var(--color-90);
   background: var(--color-100);
 }
 
@@ -764,23 +764,23 @@ button, input, select { font: inherit; }
    do not shift vertically when the second column appears. */
 .event-fields > .field,
 .title-fields > .field {
-  grid-template-rows: var(--label-height) var(--input-height);
+  grid-template-rows: var(--height-label) var(--height-input);
   align-content: start;
 }
 .event-fields > .field > label,
 .title-fields > .field > label {
-  line-height: var(--label-height);
+  line-height: var(--height-label);
 }
 .event-fields > .field > .english-input,
 .title-fields > .field > .english-input,
 .title-fields > .field > input:not(.english-input),
 .title-fields > .field > .preset-input {
-  height: var(--input-height);
+  height: var(--height-input);
   min-height: 0;
 }
 .title-fields > .field > .preset-input > input,
 .title-fields > .field > .preset-input > select {
-  height: var(--input-height);
+  height: var(--height-input);
 }
 
 .title-fields,
@@ -794,7 +794,7 @@ button, input, select { font: inherit; }
 .right-selects { grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: start; }
 @media (max-width: 960px) { .right-selects { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .right-selects { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.right-selects > .field > select:first-of-type { height: var(--input-height); }
+.right-selects > .field > select:first-of-type { height: var(--height-input); }
 /* Preserve the editor row when neither right slot displays the tournament. */
 .title-fields.is-inactive label { opacity: .5; }
 .title-fields.is-inactive input:disabled,
@@ -843,20 +843,20 @@ button, input, select { font: inherit; }
   align-items: center;
   gap: var(--space-12);
   color: var(--color-40);
-  font-size: var(--font-14);
-  font-weight: var(--weight-action);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-action);
   white-space: nowrap;
 }
 
 .channel-picker select {
   min-width: 112px;
-  height: var(--button-height);
+  height: var(--height-button);
   padding: 0 var(--space-24) 0 var(--space-16);
-  border: var(--border-width) solid var(--color-80);
+  border: var(--width-border) solid var(--color-80);
   border-radius: var(--radius);
   background-color: var(--color-100);
   color: var(--color-20);
-  font-weight: var(--weight-action);
+  font-weight: var(--font-weight-action);
   cursor: pointer;
 }
 
@@ -867,7 +867,7 @@ button, input, select { font: inherit; }
   justify-content: flex-start;
   gap: var(--space-12);
   align-self: start;
-  height: var(--input-height);
+  height: var(--height-input);
   margin-top: var(--space-24);
 }
 
@@ -892,24 +892,24 @@ button, input, select { font: inherit; }
 /* Each player's square photo stays in the same row as the selector and name. */
 .player-entry-row {
   display: grid;
-  grid-template-columns: var(--swatch-size) minmax(0, 1fr);
+  grid-template-columns: var(--size-swatch) minmax(0, 1fr);
   align-items: center;
   gap: var(--space-8);
   min-width: 0;
-  height: var(--input-height);
+  height: var(--height-input);
 }
-.player-entry-row .preset-input { min-width: 0; height: var(--input-height); }
+.player-entry-row .preset-input { min-width: 0; height: var(--height-input); }
 .player-entry-row .preset-input select,
-.player-entry-row .preset-input input { height: var(--input-height); min-width: 0; }
+.player-entry-row .preset-input input { height: var(--height-input); min-width: 0; }
 .player-photo-picker {
   appearance: none;
   position: relative;
   display: block;
-  width: var(--swatch-size);
-  height: var(--swatch-size);
+  width: var(--size-swatch);
+  height: var(--size-swatch);
   padding: 0;
   overflow: hidden;
-  border: var(--border-width) solid var(--color-80);
+  border: var(--width-border) solid var(--color-80);
   border-radius: var(--radius);
   background: var(--color-95);
   cursor: pointer;
@@ -924,8 +924,8 @@ button, input, select { font: inherit; }
   justify-content: center;
   background: rgba(0, 0, 0, .72);
   color: var(--color-100);
-  font-size: var(--font-12);
-  font-weight: var(--weight-action);
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-action);
   opacity: 0;
   pointer-events: none;
   transition: opacity .15s ease;
@@ -990,7 +990,7 @@ button, input, select { font: inherit; }
   top: 50%;
   transform: translateY(-50%);
   width: 1px;
-  height: var(--divider-height);
+  height: var(--height-input);
   background: var(--color-80);
   pointer-events: none;
 }
@@ -999,7 +999,7 @@ button, input, select { font: inherit; }
 [data-board-preset] {
   background: var(--color-100) !important;
   color: var(--color-20) !important;
-  font-weight: var(--weight-action) !important;
+  font-weight: var(--font-weight-action) !important;
   cursor: pointer;
 }
 
@@ -1024,12 +1024,12 @@ button, input, select { font: inherit; }
   display: grid;
   place-content: center;
   line-height: 1.15;
-  border: var(--border-width) solid var(--color-80);
+  border: var(--width-border) solid var(--color-80);
   border-radius: var(--radius);
   background: var(--color-95);
   color: var(--color-20);
-  font-size: var(--font-12);
-  font-weight: var(--weight-action);
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-action);
   cursor: pointer;
 }
 
@@ -1040,14 +1040,14 @@ button, input, select { font: inherit; }
 /* All color and photo previews sit to the left of their associated controls. */
 .color-control {
   display: grid;
-  grid-template-columns: var(--swatch-size) minmax(0, 1fr);
+  grid-template-columns: var(--size-swatch) minmax(0, 1fr);
   gap: var(--space-8);
 }
 
 /* Tournament panel: color preview, mode selector, then HEX input. */
 .panel-color-control {
   display: grid;
-  grid-template-columns: var(--swatch-size) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: var(--size-swatch) minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--space-8);
 }
 
@@ -1057,10 +1057,10 @@ button, input, select { font: inherit; }
    displays the exact panel gradient while the picker stays disabled. */
 .panel-color-swatch {
   display: block;
-  width: var(--swatch-size);
-  height: var(--input-height);
+  width: var(--size-swatch);
+  height: var(--height-input);
   overflow: hidden;
-  border: var(--border-width) solid var(--color-80);
+  border: var(--width-border) solid var(--color-80);
   border-radius: var(--radius);
   background: var(--panel-swatch-background, var(--color-100));
 }
@@ -1076,8 +1076,8 @@ button, input, select { font: inherit; }
 }
 
 .field input[type="color"] {
-  width: var(--swatch-size);
-  height: var(--swatch-size);
+  width: var(--size-swatch);
+  height: var(--size-swatch);
   padding: 0;
   border-color: var(--color-80);
   border-radius: var(--radius);
@@ -1109,7 +1109,7 @@ button, input, select { font: inherit; }
   border-radius: var(--radius);
   background: var(--color-100);
   color: var(--color-20);
-  box-shadow: var(--dialog-shadow);
+  box-shadow: var(--shadow-dialog);
 }
 
 .settings-dialog::backdrop { background: color-mix(in srgb, var(--color-20) 48%, transparent); }
@@ -1119,19 +1119,19 @@ button, input, select { font: inherit; }
   align-items: center;
   justify-content: space-between;
   padding: var(--space-16) var(--space-24);
-  border-bottom: var(--border-width) solid var(--color-90);
+  border-bottom: var(--width-border) solid var(--color-90);
 }
 
-.settings-dialog-head h2 { margin: 0; font-size: var(--font-20); font-weight: var(--weight-action); }
+.settings-dialog-head h2 { margin: 0; font-size: var(--font-size-20); font-weight: var(--font-weight-action); }
 
 .dialog-close {
-  width: var(--button-height);
-  height: var(--button-height);
+  width: var(--height-button);
+  height: var(--height-button);
   border: 0;
   border-radius: 50%;
   background: var(--color-95);
   color: var(--color-20);
-  font-size: var(--font-24);
+  font-size: var(--font-size-24);
   line-height: 1;
   cursor: pointer;
 }
@@ -1148,13 +1148,13 @@ button, input, select { font: inherit; }
   width: 100%;
   padding: var(--space-12);
   border: 0;
-  border-bottom: var(--border-width) solid var(--color-90);
+  border-bottom: var(--width-border) solid var(--color-90);
   border-radius: 0;
   background: transparent;
   color: var(--color-20);
   text-align: left;
-  font-size: var(--font-14);
-  font-weight: var(--weight-action);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-action);
   cursor: pointer;
 }
 

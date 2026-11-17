@@ -28,13 +28,19 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=10'), 'Shared CSS v10 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=11'), 'Shared CSS v11 must be loaded');
+assert.ok(styles.includes('height: var(--height-input);'),
+  'Editor input and divider heights must share the input-height variable');
+for (const retired of ["--border-width","--button-height","--dialog-shadow","--divider-height","--font-12","--font-14","--font-16","--font-20","--font-24","--input-height","--label-height","--preset-select-width","--primary-shadow","--swatch-size","--weight-action","--weight-normal"]) {
+  assert.ok(!styles.includes(retired), 'Retired naming must not remain: ' + retired);
+}
+
 assert.ok(styles.includes('font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, sans-serif;'),
   'Overlay fallback font order must prioritize Hiragino before Yu Gothic');
 assert.ok(styles.includes('border-radius: var(--radius);'), 'Editor radius token missing');
 assert.ok(!styles.includes('--jbs-ui-'), 'Retired prefixed style token remains');
-assert.ok(styles.includes('height: var(--input-height);')
-  && styles.includes('width: var(--swatch-size);'), 'Shared 36px sizes missing');
+assert.ok(styles.includes('height: var(--height-input);')
+  && styles.includes('width: var(--size-swatch);'), 'Shared 36px sizes missing');
 assert.ok(styles.includes('background: var(--color-95, hsl(215 25% 95%));')
   && styles.includes('color: var(--color-20, hsl(215 25% 20%));'), 'Base colors missing');
 assert.ok(!js.includes('setProperty("--button-theme"'), 'Unused theme override remains');
@@ -52,7 +58,7 @@ for (const duplicate of ['.settings-action {', '.action-separator {', '.sponsor-
   assert.ok(!styles.includes(duplicate), 'Duplicated local style: ' + duplicate);
 }
 
-assert.ok(styles.includes('grid-template-rows: var(--label-height) var(--input-height);'),
+assert.ok(styles.includes('grid-template-rows: var(--height-label) var(--height-input);'),
   'Editor fields must align their label and control rows in bilingual mode');
 assert.ok(styles.includes('.title-fields > .field > .preset-input > select'),
   'Preset selects need the same height as Japanese and English inputs');
