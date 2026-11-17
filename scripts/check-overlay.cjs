@@ -96,6 +96,23 @@ assert.ok(js.includes('"決勝": "FINAL"'),
   'Japanese final must match the English preset label');
 assert.ok(js.includes('migrateOldEmptyRound') && js.includes('roundMigrationKey'),
   'Old blank defaults should migrate only once without clobbering user settings');
+assert.ok(!js.includes('savedState.round === "準決勝"'),
+  'Valid saved semifinals must not be replaced with the default final');
+assert.ok(js.includes('const STAGE_WIDTH = 1920;') && js.includes('const STAGE_HEIGHT = 1080;'),
+  'Preview scaling and both PNG renderers must share one canvas size');
+for (const unused of ['sponsor-shop', 'sponsor-kifu', 'sponsor-service', 'sponsor-wordmark',
+  'dice-mark', 'thumbnail-picker']) {
+  assert.ok(!styles.includes('.' + unused), 'Unused CSS selector remains: ' + unused);
+}
+assert.ok(styles.includes('.jbsui .swap-colors {')
+  && !styles.includes('.swap-colors:hover')
+  && !/\.jbsui\s+\.swap-colors\s*\{[^}]*(?:border:|background:|font-size:|font-weight:)/s.test(styles),
+  'Player swap buttons must inherit common JBS button appearance');
+for (const breakpoint of [1200, 960, 820, 680, 600]) {
+  const count = styles.split('@media (max-width: ' + breakpoint + 'px)').length - 1;
+  assert.equal(count, 1, 'Breakpoint rules must be grouped, one block per width: ' + breakpoint);
+}
+
 
 const editingStyles = styles.slice(styles.indexOf('.control-panel {'), styles.indexOf('.output-page {'))
   .replace(/\/\*[\s\S]*?\*\//g, '');
@@ -117,9 +134,9 @@ assert.ok(!styles.includes('transition: opacity'),
 
 assert.ok(styles.includes('height: var(--height-input);'),
   'Editor input and divider heights must share the input-height variable');
-assert.ok(editor.includes('id="swapPlayerNames" class="swap-colors player-name-swap">上下入替</button>'),
+assert.ok(editor.includes('id="swapPlayerNames" class="swap-colors player-name-swap jbsui-button">上下入替</button>'),
   'Player swap button must show a single-line label');
-assert.ok(editor.includes('id="swapPlayerColors" class="swap-colors">上下入替</button>')
+assert.ok(editor.includes('id="swapPlayerColors" class="swap-colors jbsui-button">上下入替</button>')
   && styles.includes('--width-editor-swap: 80px;')
   && styles.includes('height: var(--height-input);')
   && styles.includes('white-space: nowrap;'),
@@ -244,6 +261,40 @@ assert.ok(js.includes('leftPhoto: state.topPhoto') && js.includes('rightPhoto: s
   'Uploaded player photos must be transferred');
 assert.ok(js.includes('window.open(url.href, "_blank")'),
   'Thumbnail editor must open in a fresh window to keep opener linkage reliable');
+
+const migrationStart = js.indexOf('function loadSharedState() {');
+const migrationEnd = js.indexOf('\n// The shared UI focus ring', migrationStart);
+assert.ok(migrationStart >= 0 && migrationEnd > migrationStart,
+  'Stored-state migration must remain directly testable');
+const migrationSource = js.slice(migrationStart, migrationEnd);
+const migrateSavedState = Function('saved', 'migrationDone', `
+  const embeddedState = null;
+  const fromQuery = {};
+  const storageKey = 'test-overlay';
+  const defaults = { edition: 'JBS 第　回', round: '決勝', roundEn: 'FINAL',
+    guideVerticalGap: 0, guideStart12: 500, guideStart6: 910,
+    guideGoalStart: 1255, guidePointGap: 62, panelColor: '#FFFFFF' };
+  let state = { ...defaults };
+  let saves = 0;
+  const localStorage = {
+    data: new Map([['test-overlay', JSON.stringify(saved)],
+      ...(migrationDone ? [['test-overlay-default-round-v1', '1']] : [])]),
+    getItem(key) { return this.data.get(key) ?? null; },
+    setItem(key, value) { this.data.set(key, value); }
+  };
+  const normalizeLegacyMediaModes = (value) => value;
+  const persistState = () => { saves += 1; };
+  ` + migrationSource + `
+  loadSharedState();
+  return { state, saves };
+`);
+assert.equal(migrateSavedState({ round: '準決勝', roundEn: 'SEMIFINAL' }, true).state.round,
+  '準決勝', 'Manually saved semifinals must survive reloads');
+assert.equal(migrateSavedState({ round: '' }, false).state.round,
+  '決勝', 'Legacy blank round must migrate to final');
+assert.equal(migrateSavedState({ round: '（未選択）' }, true).state.round,
+  '決勝', 'Legacy placeholder must migrate even when initial migration completed');
+
 const version = editor.match(/overlay\.js\?v=([^"']+)/)?.[1];
 assert.ok(version && output.includes('overlay.js?v=' + version), 'Editor/output script version mismatch');
 // Exercise the actual PNG capture helper with stubbed browser renderers.
@@ -254,8 +305,8 @@ const sourceEnd = js.indexOf('\nasync function exportStageAsPng() {', sourceStar
 assert.ok(sourceStart >= 0 && sourceEnd > sourceStart,
   'PNG capture helper must be independently testable');
 const captureSource = js.slice(sourceStart, sourceEnd);
-const makeCapture = (browser) => Function('window', 'console',
-  captureSource + '\nreturn captureStagePngBlob;')(browser, { warn() {}, error() {} });
+const makeCapture = (browser) => Function('window', 'console', 'STAGE_WIDTH', 'STAGE_HEIGHT',
+  captureSource + '\nreturn captureStagePngBlob;')(browser, { warn() {}, error() {} }, 1920, 1080);
 
 async function testPngCapture() {
   const stage = { id: 'stage-test' };
