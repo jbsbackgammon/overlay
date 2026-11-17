@@ -100,6 +100,13 @@ assert.ok(!js.includes('savedState.round === "準決勝"'),
   'Valid saved semifinals must not be replaced with the default final');
 assert.ok(js.includes('const STAGE_WIDTH = 1920;') && js.includes('const STAGE_HEIGHT = 1080;'),
   'Preview scaling and both PNG renderers must share one canvas size');
+assert.ok(js.includes('design.getPropertyValue("--width-editor-preview-max")')
+  && js.includes('design.getPropertyValue("--width-editor-preview")')
+  && js.includes('design.getPropertyValue("--space-12")')
+  && !js.includes('Math.min(1200,'),
+  'Preview sizing must use the CSS design tokens, not duplicate numeric constants');
+assert.equal((js.match(/Object\.hasOwn\(defaults, key\)/g) || []).length, 2,
+  'Only owned state fields may be accepted from URL or imported JSON');
 for (const unused of ['sponsor-shop', 'sponsor-kifu', 'sponsor-service', 'sponsor-wordmark',
   'dice-mark', 'thumbnail-picker']) {
   assert.ok(!styles.includes('.' + unused), 'Unused CSS selector remains: ' + unused);
