@@ -28,8 +28,7 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 assert.ok(editor.includes('common/ui.css?v=3'), 'Shared JBS UI stylesheet missing');
-assert.ok(!/^\\.preset-input\\s*\\{/m.test(styles)
-  && !/^\\.preset-input select\\s*\\{/m.test(styles),
+assert.ok(!styles.includes('\n.preset-input {') && !styles.includes('\n.preset-input select {'),
   'Shared preset select must not be redefined in overlay styles');
 for (const field of ['topMember', 'bottomMember', 'titlePreset', 'roundPreset']) {
   assert.ok(editor.includes('id="' + field + '"'),
