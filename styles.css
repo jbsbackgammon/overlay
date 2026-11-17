@@ -837,14 +837,6 @@ button, input, select { font: inherit; }
   gap: var(--jbs-ui-space-8) var(--jbs-ui-space-12);
 }
 
-.action-separator {
-  width: 1px;
-  height: var(--jbs-ui-divider-height);
-  flex: 0 0 1px;
-  align-self: center;
-  background: var(--jbs-ui-divider);
-}
-
 .channel-picker {
   display: flex;
   align-items: center;
@@ -891,65 +883,7 @@ button, input, select { font: inherit; }
 
 .open-output {
   min-width: 170px;
-  min-height: var(--jbs-ui-button-height);
   padding: 0 24px;
-  border: 0;
-  border-radius: var(--jbs-ui-radius);
-  background: var(--button-theme, var(--jbs-ui-text));
-  color: white;
-  font-weight: var(--jbs-ui-weight-action);
-  box-shadow: 0 5px 12px rgba(0,0,0,.16);
-  cursor: pointer;
-}
-
-.open-output:hover { filter: brightness(1.08); }
-
-.settings-action {
-  min-height: var(--jbs-ui-button-height);
-  padding: 0 18px;
-  border: var(--jbs-ui-border-width) solid var(--jbs-ui-border);
-  border-radius: var(--jbs-ui-radius);
-  background: var(--jbs-ui-button-bg);
-  color: var(--jbs-ui-text);
-  font-size: var(--jbs-ui-font-14);
-  font-weight: var(--jbs-ui-weight-action);
-  cursor: pointer;
-}
-
-.settings-action:hover { background: var(--jbs-ui-hover-bg); }
-
-.sponsor-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--jbs-ui-gap-swatch);
-  min-height: 34px;
-  padding: 0;
-  color: var(--jbs-ui-label);
-  font-size: var(--jbs-ui-font-14);
-  font-weight: var(--jbs-ui-weight-label);
-  cursor: pointer;
-}
-
-.sponsor-toggle input {
-  width: 20px;
-  height: 20px;
-  margin: 0;
-  accent-color: var(--jbs-ui-text);
-}
-
-.sponsor-toggle:has(input:disabled) { opacity: .4; }
-
-.field { display: grid; gap: 4px; margin: 0; }
-.field label { color: var(--jbs-ui-label); font-size: var(--jbs-ui-font-13); font-weight: var(--jbs-ui-weight-label); letter-spacing: .03em; }
-
-.field input, .field select {
-  width: 100%;
-  border: var(--jbs-ui-border-width) solid var(--jbs-ui-border);
-  border-radius: var(--jbs-ui-radius);
-  background: var(--jbs-ui-surface);
-  color: var(--jbs-ui-text);
-  padding: 7px 10px;
-  outline: none;
 }
 
 .preset-input {
@@ -1045,11 +979,6 @@ button, input, select { font: inherit; }
 .event-fields > .field .preset-input > input,
 .title-fields > .field .preset-input > input {
   min-width: 0;
-}
-
-.field input:focus, .field select:focus {
-  border-color: var(--jbs-ui-focus);
-  box-shadow: 0 0 0 3px rgba(75,97,126,.1);
 }
 
 .color-row {
