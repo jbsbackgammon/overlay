@@ -178,7 +178,7 @@ button, input, select { font: inherit; }
 
 .guide-goal {
   left: var(--guide-goal-left, 810px);
-  width: 84px;
+  width: 128px;
   display: grid;
   place-items: center;
   font-size: 28px;
@@ -187,12 +187,8 @@ button, input, select { font: inherit; }
 }
 
 .guide-goal > span {
-  position: relative;
-  left: 0;
   display: inline-block;
   white-space: nowrap;
-  transform-origin: center;
-  transform: scaleX(.72);
 }
 
 .stage.personal-mode .player-dot { left: 350px; }

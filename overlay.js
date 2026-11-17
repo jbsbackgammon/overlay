@@ -737,7 +737,7 @@ function render() {
   const guideGoalStart = Number(state.guideGoalStart) || 0;
   const guidePointGap = Math.max(20, Number(state.guidePointGap) || 20);
   const guideLeft = guideStart12 - guidePointGap / 2;
-  const guideGoalWidth = 84;
+  const guideGoalWidth = 128;
   stage.style.setProperty("--guide-vertical-gap", `${guideVerticalGap}px`);
   stage.style.setProperty("--guide-left", `${guideLeft}px`);
   stage.style.setProperty("--guide-width", `${Math.max(guideGoalWidth, guideGoalStart + guideGoalWidth - guideLeft)}px`);
