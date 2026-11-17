@@ -1274,6 +1274,63 @@ async function loadMembers() {
   }
 }
 
+// Prefer the SVG-based renderer for fidelity. If it fails (for example due
+// to unsupported assets or a null canvas blob), retry with html2canvas.
+// A failure in the preferred renderer must not prevent PNG export.
+async function captureStagePngBlob(stage) {
+  const failures = [];
+  if (window.htmlToImage?.toBlob) {
+    try {
+      const blob = await window.htmlToImage.toBlob(stage, {
+        width: 1920,
+        height: 1080,
+        canvasWidth: 1920,
+        canvasHeight: 1080,
+        pixelRatio: 1,
+        cacheBust: false,
+        skipFonts: true,
+        backgroundColor: "transparent",
+        style: {
+          width: "1920px",
+          height: "1080px",
+          transform: "none",
+          transformOrigin: "top left"
+        }
+      });
+      if (blob?.size > 0) return blob;
+      throw new Error("html-to-image returned an empty PNG");
+    } catch (error) {
+      failures.push(error);
+      console.warn("PNG書出: html-to-image failed; trying html2canvas.", error);
+    }
+  }
+
+  if (typeof window.html2canvas === "function") {
+    try {
+      const canvas = await window.html2canvas(stage, {
+        width: 1920,
+        height: 1080,
+        scale: 1,
+        backgroundColor: null,
+        useCORS: true,
+        allowTaint: false,
+        imageTimeout: 5000,
+        logging: false
+      });
+      const blob = await new Promise((resolve, reject) => {
+        canvas.toBlob((result) => result?.size > 0
+          ? resolve(result)
+          : reject(new Error("html2canvas returned an empty PNG")), "image/png");
+      });
+      return blob;
+    } catch (error) {
+      failures.push(error);
+      console.error("PNG書出: html2canvas fallback failed.", error);
+    }
+  }
+  throw new Error("All PNG renderers failed: " + failures.map((error) => error?.message || String(error)).join(" / "));
+}
+
 async function exportStageAsPng() {
   const stage = $(".stage");
   const button = $("#exportPng");
@@ -1311,39 +1368,7 @@ async function exportStageAsPng() {
         image.addEventListener("error", resolve, { once: true });
       })));
     stage.style.transform = "none";
-    let blob;
-    if (window.htmlToImage?.toBlob) {
-      blob = await window.htmlToImage.toBlob(stage, {
-        width: 1920,
-        height: 1080,
-        canvasWidth: 1920,
-        canvasHeight: 1080,
-        pixelRatio: 1,
-        cacheBust: false,
-        skipFonts: true,
-        backgroundColor: "transparent",
-        style: {
-          width: "1920px",
-          height: "1080px",
-          transform: "none",
-          transformOrigin: "top left"
-        }
-      });
-      if (!blob) throw new Error("PNG blob creation failed");
-    } else {
-      const canvas = await window.html2canvas(stage, {
-        width: 1920,
-        height: 1080,
-        scale: 1,
-        backgroundColor: null,
-        useCORS: true,
-        imageTimeout: 5000,
-        logging: false
-      });
-      blob = await new Promise((resolve, reject) => {
-        canvas.toBlob((value) => value ? resolve(value) : reject(new Error("PNG blob creation failed")), "image/png");
-      });
-    }
+    const blob = await captureStagePngBlob(stage);
     const now = new Date();
     const pad = (number) => String(number).padStart(2, "0");
     const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
