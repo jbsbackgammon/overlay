@@ -1357,20 +1357,29 @@ async function exportStageAsPng() {
   }
 
   const originalText = button.textContent;
-  const originalTransform = stage.style.transform;
+  let captureHost = null;
   let readyToSave = false;
   button.disabled = true;
   button.textContent = "書出中…";
   try {
     await document.fonts?.ready;
-    await Promise.all($$("img", stage).map((image) => image.complete
+    // Render from an isolated full-resolution snapshot. Resetting the live
+    // preview's transform alone keeps its narrow overflow:hidden parent,
+    // which clips the PNG at the editor preview's width and height.
+    captureHost = document.createElement("div");
+    captureHost.style.cssText = `position:fixed;left:0;top:0;width:${STAGE_WIDTH}px;height:${STAGE_HEIGHT}px;z-index:-1;pointer-events:none;overflow:visible;`;
+    const captureStage = stage.cloneNode(true);
+    captureStage.style.transform = "none";
+    captureStage.style.transformOrigin = "top left";
+    captureHost.append(captureStage);
+    document.body.append(captureHost);
+    await Promise.all($("img", captureStage).map((image) => image.complete
       ? Promise.resolve()
       : new Promise((resolve) => {
         image.addEventListener("load", resolve, { once: true });
         image.addEventListener("error", resolve, { once: true });
       })));
-    stage.style.transform = "none";
-    const blob = await captureStagePngBlob(stage);
+    const blob = await captureStagePngBlob(captureStage);
     const now = new Date();
     const stamp = `${now.getFullYear()}${pad2(now.getMonth() + 1)}${pad2(now.getDate())}-${pad2(now.getHours())}${pad2(now.getMinutes())}${pad2(now.getSeconds())}`;
     const downloadUrl = URL.createObjectURL(blob);
@@ -1383,7 +1392,7 @@ async function exportStageAsPng() {
     console.error(error);
     alert("PNGの書き出しに失敗しました。ページを再読み込みして、もう一度お試しください。");
   } finally {
-    stage.style.transform = originalTransform;
+    captureHost?.remove();
     button.disabled = false;
     button.textContent = readyToSave ? "PNG保存" : originalText;
   }
