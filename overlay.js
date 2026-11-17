@@ -1,5 +1,7 @@
 const defaults = {
   edition: "JBS 第　回",
+  // Tracks editions sourced from common; empty means the edition is manually managed.
+  editionSource: "",
   title: "日本選手権",
   game: "バックギャモン",
   round: "",
@@ -327,6 +329,21 @@ function commonTournament(name) {
   return brand.getTournament(name);
 }
 
+// The JBS common master is the only authority for official edition numbers.
+// Keep manually entered editions untouched unless the user selects an event
+// again, or the current edition was previously populated from common.
+function applyCommonEdition(name) {
+  const brand = window.JBSBrand;
+  if (!brand?.getConfig?.() || !name) return false;
+  const edition = brand.getEdition(name);
+  if (!edition) return false;
+  const changed = state.edition !== edition || state.editionSource !== name;
+  state.edition = edition;
+  state.editionEn = englishEdition(edition);
+  state.editionSource = name;
+  return changed;
+}
+
 function refreshTournamentOptions() {
   const brand = window.JBSBrand;
   const select = document.getElementById("titlePreset");
@@ -344,9 +361,16 @@ async function loadCommonBrand() {
   try {
     await window.JBSBrand.load();
     refreshTournamentOptions();
-    // Use the shared contrast rule without resetting a saved or manually
-    // edited title, edition or theme color when the download finishes.
-    render();
+    // Auto-fill the initial placeholder and keep previously linked editions
+    // current when the common master changes (including annual JST rollovers).
+    // Do not overwrite custom editions restored from settings or JSON.
+    const isAutoEdition = state.editionSource === state.title || state.edition === defaults.edition;
+    if (isAutoEdition && applyCommonEdition(state.title)) {
+      persistState();
+      syncEditorFromState();
+    } else {
+      render();
+    }
   } catch (error) {
     console.warn("JBS commonを取得できなかったため、既存の大会設定を使用します。", error);
   }
@@ -1375,6 +1399,9 @@ function bindEditor() {
       const value = input.type === "checkbox" ? input.checked : input.value;
       if (input.classList.contains("hex-input") && !/^#[0-9a-fA-F]{6}$/.test(value)) return;
       state[key] = value;
+      if (key === "edition" || (key === "title" && value !== state.editionSource)) {
+        state.editionSource = "";
+      }
       if (key === "rules" && value) state.sponsors2 = false;
       if (key === "sponsors2" && value) state.rules = false;
       if (key === "personal" && value) state.playerPhoto = false;
@@ -1427,11 +1454,10 @@ function bindEditor() {
         const shared = commonTournament(select.value);
         state.titleEn = shared?.nameEn || titleEnglishPresets[select.value] || "";
         $("[data-field=titleEn]").value = state.titleEn;
-        // Common's edition follows the current date in JST (including the
-        // July rollover for 盤聖戦 and 賽王戦). Do not alter editions offline.
-        if (shared?.edition) {
-          state.edition = shared.edition;
-          state.editionEn = englishEdition(shared.edition);
+        // The common master calculates the edition for the current date in JST.
+        // If it is still loading, apply the edition when loading completes.
+        state.editionSource = select.value;
+        if (applyCommonEdition(select.value)) {
           $("[data-field=edition]").value = state.edition;
           $("[data-field=editionEn]").value = state.editionEn;
         }

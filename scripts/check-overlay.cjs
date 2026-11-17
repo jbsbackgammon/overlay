@@ -25,6 +25,10 @@ assert.ok(js.includes('"right5Mode", mediaLibrary.ads'), 'Missing right5 image o
 assert.ok(js.includes('modes.right3 === "rules34"'), 'Missing rules for right3 and right4');
 assert.ok(js.includes('modes.right4 === "rules45"'), 'Missing rules for right4 and right5');
 assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
+assert.ok(js.includes('brand.getEdition(name)'), 'Official editions must come from JBS common');
+assert.ok(js.includes('state.editionSource === state.title'), 'Linked editions must refresh on common load');
+assert.ok(js.includes('state.editionSource = "";'), 'Manual editions must detach from common');
+assert.ok(js.includes('state.edition === defaults.edition'), 'Initial placeholder should use common edition');
 const version = editor.match(/overlay\.js\?v=([^"']+)/)?.[1];
 assert.ok(version && output.includes('overlay.js?v=' + version), 'Editor/output script version mismatch');
 console.log('Overlay initialization checks passed.');
