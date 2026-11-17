@@ -732,7 +732,6 @@ function render() {
   // Expose the common sub color without changing existing board/panel styling.
   stage.style.setProperty("--tournament-sub-color", state.themeSubColor || state.frameColor);
   $$(".open-output").forEach((button) => {
-    button.style.setProperty("--button-theme", state.frameColor);
     button.style.setProperty("--button-top", state.topColor);
     button.style.setProperty("--button-bottom", state.bottomColor);
   });

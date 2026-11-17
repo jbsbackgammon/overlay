@@ -14,8 +14,8 @@ html, body { margin: 0; min-height: 100%; }
 
 body {
   /* UI tokens are loaded in the editor; output.html uses these same HSL fallbacks. */
-  background: var(--jbs-ui-page-bg, hsl(215 25% 95%));
-  color: var(--jbs-ui-text, hsl(215 25% 20%));
+  background: var(--color-95, hsl(215 25% 95%));
+  color: var(--color-20, hsl(215 25% 20%));
 }
 
 button, input, select { font: inherit; }
@@ -34,7 +34,7 @@ button, input, select { font: inherit; }
   display: grid;
   place-items: center;
   padding: 24px 24px 16px;
-  background: var(--jbs-ui-page-bg, hsl(215 25% 95%));
+  background: var(--color-95, hsl(215 25% 95%));
 }
 
 .stage-wrap {
@@ -743,17 +743,17 @@ button, input, select { font: inherit; }
 .control-panel {
   display: grid;
   grid-template-columns: minmax(220px, 1fr) minmax(420px, 2fr);
-  gap: var(--jbs-ui-space-8) var(--jbs-ui-space-16);
-  padding: var(--jbs-ui-space-16) var(--jbs-ui-space-24);
-  border-top: var(--jbs-ui-border-width) solid var(--jbs-ui-hairline);
-  background: var(--jbs-ui-surface);
+  gap: var(--space-8) var(--space-16);
+  padding: var(--space-16) var(--space-24);
+  border-top: var(--border-width) solid var(--color-90);
+  background: var(--color-100);
 }
 
 .event-fields {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) 41px minmax(320px, 2fr);
-  gap: var(--jbs-ui-space-16);
+  gap: var(--space-16);
   align-items: end;
 }
 
@@ -764,23 +764,23 @@ button, input, select { font: inherit; }
    do not shift vertically when the second column appears. */
 .event-fields > .field,
 .title-fields > .field {
-  grid-template-rows: var(--jbs-ui-label-height) var(--jbs-ui-input-height);
+  grid-template-rows: var(--label-height) var(--input-height);
   align-content: start;
 }
 .event-fields > .field > label,
 .title-fields > .field > label {
-  line-height: var(--jbs-ui-label-height);
+  line-height: var(--label-height);
 }
 .event-fields > .field > .english-input,
 .title-fields > .field > .english-input,
 .title-fields > .field > input:not(.english-input),
 .title-fields > .field > .preset-input {
-  height: var(--jbs-ui-input-height);
+  height: var(--input-height);
   min-height: 0;
 }
 .title-fields > .field > .preset-input > input,
 .title-fields > .field > .preset-input > select {
-  height: var(--jbs-ui-input-height);
+  height: var(--input-height);
 }
 
 .title-fields,
@@ -788,35 +788,35 @@ button, input, select { font: inherit; }
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--jbs-ui-space-16);
+  gap: var(--space-16);
 }
 
 .right-selects { grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: start; }
 @media (max-width: 960px) { .right-selects { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .right-selects { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.right-selects > .field > select:first-of-type { height: var(--jbs-ui-input-height); }
+.right-selects > .field > select:first-of-type { height: var(--input-height); }
 /* Preserve the editor row when neither right slot displays the tournament. */
 .title-fields.is-inactive label { opacity: .5; }
 .title-fields.is-inactive input:disabled,
 .title-fields.is-inactive select:disabled {
-  background-color: var(--jbs-ui-disabled-bg);
-  border-color: var(--jbs-ui-disabled-border);
-  color: var(--jbs-ui-disabled-text);
+  background-color: var(--color-95);
+  border-color: var(--color-90);
+  color: var(--color-60);
   cursor: not-allowed;
 }
 .panel-color-field.is-inactive label { opacity: .5; }
 .panel-color-field.is-inactive input:disabled,
 .panel-color-field.is-inactive select:disabled {
-  background-color: var(--jbs-ui-disabled-bg);
-  border-color: var(--jbs-ui-disabled-border);
-  color: var(--jbs-ui-disabled-text);
+  background-color: var(--color-95);
+  border-color: var(--color-90);
+  color: var(--color-60);
   cursor: not-allowed;
 }
 .panel-color-field.is-inactive .panel-color-swatch { opacity: .45; }
 .panel-color-field.is-gradient .hex-input:disabled {
-  background-color: var(--jbs-ui-disabled-bg);
-  border-color: var(--jbs-ui-disabled-border);
-  color: var(--jbs-ui-disabled-text);
+  background-color: var(--color-95);
+  border-color: var(--color-90);
+  color: var(--color-60);
   cursor: not-allowed;
 }
 .thumbnail-picker:not([hidden]) { margin-top: 4px; }
@@ -825,7 +825,7 @@ button, input, select { font: inherit; }
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: var(--jbs-ui-space-16);
+  gap: var(--space-16);
 }
 
 .guide-fields[hidden] { display: none; }
@@ -835,28 +835,28 @@ button, input, select { font: inherit; }
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--jbs-ui-space-8) var(--jbs-ui-space-12);
+  gap: var(--space-8) var(--space-12);
 }
 
 .channel-picker {
   display: flex;
   align-items: center;
-  gap: var(--jbs-ui-space-12);
-  color: var(--jbs-ui-label);
-  font-size: var(--jbs-ui-font-14);
-  font-weight: var(--jbs-ui-weight-action);
+  gap: var(--space-12);
+  color: var(--color-40);
+  font-size: var(--font-14);
+  font-weight: var(--weight-action);
   white-space: nowrap;
 }
 
 .channel-picker select {
   min-width: 112px;
-  height: var(--jbs-ui-button-height);
-  padding: 0 var(--jbs-ui-space-24) 0 var(--jbs-ui-space-16);
-  border: var(--jbs-ui-border-width) solid var(--jbs-ui-border);
-  border-radius: var(--jbs-ui-radius);
-  background-color: var(--jbs-ui-surface);
-  color: var(--jbs-ui-text);
-  font-weight: var(--jbs-ui-weight-action);
+  height: var(--button-height);
+  padding: 0 var(--space-24) 0 var(--space-16);
+  border: var(--border-width) solid var(--color-80);
+  border-radius: var(--radius);
+  background-color: var(--color-100);
+  color: var(--color-20);
+  font-weight: var(--weight-action);
   cursor: pointer;
 }
 
@@ -865,17 +865,17 @@ button, input, select { font: inherit; }
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: var(--jbs-ui-space-12);
+  gap: var(--space-12);
   align-self: start;
-  height: var(--jbs-ui-input-height);
-  margin-top: var(--jbs-ui-space-24);
+  height: var(--input-height);
+  margin-top: var(--space-24);
 }
 
 .player-swap-field {
   display: flex;
   align-items: flex-end;
   align-self: start;
-  padding-top: var(--jbs-ui-space-16);
+  padding-top: var(--space-16);
 }
 
 .player-swap-field .swap-colors {
@@ -892,29 +892,29 @@ button, input, select { font: inherit; }
 /* Each player's square photo stays in the same row as the selector and name. */
 .player-entry-row {
   display: grid;
-  grid-template-columns: var(--jbs-ui-swatch-size) minmax(0, 1fr);
+  grid-template-columns: var(--swatch-size) minmax(0, 1fr);
   align-items: center;
-  gap: var(--jbs-ui-space-8);
+  gap: var(--space-8);
   min-width: 0;
-  height: var(--jbs-ui-input-height);
+  height: var(--input-height);
 }
-.player-entry-row .preset-input { min-width: 0; height: var(--jbs-ui-input-height); }
+.player-entry-row .preset-input { min-width: 0; height: var(--input-height); }
 .player-entry-row .preset-input select,
-.player-entry-row .preset-input input { height: var(--jbs-ui-input-height); min-width: 0; }
+.player-entry-row .preset-input input { height: var(--input-height); min-width: 0; }
 .player-photo-picker {
   appearance: none;
   position: relative;
   display: block;
-  width: var(--jbs-ui-swatch-size);
-  height: var(--jbs-ui-swatch-size);
+  width: var(--swatch-size);
+  height: var(--swatch-size);
   padding: 0;
   overflow: hidden;
-  border: var(--jbs-ui-border-width) solid var(--jbs-ui-border);
-  border-radius: var(--jbs-ui-radius);
-  background: var(--jbs-ui-photo-bg);
+  border: var(--border-width) solid var(--color-80);
+  border-radius: var(--radius);
+  background: var(--color-95);
   cursor: pointer;
 }
-.player-photo-picker:hover { border-color: var(--jbs-ui-focus); }
+.player-photo-picker:hover { border-color: var(--color-60); }
 .player-photo-picker::after {
   content: "変更";
   position: absolute;
@@ -923,16 +923,16 @@ button, input, select { font: inherit; }
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, .72);
-  color: var(--jbs-ui-on-primary);
-  font-size: var(--jbs-ui-font-12);
-  font-weight: var(--jbs-ui-weight-action);
+  color: var(--color-100);
+  font-size: var(--font-12);
+  font-weight: var(--weight-action);
   opacity: 0;
   pointer-events: none;
   transition: opacity .15s ease;
 }
 .player-photo-picker:hover::after,
 .player-photo-picker:focus-visible::after { opacity: 1; }
-.player-photo-picker:focus-visible { outline: 2px solid var(--jbs-ui-focus); outline-offset: 2px; }
+.player-photo-picker:focus-visible { outline: 2px solid var(--color-60); outline-offset: 2px; }
 .player-photo-preview { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 .english-input[hidden] { display: none; }
@@ -942,7 +942,7 @@ button, input, select { font: inherit; }
 .event-fields > .field:has(> .english-input:not([hidden])),
 .title-fields > .field:has(> .english-input:not([hidden])) {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--jbs-ui-space-8);
+  column-gap: var(--space-8);
 }
 .event-fields > .field:has(> .english-input:not([hidden])) > label,
 .title-fields > .field:has(> .english-input:not([hidden])) > label {
@@ -975,7 +975,7 @@ button, input, select { font: inherit; }
     minmax(0, calc((100% - 318px) / 6 + 47px))
     minmax(0, calc((100% - 318px) / 6 + 47px))
     41px;
-  gap: var(--jbs-ui-space-16);
+  gap: var(--space-16);
 }
 
 /* Separate tournament panel styling from the board/player color group.
@@ -986,20 +986,20 @@ button, input, select { font: inherit; }
 .board-color-field::before {
   content: "";
   position: absolute;
-  left: calc(-1 * var(--jbs-ui-space-8));
+  left: calc(-1 * var(--space-8));
   top: 50%;
   transform: translateY(-50%);
   width: 1px;
-  height: var(--jbs-ui-divider-height);
-  background: var(--jbs-ui-divider);
+  height: var(--divider-height);
+  background: var(--color-80);
   pointer-events: none;
 }
 
 
 [data-board-preset] {
-  background: var(--jbs-ui-surface) !important;
-  color: var(--jbs-ui-text) !important;
-  font-weight: var(--jbs-ui-weight-action) !important;
+  background: var(--color-100) !important;
+  color: var(--color-20) !important;
+  font-weight: var(--weight-action) !important;
   cursor: pointer;
 }
 
@@ -1014,55 +1014,55 @@ button, input, select { font: inherit; }
   align-items: flex-end;
   grid-column: 6;
   grid-row: 1;
-  margin-left: calc(-1 * var(--jbs-ui-space-4));
+  margin-left: calc(-1 * var(--space-4));
 }
 
 .swap-colors {
   width: 41px;
   height: 41px;
-  padding: var(--jbs-ui-space-4);
+  padding: var(--space-4);
   display: grid;
   place-content: center;
   line-height: 1.15;
-  border: var(--jbs-ui-border-width) solid var(--jbs-ui-border);
-  border-radius: var(--jbs-ui-radius);
-  background: var(--jbs-ui-button-bg);
-  color: var(--jbs-ui-text);
-  font-size: var(--jbs-ui-font-12);
-  font-weight: var(--jbs-ui-weight-action);
+  border: var(--border-width) solid var(--color-80);
+  border-radius: var(--radius);
+  background: var(--color-95);
+  color: var(--color-20);
+  font-size: var(--font-12);
+  font-weight: var(--weight-action);
   cursor: pointer;
 }
 
 .swap-colors span { display: block; }
 
-.swap-colors:hover { background: var(--jbs-ui-hover-bg); }
+.swap-colors:hover { background: var(--color-90); }
 
 /* All color and photo previews sit to the left of their associated controls. */
 .color-control {
   display: grid;
-  grid-template-columns: var(--jbs-ui-swatch-size) minmax(0, 1fr);
-  gap: var(--jbs-ui-space-8);
+  grid-template-columns: var(--swatch-size) minmax(0, 1fr);
+  gap: var(--space-8);
 }
 
 /* Tournament panel: color preview, mode selector, then HEX input. */
 .panel-color-control {
   display: grid;
-  grid-template-columns: var(--jbs-ui-swatch-size) minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--jbs-ui-space-8);
+  grid-template-columns: var(--swatch-size) minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-8);
 }
 
-.panel-color-control select { padding-left: var(--jbs-ui-space-8); padding-right: var(--jbs-ui-space-4); }
+.panel-color-control select { padding-left: var(--space-8); padding-right: var(--space-4); }
 
 /* The native color input cannot render gradients. Its shared 36px swatch
    displays the exact panel gradient while the picker stays disabled. */
 .panel-color-swatch {
   display: block;
-  width: var(--jbs-ui-swatch-size);
-  height: var(--jbs-ui-input-height);
+  width: var(--swatch-size);
+  height: var(--input-height);
   overflow: hidden;
-  border: var(--jbs-ui-border-width) solid var(--jbs-ui-border);
-  border-radius: var(--jbs-ui-radius);
-  background: var(--panel-swatch-background, var(--jbs-ui-surface));
+  border: var(--border-width) solid var(--color-80);
+  border-radius: var(--radius);
+  background: var(--panel-swatch-background, var(--color-100));
 }
 .panel-color-swatch > input[type="color"] {
   display: block;
@@ -1076,11 +1076,11 @@ button, input, select { font: inherit; }
 }
 
 .field input[type="color"] {
-  width: var(--jbs-ui-swatch-size);
-  height: var(--jbs-ui-swatch-size);
+  width: var(--swatch-size);
+  height: var(--swatch-size);
   padding: 0;
-  border-color: var(--jbs-ui-border);
-  border-radius: var(--jbs-ui-radius);
+  border-color: var(--color-80);
+  border-radius: var(--radius);
   overflow: hidden;
   background: transparent;
   cursor: pointer;
@@ -1102,36 +1102,36 @@ button, input, select { font: inherit; }
 }
 
 .settings-dialog {
-  width: min(920px, calc(100vw - var(--jbs-ui-space-24) - var(--jbs-ui-space-24)));
-  max-height: min(680px, calc(100vh - var(--jbs-ui-space-24) - var(--jbs-ui-space-24)));
+  width: min(920px, calc(100vw - var(--space-24) - var(--space-24)));
+  max-height: min(680px, calc(100vh - var(--space-24) - var(--space-24)));
   padding: 0;
   border: 0;
-  border-radius: var(--jbs-ui-radius);
-  background: var(--jbs-ui-surface);
-  color: var(--jbs-ui-text);
-  box-shadow: var(--jbs-ui-dialog-shadow);
+  border-radius: var(--radius);
+  background: var(--color-100);
+  color: var(--color-20);
+  box-shadow: var(--dialog-shadow);
 }
 
-.settings-dialog::backdrop { background: var(--jbs-ui-backdrop); }
+.settings-dialog::backdrop { background: color-mix(in srgb, var(--color-20) 48%, transparent); }
 
 .settings-dialog-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--jbs-ui-space-16) var(--jbs-ui-space-24);
-  border-bottom: var(--jbs-ui-border-width) solid var(--jbs-ui-hairline);
+  padding: var(--space-16) var(--space-24);
+  border-bottom: var(--border-width) solid var(--color-90);
 }
 
-.settings-dialog-head h2 { margin: 0; font-size: var(--jbs-ui-font-20); font-weight: var(--jbs-ui-weight-action); }
+.settings-dialog-head h2 { margin: 0; font-size: var(--font-20); font-weight: var(--weight-action); }
 
 .dialog-close {
-  width: var(--jbs-ui-button-height);
-  height: var(--jbs-ui-button-height);
+  width: var(--button-height);
+  height: var(--button-height);
   border: 0;
   border-radius: 50%;
-  background: var(--jbs-ui-button-bg);
-  color: var(--jbs-ui-text);
-  font-size: var(--jbs-ui-font-24);
+  background: var(--color-95);
+  color: var(--color-20);
+  font-size: var(--font-24);
   line-height: 1;
   cursor: pointer;
 }
@@ -1140,27 +1140,27 @@ button, input, select { font: inherit; }
   display: grid;
   gap: 0;
   max-height: 570px;
-  padding: var(--jbs-ui-space-16);
+  padding: var(--space-16);
   overflow: auto;
 }
 
 .saved-setting {
   width: 100%;
-  padding: var(--jbs-ui-space-12);
+  padding: var(--space-12);
   border: 0;
-  border-bottom: var(--jbs-ui-border-width) solid var(--jbs-ui-hairline);
+  border-bottom: var(--border-width) solid var(--color-90);
   border-radius: 0;
   background: transparent;
-  color: var(--jbs-ui-text);
+  color: var(--color-20);
   text-align: left;
-  font-size: var(--jbs-ui-font-14);
-  font-weight: var(--jbs-ui-weight-action);
+  font-size: var(--font-14);
+  font-weight: var(--weight-action);
   cursor: pointer;
 }
 
 .saved-setting:last-child { border-bottom: 0; }
-.saved-setting:hover { background: var(--jbs-ui-hover-bg); }
-.saved-settings-empty { margin: var(--jbs-ui-space-16); color: var(--jbs-ui-label); text-align: center; }
+.saved-setting:hover { background: var(--color-90); }
+.saved-settings-empty { margin: var(--space-16); color: var(--color-40); text-align: center; }
 
 .output-page {
   width: 1920px;

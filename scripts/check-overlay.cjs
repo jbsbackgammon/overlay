@@ -28,23 +28,14 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=8'), 'Shared JBS UI stylesheet missing');
-assert.ok(styles.includes('border-radius: var(--jbs-ui-radius);'),
-  'Rectangular editor components must use the single shared 4px radius token');
-for (const retired of ['--jbs-ui-radius-control', '--jbs-ui-radius-button',
-                      '--jbs-ui-radius-panel', '--jbs-ui-radius-dialog',
-                      '--jbs-ui-radius-preview']) {
-  assert.ok(!styles.includes(retired), 'Deprecated radius token found: ' + retired);
-}
-
-assert.ok(!styles.includes('var(--jbs-ui-font-13)') && !styles.includes('var(--jbs-ui-weight-label)'),
-  'Editor must not reference retired typography tokens');
-assert.ok(styles.includes('height: var(--jbs-ui-input-height);') && styles.includes('width: var(--jbs-ui-swatch-size);'),
-  'Inputs and previews must use shared 36px tokens');
-assert.ok(styles.includes('background: var(--jbs-ui-page-bg, hsl(215 25% 95%));'),
-  'Editor and preview page backgrounds must use the seven-tone palette');
-assert.ok(styles.includes('color: var(--jbs-ui-text, hsl(215 25% 20%));'),
-  'Editor base text must use the twenty-percent tone');
+assert.ok(editor.includes('common/ui.css?v=9'), 'Shared CSS v9 must be loaded');
+assert.ok(styles.includes('border-radius: var(--radius);'), 'Editor radius token missing');
+assert.ok(!styles.includes('--jbs-ui-'), 'Retired prefixed style token remains');
+assert.ok(styles.includes('height: var(--input-height);')
+  && styles.includes('width: var(--swatch-size);'), 'Shared 36px sizes missing');
+assert.ok(styles.includes('background: var(--color-95, hsl(215 25% 95%));')
+  && styles.includes('color: var(--color-20, hsl(215 25% 20%));'), 'Base colors missing');
+assert.ok(!js.includes('setProperty("--button-theme"'), 'Unused theme override remains');
 assert.ok(!styles.includes('\n.preset-input {') && !styles.includes('\n.preset-input select {'),
   'Shared preset select must not be redefined in overlay styles');
 for (const field of ['topMember', 'bottomMember', 'titlePreset', 'roundPreset']) {
@@ -59,7 +50,7 @@ for (const duplicate of ['.settings-action {', '.action-separator {', '.sponsor-
   assert.ok(!styles.includes(duplicate), 'Duplicated local style: ' + duplicate);
 }
 
-assert.ok(styles.includes('grid-template-rows: var(--jbs-ui-label-height) var(--jbs-ui-input-height);'),
+assert.ok(styles.includes('grid-template-rows: var(--label-height) var(--input-height);'),
   'Editor fields must align their label and control rows in bilingual mode');
 assert.ok(styles.includes('.title-fields > .field > .preset-input > select'),
   'Preset selects need the same height as Japanese and English inputs');
