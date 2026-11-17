@@ -1026,11 +1026,8 @@ button, input, select { font: inherit; }
 
 .panel-color-control select { padding-left: var(--space-8); padding-right: var(--space-4); }
 
-/* The native color input cannot render gradients. Its shared 36px swatch
-   displays the exact panel gradient while the picker stays disabled. */
-.panel-color-swatch {
-  background: var(--panel-swatch-background, var(--color-100));
-}
+/* The common swatch uses --color-swatch-background, provided by overlay.js.
+   Hide the native solid-color picker to reveal gold/silver/bronze gradients. */
 .panel-color-field.is-gradient .panel-color-swatch > input[type="color"] {
   opacity: 0;
 }
