@@ -42,6 +42,7 @@ jobs:
           test -d vendor
           node --check overlay.js
           node --check scripts/generate-media.cjs
+          node scripts/check-overlay.cjs
           python3 -m json.tool ads.json > /dev/null
 
       - name: Prepare static website
