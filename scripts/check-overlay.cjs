@@ -28,7 +28,16 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=15'), 'Shared CSS v15 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=16'), 'Shared CSS v16 must be loaded');
+assert.ok(!/--(?:opacity-disabled|opacity-inactive|opacity-editor-swatch-inactive|shadow-dialog|shadow-editor-preview)/.test(styles),
+  'Retired opacity and shadow tokens must not remain');
+assert.ok(styles.includes('.title-fields.is-inactive label { opacity: var(--opacity-muted); }')
+  && styles.includes('.panel-color-field.is-inactive label { opacity: var(--opacity-muted); }')
+  && styles.includes('.panel-color-field.is-inactive .panel-color-swatch { opacity: var(--opacity-muted); }'),
+  'Editor inactive labels and previews must use the shared 0.5 opacity');
+assert.ok((styles.match(/box-shadow: var\(--shadow-primary\);/g) || []).length === 2,
+  'Editor preview and settings dialog must use the shared primary shadow');
+
 assert.ok(/\.channel-picker\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/s.test(styles),
   'Stream selector must use weight 400 from common CSS');
 assert.ok(/\[data-board-preset\]\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/s.test(styles),
