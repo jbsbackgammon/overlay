@@ -1607,56 +1607,6 @@ function loadSharedState() {
   }
 }
 
-// Native Chromium/Windows select popups ignore CSS option padding, so
-// reserve symmetrical visible space only while their option list is open.
-// Preserve explicit values (especially text-valued presets) and restore the
-// original labels as soon as the user selects or leaves the control.
-const selectPopupGutter = "\u00A0\u00A0";
-const originalOptionLabels = new WeakMap();
-function padNativeSelectOptions(select) {
-  for (const option of select.options) {
-    if (originalOptionLabels.has(option)) continue;
-    const originalText = option.textContent;
-    const originalValue = option.value;
-    const hadValue = option.hasAttribute("value");
-    originalOptionLabels.set(option, { originalText, hadValue });
-    option.value = originalValue;
-    option.textContent = selectPopupGutter + originalText + selectPopupGutter;
-  }
-}
-function restoreNativeSelectOptions(select) {
-  for (const option of select.options) {
-    const original = originalOptionLabels.get(option);
-    if (!original) continue;
-    option.textContent = original.originalText;
-    if (!original.hadValue) option.removeAttribute("value");
-    originalOptionLabels.delete(option);
-  }
-}
-function editorSelectFromEvent(event) {
-  const target = event.target;
-  return target instanceof HTMLSelectElement && target.closest(".jbsui") ? target : null;
-}
-document.addEventListener("pointerdown", (event) => {
-  const select = editorSelectFromEvent(event);
-  if (select) padNativeSelectOptions(select);
-}, true);
-document.addEventListener("keydown", (event) => {
-  const select = editorSelectFromEvent(event);
-  if (!select) return;
-  if (event.key === "Escape") restoreNativeSelectOptions(select);
-  else if (["Enter", " ", "ArrowDown", "ArrowUp", "F4"].includes(event.key))
-    padNativeSelectOptions(select);
-}, true);
-document.addEventListener("change", (event) => {
-  const select = editorSelectFromEvent(event);
-  if (select) restoreNativeSelectOptions(select);
-}, true);
-document.addEventListener("focusout", (event) => {
-  const select = editorSelectFromEvent(event);
-  if (select) restoreNativeSelectOptions(select);
-}, true);
-
 // The shared UI focus ring is reserved for keyboard navigation.
 // Native :focus-visible also matches mouse-focused text fields, so track
 // the most recent interaction explicitly. Pointer/touch input hides it.
