@@ -220,4 +220,62 @@ assert.ok(js.includes('window.open(url.href, "_blank")'),
   'Thumbnail editor must open in a fresh window to keep opener linkage reliable');
 const version = editor.match(/overlay\.js\?v=([^"']+)/)?.[1];
 assert.ok(version && output.includes('overlay.js?v=' + version), 'Editor/output script version mismatch');
-console.log('Overlay initialization checks passed.');
+// Exercise the actual PNG capture helper with stubbed browser renderers.
+// The previous implementation failed immediately rather than attempting
+// html2canvas whenever html-to-image was present but threw an exception.
+const sourceStart = js.indexOf('async function captureStagePngBlob(stage) {');
+const sourceEnd = js.indexOf('\nasync function exportStageAsPng() {', sourceStart);
+assert.ok(sourceStart >= 0 && sourceEnd > sourceStart,
+  'PNG capture helper must be independently testable');
+const captureSource = js.slice(sourceStart, sourceEnd);
+const makeCapture = (browser) => Function('window', 'console',
+  captureSource + '\nreturn captureStagePngBlob;')(browser, { warn() {}, error() {} });
+
+async function testPngCapture() {
+  const stage = { id: 'stage-test' };
+  const png = new Blob(['png-content'], { type: 'image/png' });
+
+  let fallbackCalls = 0;
+  const primary = makeCapture({
+    htmlToImage: { toBlob: async () => png },
+    html2canvas: async () => { fallbackCalls++; throw new Error('unexpected fallback'); }
+  });
+  assert.equal(await primary(stage), png, 'Successful SVG export must not invoke fallback');
+  assert.equal(fallbackCalls, 0, 'Successful SVG export must not render twice');
+
+  for (const failingRenderer of [
+    async () => { throw new Error('SVG renderer blocked'); },
+    async () => null
+  ]) {
+    let canvasCalls = 0;
+    const retry = makeCapture({
+      htmlToImage: { toBlob: failingRenderer },
+      html2canvas: async (node, options) => {
+        assert.equal(node, stage);
+        assert.equal(options.width, 1920);
+        assert.equal(options.height, 1080);
+        assert.equal(options.useCORS, true);
+        canvasCalls++;
+        return { toBlob(callback, type) { assert.equal(type, 'image/png'); callback(png); } };
+      }
+    });
+    assert.equal(await retry(stage), png, 'Fallback must produce a valid PNG blob');
+    assert.equal(canvasCalls, 1, 'Fallback must run exactly once after SVG failure');
+  }
+
+  const fallbackOnly = makeCapture({
+    html2canvas: async () => ({ toBlob(callback) { callback(png); } })
+  });
+  assert.equal(await fallbackOnly(stage), png, 'Fallback must work if primary is unavailable');
+
+  const allFailed = makeCapture({
+    htmlToImage: { toBlob: async () => { throw new Error('first failed'); } },
+    html2canvas: async () => { throw new Error('second failed'); }
+  });
+  await assert.rejects(() => allFailed(stage), /All PNG renderers failed/,
+    'Both renderer failures must be reported instead of silently pretending success');
+}
+
+testPngCapture()
+  .then(() => console.log('Overlay initialization and PNG fallback checks passed.'))
+  .catch((error) => { console.error(error); process.exitCode = 1; });
