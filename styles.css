@@ -924,17 +924,19 @@ button, input, select { font: inherit; }
   gap: var(--space-16);
 }
 
-/* Separate tournament panel styling from the board/player color group.
-   Place the divider at the midpoint of the 16px column gap. */
+/* Match the top action-row divider: a 1px rule, 36px tall,
+   with 12px clear space on both sides. Keep it aligned with the
+   input controls rather than vertically centering it across labels. */
+.panel-color-field { margin-right: var(--space-4); }
 .board-color-field {
   position: relative;
+  margin-left: calc(var(--space-4) + var(--width-border));
 }
 .board-color-field::before {
   content: "";
   position: absolute;
-  left: calc(-1 * var(--space-8));
-  top: 50%;
-  transform: translateY(-50%);
+  left: calc(-1 * (var(--space-12) + var(--width-border)));
+  bottom: 0;
   width: var(--width-border);
   height: var(--height-input);
   background: var(--color-85);
@@ -1083,6 +1085,8 @@ button, input, select { font: inherit; }
   .title-fields:has(> .jbsui-field > .english-input:not([hidden])) {
     grid-template-columns: minmax(0, 1fr);
   }
+  .panel-color-field { margin-right: 0; }
+  .board-color-field { margin-left: 0; }
   .board-color-field::before { display: none; }
 }
 @media (max-width: 600px) {
