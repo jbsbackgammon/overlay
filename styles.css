@@ -4,8 +4,6 @@
   --ink: #11100d;
   --gold: #cfb064;
   --gold-soft: #e5d2a0;
-  --charcoal: #353535;
-  --accent: #cf2933;
   /* Overlay editor layout only. Generic design values live in common/ui.css. */
   --width-editor-panel-min: 220px;
   --width-editor-panel-wide-min: 420px;
@@ -371,7 +369,7 @@ button, input, select { font: inherit; }
   bottom: 0;
   width: 100%;
   margin: 0;
-  color: var(--accent);
+  color: var(--round-text-color, #cf2933);
   font-size: 60px;
   line-height: 1;
   font-weight: 900;
@@ -431,7 +429,6 @@ button, input, select { font: inherit; }
   bottom: 10px;
   width: 480px;
   height: 780px;
-  display: flex;
   display: block;
 }
 
@@ -816,10 +813,9 @@ button, input, select { font: inherit; }
 .right-selects {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-16);
 }
-
+.title-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .right-selects { grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: start; }
 @media (max-width: 960px) { .right-selects { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .right-selects { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -1094,15 +1090,13 @@ button, input, select { font: inherit; }
 .output-page .stage { transform: none !important; }
 
 @media (max-width: 1200px) {
-  .app { grid-template-rows: auto auto; }
   .control-panel { grid-template-columns: 1fr; }
-  .event-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .color-row { grid-column: 1; }
   .stage-shell { padding: var(--space-12); }
 }
 
 @media (max-width: 680px) {
-  .event-fields, .color-row { grid-template-columns: 1fr; }
+  .color-row { grid-template-columns: 1fr; }
   .color-row > .swap-field { grid-column: auto; grid-row: auto; margin-left: 0; }
 }
 
