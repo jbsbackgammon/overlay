@@ -28,7 +28,11 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=4'), 'Shared JBS UI stylesheet missing');
+assert.ok(editor.includes('common/ui.css?v=5'), 'Shared JBS UI stylesheet missing');
+assert.ok(!styles.includes('var(--jbs-ui-font-13)') && !styles.includes('var(--jbs-ui-weight-label)'),
+  'Editor must not reference retired typography tokens');
+assert.ok(styles.includes('height: var(--jbs-ui-input-height);') && styles.includes('width: var(--jbs-ui-swatch-size);'),
+  'Inputs and previews must use shared 36px tokens');
 assert.ok(styles.includes('background: var(--jbs-ui-page-bg, hsl(215 25% 95%));'),
   'Editor and preview page backgrounds must use the seven-tone palette');
 assert.ok(styles.includes('color: var(--jbs-ui-text, hsl(215 25% 20%));'),
