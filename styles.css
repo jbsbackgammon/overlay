@@ -886,24 +886,7 @@ button, input, select { font: inherit; }
   padding: 0 24px;
 }
 
-.preset-input {
-  display: grid;
-  grid-template-columns: 68px minmax(0, 1fr);
-}
-
-.preset-input select {
-  border-radius: 9px 0 0 9px;
-  border-right: 0;
-  background: var(--jbs-ui-button-bg);
-  color: var(--jbs-ui-text);
-  font-weight: var(--jbs-ui-weight-label);
-  padding-left: 8px;
-  padding-right: 4px;
-  cursor: pointer;
-}
-
-.preset-input input { border-radius: 0 9px 9px 0; }
-.player-input select { width: 100%; }
+/* Preset selector and joined input styles live in common/ui.css. */
 
 /* Each player's square photo stays in the same row as the selector and name. */
 .player-entry-row {

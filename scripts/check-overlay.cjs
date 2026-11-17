@@ -27,7 +27,14 @@ assert.ok(js.includes('modes.right4 === "rules45"'), 'Missing rules for right4 a
 assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
-assert.ok(editor.includes('common/ui.css?v=1'), 'Shared JBS UI stylesheet missing');
+assert.ok(editor.includes('common/ui.css?v=3'), 'Shared JBS UI stylesheet missing');
+assert.ok(!/^\\.preset-input\\s*\\{/m.test(styles)
+  && !/^\\.preset-input select\\s*\\{/m.test(styles),
+  'Shared preset select must not be redefined in overlay styles');
+for (const field of ['topMember', 'bottomMember', 'titlePreset', 'roundPreset']) {
+  assert.ok(editor.includes('id="' + field + '"'),
+    'Existing preset selector must be kept: ' + field);
+}
 assert.ok(editor.includes('class="control-panel jbs-ui"'), 'Missing JBS editor scope');
 for (const name of ['jbs-ui-button', 'jbs-ui-divider', 'jbs-ui-check']) {
   assert.ok(editor.includes(name), 'Missing shared UI component: ' + name);
