@@ -28,7 +28,7 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=7'), 'Shared JBS UI stylesheet missing');
+assert.ok(editor.includes('common/ui.css?v=8'), 'Shared JBS UI stylesheet missing');
 assert.ok(styles.includes('border-radius: var(--jbs-ui-radius);'),
   'Rectangular editor components must use the single shared 4px radius token');
 for (const retired of ['--jbs-ui-radius-control', '--jbs-ui-radius-button',
