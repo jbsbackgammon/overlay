@@ -507,7 +507,7 @@ function decodeOutputState(value) {
 }
 
 const embeddedState = decodeOutputState(query.get("state"));
-const fromQuery = Object.fromEntries([...query.entries()].filter(([key]) => key in defaults));
+const fromQuery = Object.fromEntries([...query.entries()].filter(([key]) => Object.hasOwn(defaults, key)));
 if ("sponsors" in fromQuery) fromQuery.sponsors = fromQuery.sponsors !== "false";
 if ("sponsors2" in fromQuery) fromQuery.sponsors2 = fromQuery.sponsors2 !== "false";
 if ("personal" in fromQuery) fromQuery.personal = fromQuery.personal !== "false";
@@ -587,10 +587,17 @@ function fitStage() {
     (parseFloat(shellStyle.paddingRight) || 0);
   const verticalPadding = (parseFloat(shellStyle.paddingTop) || 0) +
     (parseFloat(shellStyle.paddingBottom) || 0);
-  const maxWidth = Math.min(1200, Math.max(1, shell.clientWidth - horizontalPadding) * .92);
+  // The preview limit, width ratio, and safety margin come from the CSS
+  // design tokens instead of repeating their values in JavaScript.
+  const design = getComputedStyle(document.documentElement);
+  const previewMaxWidth = parseFloat(design.getPropertyValue("--width-editor-preview-max"));
+  const previewRatio = parseFloat(design.getPropertyValue("--width-editor-preview")) / 100;
+  const viewportGap = parseFloat(design.getPropertyValue("--space-12"));
+  const maxWidth = Math.min(previewMaxWidth,
+    Math.max(1, shell.clientWidth - horizontalPadding) * previewRatio);
   const viewportHeight = window.visualViewport?.height || window.innerHeight;
   const availableHeight = viewportHeight - controls.getBoundingClientRect().bottom -
-    verticalPadding - 12;
+    verticalPadding - viewportGap;
   // Keep an accessible minimum on very small screens; the page can scroll.
   const fittedWidth = Math.min(maxWidth, Math.max(360, availableHeight * STAGE_WIDTH / STAGE_HEIGHT));
   wrap.style.width = `${fittedWidth}px`;
@@ -1190,7 +1197,7 @@ async function importJsonFile(file) {
     const parsed = JSON.parse(await file.text());
     const imported = parsed?.state && typeof parsed.state === "object" ? parsed.state : parsed;
     if (!imported || typeof imported !== "object" || Array.isArray(imported)) throw new Error();
-    const allowed = Object.fromEntries(Object.entries(imported).filter(([key]) => key in defaults));
+    const allowed = Object.fromEntries(Object.entries(imported).filter(([key]) => Object.hasOwn(defaults, key)));
     state = normalizeLegacyMediaModes({ ...defaults, ...allowed });
     persistState();
     syncEditorFromState();
