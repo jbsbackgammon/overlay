@@ -77,8 +77,8 @@ assert.ok(js.includes('event.source !== handoff.popup') && js.includes('event.or
   'Thumbnail handoff must verify the requesting window and origin');
 assert.ok(js.includes('leftPhoto: state.topPhoto') && js.includes('rightPhoto: state.bottomPhoto'),
   'Uploaded player photos must be transferred');
-assert.ok(js.includes('window.open(url.href, "jbs-overlay-thumbnail")'),
-  'Thumbnail editor must open in its own window');
+assert.ok(js.includes('window.open(url.href, "_blank")'),
+  'Thumbnail editor must open in a fresh window to keep opener linkage reliable');
 const version = editor.match(/overlay\.js\?v=([^"']+)/)?.[1];
 assert.ok(version && output.includes('overlay.js?v=' + version), 'Editor/output script version mismatch');
 console.log('Overlay initialization checks passed.');

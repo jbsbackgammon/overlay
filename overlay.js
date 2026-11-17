@@ -1613,7 +1613,7 @@ function bindEditor() {
     };
     // Open synchronously from the click so browsers allow the new window.
     // The thumbnail page requests the fields after its member data is ready.
-    const popup = window.open(url.href, "jbs-overlay-thumbnail");
+    const popup = window.open(url.href, "_blank");
     if (!popup) {
       alert("サムネイル作成画面を開けませんでした。ブラウザのポップアップ許可をご確認ください。");
       return;
