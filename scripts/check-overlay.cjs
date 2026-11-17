@@ -28,7 +28,9 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=9'), 'Shared CSS v9 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=10'), 'Shared CSS v10 must be loaded');
+assert.ok(styles.includes('font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, sans-serif;'),
+  'Overlay fallback font order must prioritize Hiragino before Yu Gothic');
 assert.ok(styles.includes('border-radius: var(--radius);'), 'Editor radius token missing');
 assert.ok(!styles.includes('--jbs-ui-'), 'Retired prefixed style token remains');
 assert.ok(styles.includes('height: var(--input-height);')
