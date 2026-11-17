@@ -210,6 +210,15 @@ button, input, select { font: inherit; }
   white-space: nowrap;
 }
 
+/* Upper points use the bottom player color, while only the upper goal
+   uses the top player color. Separate fills prevent alpha blending. */
+.point-guide.top { background: transparent; }
+.point-guide.top .guide-half { background: var(--guide-background); }
+.point-guide.top .guide-goal {
+  background: var(--guide-goal-background);
+  color: var(--guide-goal-ink);
+}
+
 .stage.personal-mode .player-dot { left: 350px; }
 .stage.personal-mode .player-name {
   left: 439px;
