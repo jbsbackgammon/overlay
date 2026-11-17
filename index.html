@@ -12,7 +12,7 @@
   <link rel="icon" href="https://jbsbackgammon.github.io/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=20261117-player-color-order-v14">
+  <link rel="stylesheet" href="styles.css?v=20261117-five-right-slots-v15">
 </head>
 <body>
   <div class="app">
@@ -49,8 +49,9 @@
       <div class="right-selects">
         <div class="field"><label for="right1Mode">右1</label><select id="right1Mode" data-field="right1Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="title" selected>大会名パネル</option><option value="thumbnail">サムネイル流し</option></select></div>
         <div class="field"><label for="right2Mode">右2</label><select id="right2Mode" data-field="right2Mode"><option value="none" selected>表示無し</option><option value="reference">ガイド表示</option><option value="title">大会名パネル</option><option value="thumbnail">サムネイル流し</option></select></div>
-        <div class="field"><label for="right3Mode">右3</label><select id="right3Mode" data-field="right3Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="sponsors" selected>広告流し</option></select></div>
-        <div class="field"><label for="right4Mode">右4</label><select id="right4Mode" data-field="right4Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="rules">ルール</option><option value="sponsors2">広告流し</option><option value="sponsors2bottom">広告下のみ（従来機能）</option></select></div>
+        <div class="field"><label for="right3Mode">右3</label><select id="right3Mode" data-field="right3Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="sponsors" selected>広告流し</option><option value="rules34">ルール（右3・右4）</option></select></div>
+        <div class="field"><label for="right4Mode">右4</label><select id="right4Mode" data-field="right4Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="rules34" disabled>ルール（右3・右4）</option><option value="rules45">ルール（右4・右5）</option><option value="sponsors">広告流し</option></select></div>
+        <div class="field"><label for="right5Mode">右5</label><select id="right5Mode" data-field="right5Mode"><option value="none">表示無し</option><option value="reference">ガイド表示</option><option value="rules45" disabled>ルール（右4・右5）</option><option value="sponsors">広告流し</option></select></div>
       </div>
 
       <div class="title-fields">
@@ -121,10 +122,10 @@
   <!-- Common defines JBSBrand; its data are fetched separately with a fallback. -->
   <script src="https://jbsbackgammon.github.io/common/brand.js"></script>
   <script>
-    fetch('stage.html?v=20261021-panel-right2-v6').then(r => r.text()).then(html => {
+    fetch('stage.html?v=20261117-five-right-slots-v15').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261101-player-photos-v11';
+      script.src = 'overlay.js?v=20261117-five-right-slots-v15';
       document.body.appendChild(script);
     });
   </script>

@@ -414,6 +414,7 @@ button, input, select { font: inherit; }
 .side-stack > .sponsor-rail { top: 280px; }
 .side-stack > .sponsor-secondary,
 .side-stack > .rules-panel { top: 450px; }
+.stage[data-rules-location="34"] .side-stack > .rules-panel { top: 280px; }
 
 .side-video-window {
   flex: 0 0 270px;
@@ -455,7 +456,8 @@ button, input, select { font: inherit; }
 .slot-reference strong,
 .slot-reference span { font: inherit; }
 .slot-reference-3 { top: 280px; height: 160px; }
-.slot-reference-4 { top: 450px; height: 330px; }
+.slot-reference-4 { top: 450px; height: 160px; }
+.slot-reference-5 { top: 620px; height: 160px; }
 .slot-reference[hidden] { display: none; }
 
 .side-thumbnail {
@@ -494,14 +496,8 @@ button, input, select { font: inherit; }
   gap: 10px;
 }
 
-.stage[data-right4-mode="sponsors2bottom"] .sponsor-secondary {
-  grid-template-rows: 160px;
-  align-content: end;
-}
-
-.stage[data-right4-mode="sponsors2bottom"] .secondary-ad-slot:first-child {
-  display: none;
-}
+.secondary-ad-slot[data-secondary-ad-slot="0"] { grid-row: 1; }
+.secondary-ad-slot[data-secondary-ad-slot="1"] { grid-row: 2; }
 
 .secondary-ad-slot {
   width: 480px;
@@ -771,7 +767,9 @@ button, input, select { font: inherit; }
   gap: 16px;
 }
 
-.right-selects { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; }
+.right-selects { grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: start; }
+@media (max-width: 960px) { .right-selects { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .right-selects { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .right-selects > .field > select:first-of-type { height: 38px; }
 /* Preserve the editor row when neither right slot displays the tournament. */
 .title-fields.is-inactive label { opacity: .5; }
@@ -1241,11 +1239,6 @@ button, input, select { font: inherit; }
   object-fit: contain;
 }
 .primary-fixed-ad[hidden] { display: none; }
-/* A fixed right4 banner is shown in the lower 160px row only. */
-.stage[data-right4-mode="sponsors2bottom"] .sponsor-secondary {
-  grid-template-rows: 160px;
-  align-content: end;
-}
 
 /* Preserve usable bilingual widths in the smaller editor layout. */
 @media (max-width: 1200px) {

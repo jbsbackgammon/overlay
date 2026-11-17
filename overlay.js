@@ -37,7 +37,8 @@ const defaults = {
   right1Mode: "title",
   right2Mode: "none",
   right3Mode: "sponsors",
-  right4Mode: "rules",
+  right4Mode: "rules45",
+  right5Mode: "none",
   right1Thumbnail: "",
   right2Thumbnail: "",
   interval: 60000
@@ -69,6 +70,16 @@ function fixedMediaPath(mode, kind) {
 }
 
 function normalizeLegacyMediaModes(target) {
+  // Legacy right4 was one 330px area. Preserve the occupied 160px rows.
+  if (target.right4Mode === "rules") target.right4Mode = "rules45";
+  if (target.right4Mode === "sponsors2") {
+    target.right4Mode = "sponsors";
+    target.right5Mode = "sponsors";
+  }
+  if (target.right4Mode === "sponsors2bottom") {
+    target.right4Mode = "none";
+    target.right5Mode = "sponsors";
+  }
   for (const slot of ["right1", "right2"]) {
     const old = target[`${slot}Thumbnail`];
     if (target[`${slot}Mode`] !== "thumbnail" || typeof old !== "string" || !old) continue;
@@ -88,7 +99,8 @@ function updateMediaOptions() {
     ["right1Mode", mediaLibrary.thumbnails, IMAGE_MODE_PREFIX.thumbnail],
     ["right2Mode", mediaLibrary.thumbnails, IMAGE_MODE_PREFIX.thumbnail],
     ["right3Mode", mediaLibrary.ads, IMAGE_MODE_PREFIX.sponsor],
-    ["right4Mode", mediaLibrary.ads, IMAGE_MODE_PREFIX.sponsor]
+    ["right4Mode", mediaLibrary.ads, IMAGE_MODE_PREFIX.sponsor],
+    ["right5Mode", mediaLibrary.ads, IMAGE_MODE_PREFIX.sponsor]
   ];
   for (const [id, entries, prefix] of groups) {
     const select = document.getElementById(id);
@@ -101,11 +113,6 @@ function updateMediaOptions() {
       option.dataset.mediaOption = "true";
       select.append(option);
     });
-    // Keep the old right4 bottom-only mode available, after the fixed-image choices.
-    if (id === "right4Mode") {
-      const legacy = select.querySelector('option[value="sponsors2bottom"]');
-      if (legacy) select.append(legacy);
-    }
     // Options for a previously selected but now removed file remain visible
     // until the user changes their selection, rather than silently overwriting state.
     if (selected && ![...select.options].some(option => option.value === selected)) {
@@ -654,6 +661,13 @@ function bindPlayerPhotoUploads() {
   });
 }
 
+function effectiveRightModes() {
+  const right3 = state.right3Mode || "sponsors";
+  const right4 = right3 === "rules34" ? "rules34" : (state.right4Mode || "none");
+  const right5 = right4 === "rules45" ? "rules45" : (state.right5Mode || "none");
+  return { right3, right4, right5 };
+}
+
 function render() {
   const stage = $(".stage");
   if (!stage) return;
@@ -670,9 +684,11 @@ function render() {
   stage.classList.toggle("player-photo-mode", state.playerPhoto);
   stage.dataset.right1Mode = mediaMode(state.right1Mode, "thumbnail") ? "thumbnail" : (state.right1Mode || "title");
   stage.dataset.right2Mode = mediaMode(state.right2Mode, "thumbnail") ? "thumbnail" : (state.right2Mode || "none");
-  stage.dataset.right3Mode = state.right3Mode || "sponsors";
-  stage.dataset.right4Mode = fixedMediaPath(state.right4Mode, "sponsor")
-    ? "sponsors2bottom" : (state.right4Mode || "rules");
+  const modes = effectiveRightModes();
+  stage.dataset.right3Mode = modes.right3;
+  stage.dataset.right4Mode = modes.right4;
+  stage.dataset.right5Mode = modes.right5;
+  stage.dataset.rulesLocation = modes.right3 === "rules34" ? "34" : modes.right4 === "rules45" ? "45" : "";
   const guideVerticalGap = Math.max(0, Number(state.guideVerticalGap) || 0);
   const guideStart12 = Number(state.guideStart12) || 0;
   const guideStart6 = Number(state.guideStart6) || 0;
@@ -790,11 +806,26 @@ function render() {
   $$(".personal-video").forEach((area) => { area.hidden = !(state.personal || state.playerPhoto); });
   updatePlayerPhotoImages();
   $(".side-video-window").hidden = !["reference", "thumbnail"].includes(stage.dataset.right2Mode);
-  $(".rules-panel").hidden = state.right4Mode !== "rules";
-  $(".sponsor-rail").hidden = !mediaMode(state.right3Mode, "sponsor");
-  $(".sponsor-secondary").hidden = !mediaMode(state.right4Mode, "sponsor");
-  $(".slot-reference-3").hidden = state.right3Mode !== "reference";
-  $(".slot-reference-4").hidden = state.right4Mode !== "reference";
+  $(".rules-panel").hidden = !stage.dataset.rulesLocation;
+  $(".sponsor-rail").hidden = !mediaMode(modes.right3, "sponsor");
+  $(".sponsor-secondary").hidden = ![modes.right4, modes.right5].some(mode => mediaMode(mode, "sponsor"));
+  ["right3", "right4", "right5"].forEach((slot, index) => {
+    const placeholder = $(`.slot-reference-${index + 3}`);
+    if (placeholder) placeholder.hidden = modes[slot] !== "reference";
+  });
+  $("[data-secondary-ad-slot]").forEach((slot, index) => {
+    slot.hidden = !mediaMode(index === 0 ? modes.right4 : modes.right5, "sponsor");
+  });
+  // A rule panel occupies two adjacent slots; the covered selector is shown
+  // with the same choice but disabled, while its previous selection is kept.
+  [["right4Mode", modes.right4, modes.right3 === "rules34"],
+   ["right5Mode", modes.right5, modes.right4 === "rules45"]].forEach(([id, visibleMode, locked]) => {
+    const select = document.getElementById(id);
+    if (select) {
+      select.disabled = locked;
+      if (select.value !== visibleMode) select.value = visibleMode;
+    }
+  });
   const primaryFixed = $(".primary-fixed-ad");
   const fixedRight3 = fixedMediaPath(state.right3Mode, "sponsor");
   if (primaryFixed) {
@@ -861,34 +892,34 @@ function rotateSponsor(index) {
 }
 
 function getActiveSponsorSlotCount() {
-  const primaryCount = state.right3Mode === "sponsors" ? 1 : 0;
-  const right4Mode = state.right4Mode || "rules";
-  const secondaryCount = right4Mode === "sponsors2" ? 2 : right4Mode === "sponsors2bottom" ? 1 : 0;
-  return primaryCount + secondaryCount;
+  const modes = effectiveRightModes();
+  return [modes.right3, modes.right4, modes.right5]
+    .filter(mode => mode === "sponsors").length;
 }
 
 function setupSecondarySponsors(index = sponsorIndex) {
   const cards = $$(".sponsor-track .sponsor-card:not(.sponsor-clone)");
   if (!cards.length) return;
-  const primaryOffset = state.right3Mode === "sponsors" ? 1 : 0;
-  const right4Mode = state.right4Mode || "rules";
-  const activeSlotIndexes = right4Mode === "sponsors2" ? [0, 1] : right4Mode === "sponsors2bottom" ? [1] : [];
-  const right4Fixed = fixedMediaPath(right4Mode, "sponsor");
-  $$('[data-secondary-ad-slot]').forEach((slot, slotIndex) => {
-    if (right4Fixed) {
-      if (slotIndex === 1) {
-        const image = document.createElement("img");
-        image.className = "secondary-fixed-ad";
-        image.src = right4Fixed;
-        image.alt = "固定広告";
-        slot.replaceChildren(image);
-      } else slot.replaceChildren();
+  const modes = effectiveRightModes();
+  const activeSlots = [modes.right3, modes.right4, modes.right5];
+  $('[data-secondary-ad-slot]').forEach((slot, slotIndex) => {
+    const mode = slotIndex === 0 ? modes.right4 : modes.right5;
+    const fixed = fixedMediaPath(mode, "sponsor");
+    if (fixed) {
+      const image = document.createElement("img");
+      image.className = "secondary-fixed-ad";
+      image.src = fixed;
+      image.alt = "固定広告";
+      slot.replaceChildren(image);
+      return;
+    }
+    if (mode !== "sponsors") {
+      slot.replaceChildren();
       return;
     }
     const secondaryTrack = document.createElement("div");
     secondaryTrack.className = "secondary-sponsor-track";
-    const activePosition = Math.max(0, activeSlotIndexes.indexOf(slotIndex));
-    const slotOffset = primaryOffset + activePosition;
+    const slotOffset = activeSlots.slice(0, slotIndex + 1).filter(value => value === "sponsors").length;
     const orderedCards = cards.map((_, cardIndex) => cards[(cardIndex + slotOffset) % cards.length]);
     orderedCards.forEach((source) => {
       const card = source.cloneNode(true);
@@ -1099,7 +1130,7 @@ async function importJsonFile(file) {
     const imported = parsed?.state && typeof parsed.state === "object" ? parsed.state : parsed;
     if (!imported || typeof imported !== "object" || Array.isArray(imported)) throw new Error();
     const allowed = Object.fromEntries(Object.entries(imported).filter(([key]) => key in defaults));
-    state = { ...defaults, ...allowed };
+    state = normalizeLegacyMediaModes({ ...defaults, ...allowed });
     persistState();
     syncEditorFromState();
   }
@@ -1340,7 +1371,7 @@ function bindEditor() {
       });
       $$(`[data-color-for="${key}"]`).forEach((peer) => { peer.value = value; });
       render();
-      if (["sponsors", "sponsors2", "rules", "right3Mode", "right4Mode"].includes(key)) startRotation();
+      if (["sponsors", "sponsors2", "rules", "right3Mode", "right4Mode", "right5Mode"].includes(key)) startRotation();
       if (["right1Mode", "right2Mode"].includes(key)) startThumbnailRotation();
       if (key === "english") {
         updateEnglishFields();
