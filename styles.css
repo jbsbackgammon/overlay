@@ -966,6 +966,7 @@ button, input, select { font: inherit; }
 .player-entry-row .preset-input input { height: 38px; min-width: 0; }
 .player-photo-picker {
   appearance: none;
+  position: relative;
   display: block;
   width: 38px;
   height: 38px;
@@ -977,6 +978,23 @@ button, input, select { font: inherit; }
   cursor: pointer;
 }
 .player-photo-picker:hover { border-color: #7d8fa8; }
+.player-photo-picker::after {
+  content: "変更";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, .72);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s ease;
+}
+.player-photo-picker:hover::after,
+.player-photo-picker:focus-visible::after { opacity: 1; }
 .player-photo-picker:focus-visible { outline: 2px solid #5275aa; outline-offset: 2px; }
 .player-photo-preview { display: block; width: 100%; height: 100%; object-fit: cover; }
 
