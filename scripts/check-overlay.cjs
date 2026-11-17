@@ -28,7 +28,7 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=22'), 'Shared CSS v22 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=23'), 'Shared CSS v23 must be loaded');
 assert.ok(!/--(?:opacity-muted|shadow-primary)/.test(styles),
   'Retired long-form opacity and shadow token names must not remain');
 
@@ -47,6 +47,12 @@ assert.ok(/\.channel-picker\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/
   'Stream selector must use weight 400 from common CSS');
 assert.ok(/\[data-board-preset\]\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/s.test(styles),
   'Board color select must use weight 400 from common CSS');
+assert.ok(!styles.includes('background: var(--color-100) !important;')
+  && !styles.includes('color: var(--color-20) !important;'),
+  'Board preset must inherit the shared background and text colors');
+assert.ok((styles.match(/!important/g) || []).length === 2
+  && styles.includes('transform: none !important;'),
+  'Only the output scaling override may use important (plus its documentation)');
 assert.ok(!/\.jbsui\s+\.jbsui-preset-input\s+select\s*\{/.test(styles),
   'Shared preset selector sizing must not be overridden by overlay CSS');
 assert.ok(js.includes('round: "１回戦",') && js.includes('roundEn: "Round of 64",'),
@@ -67,8 +73,8 @@ assert.ok(styles.includes('--width-editor-swap: 80px;')
   'Tool-specific layout constants must be centralized outside editor declarations');
 assert.ok(!styles.includes('--duration-short') && !styles.includes('--width-focus-outline'),
   'Retired interaction tokens must not remain');
-assert.ok(styles.includes('outline: var(--width-focus-ring) solid var(--color-60); outline-offset: var(--width-focus-ring);'),
-  'Photo focus outline and offset must use shared 3px focus ring');
+assert.ok(!styles.includes('.player-photo-picker:focus-visible { outline:'),
+  'Photo focus must inherit the common keyboard-focus outline');
 assert.ok(!styles.includes('transition: opacity'),
   'Photo label display must not retain unnecessary animation');
 
