@@ -199,6 +199,14 @@ assert.ok(js.includes('outputUrl.searchParams.set("channel", channel);'),
   'Output page must use the selected stream');
 assert.ok(js.includes('jbs-overlay-output-${channel}'),
   'Output tabs must remain separate for each stream');
+assert.ok(js.includes('async function captureStagePngBlob(stage)')
+  && js.includes('const blob = await captureStagePngBlob(stage);'),
+  'PNG export must use one shared capture helper');
+assert.ok(js.includes('if (blob?.size > 0) return blob;')
+  && js.includes('if (typeof window.html2canvas === "function")')
+  && js.includes('html2canvas fallback failed'),
+  'A failed SVG/PNG renderer must retry with html2canvas');
+
 assert.ok(editor.includes('id="createThumbnail" type="button">サムネ作成</button>'),
   'Thumbnail button is missing');
 assert.ok(js.includes('jbs-thumbnail-ready') && js.includes('jbs-overlay-thumbnail-data'),
