@@ -866,7 +866,7 @@ button, input, select { font: inherit; }
   gap: var(--space-12);
   color: var(--color-40);
   font-size: var(--font-size-14);
-  font-weight: var(--font-weight-action);
+  font-weight: var(--font-weight-normal);
   white-space: nowrap;
 }
 
@@ -878,7 +878,6 @@ button, input, select { font: inherit; }
   border-radius: var(--radius);
   background-color: var(--color-100);
   color: var(--color-20);
-  font-weight: var(--font-weight-action);
   cursor: pointer;
 }
 
@@ -1021,7 +1020,7 @@ button, input, select { font: inherit; }
 [data-board-preset] {
   background: var(--color-100) !important;
   color: var(--color-20) !important;
-  font-weight: var(--font-weight-action) !important;
+  font-weight: var(--font-weight-normal);
   cursor: pointer;
 }
 

@@ -28,7 +28,18 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=12'), 'Shared CSS v12 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=13'), 'Shared CSS v13 must be loaded');
+assert.ok(/\.channel-picker\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/s.test(styles),
+  'Stream selector must use weight 400 from common CSS');
+assert.ok(/\[data-board-preset\]\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/s.test(styles),
+  'Board color select must use weight 400 from common CSS');
+assert.ok(!/\.jbs-ui\s+\.preset-input\s+select\s*\{/.test(styles),
+  'Shared preset selector sizing must not be overridden by overlay CSS');
+assert.ok(js.includes('round: "１回戦",') && js.includes('roundEn: "Round of 64",'),
+  'New editor sessions should default to first round in both languages');
+assert.ok(js.includes('migrateOldEmptyRound') && js.includes('roundMigrationKey'),
+  'Old blank defaults should migrate only once without clobbering user settings');
+
 const editingStyles = styles.slice(styles.indexOf('.control-panel {'), styles.indexOf('.output-page {'))
   .replace(/\/\*[\s\S]*?\*\//g, '');
 const embeddedLiterals = editingStyles.split('\n').filter(line =>

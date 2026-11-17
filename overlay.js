@@ -4,10 +4,10 @@ const defaults = {
   editionSource: "",
   title: "日本選手権",
   game: "バックギャモン",
-  round: "",
+  round: "１回戦",
   editionEn: "",
   titleEn: "",
-  roundEn: "",
+  roundEn: "Round of 64",
   topName: "",
   bottomName: "",
   topNameEn: "",
@@ -1631,6 +1631,15 @@ function loadSharedState() {
   if (!embeddedState && !Object.keys(fromQuery).length) {
     try {
       const savedState = JSON.parse(localStorage.getItem(storageKey));
+      const roundMigrationKey = `${storageKey}-default-round-v1`;
+      const migrateOldEmptyRound = savedState && !localStorage.getItem(roundMigrationKey)
+        && (savedState.round === "" || savedState.round === "（未選択）");
+      if (migrateOldEmptyRound) {
+        savedState.round = defaults.round;
+        if (!savedState.roundEn) savedState.roundEn = defaults.roundEn;
+      }
+      // Do not overwrite an intentionally cleared round in subsequent sessions.
+      if (!localStorage.getItem(roundMigrationKey)) localStorage.setItem(roundMigrationKey, "1");
       const usesOldTextDefaults = savedState && (
         savedState.edition === "JBS 第54回"
         || savedState.round === "準決勝"
@@ -1639,7 +1648,7 @@ function loadSharedState() {
       );
       if (savedState?.edition === "JBS 第54回") savedState.edition = defaults.edition;
       if (savedState?.round === "準決勝") savedState.round = defaults.round;
-      if (savedState?.round === "（未選択）") savedState.round = "";
+      if (savedState?.round === "（未選択）") savedState.round = defaults.round;
       if (savedState?.topName === "（未入力）") savedState.topName = "";
       if (savedState?.bottomName === "（未入力）") savedState.bottomName = "";
       const usesOldGuideDefaults = savedState
@@ -1657,7 +1666,7 @@ function loadSharedState() {
       }
       state = normalizeLegacyMediaModes({ ...state, ...savedState });
       if (!state.right1Mode) state.right1Mode = "title";
-      if (usesOldGuideDefaults || usesOldTextDefaults) persistState();
+      if (usesOldGuideDefaults || usesOldTextDefaults || migrateOldEmptyRound) persistState();
       if (state.panelColor?.toUpperCase() === "#CFB064") {
         state.panelColor = "#FFFFFF";
         persistState();
