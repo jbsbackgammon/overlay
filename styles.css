@@ -956,7 +956,7 @@ button, input, select { font: inherit; }
 /* Each player's square photo stays in the same row as the selector and name. */
 .player-entry-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 38px;
+  grid-template-columns: 38px minmax(0, 1fr);
   align-items: center;
   gap: 6px;
   min-width: 0;
@@ -1089,17 +1089,17 @@ button, input, select { font: inherit; }
 
 .swap-colors:hover { background: #e9edf3; }
 
-/* All color controls place the HEX input before the color preview. */
+/* All color and photo previews sit to the left of their associated controls. */
 .color-control {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 38px;
+  grid-template-columns: 38px minmax(0, 1fr);
   gap: 9px;
 }
 
-/* Tournament panel: mode selector, HEX input, then color preview. */
+/* Tournament panel: color preview, mode selector, then HEX input. */
 .panel-color-control {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 38px;
+  grid-template-columns: 38px minmax(0, 1fr) minmax(0, 1fr);
   gap: 9px;
 }
 
