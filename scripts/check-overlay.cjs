@@ -258,6 +258,20 @@ const resolveChannel = value => {
 };
 assert.deepEqual(['1', '2', '3', 'unknown'].map(resolveChannel), ['1', '2', '3', '1'],
   'Stream selection must accept all three channels and default to 1');
+
+assert.ok(js.includes('function isLatinName(value)') &&
+  js.includes('if (isPlayerName && isLatinName(original)) return original;'),
+  'Romanized player names must remain unchanged in English mode');
+const isLatinSourceStart = js.indexOf('function isLatinName(value) {');
+const isLatinSourceEnd = js.indexOf('\nfunction isForeignMember(member)', isLatinSourceStart);
+assert.ok(isLatinSourceStart >= 0 && isLatinSourceEnd > isLatinSourceStart);
+const testIsLatinName = Function(js.slice(isLatinSourceStart, isLatinSourceEnd) +
+  '\nreturn isLatinName;')();
+assert.equal(testIsLatinName('John Smith'), true);
+assert.equal(testIsLatinName('François Dupont'), true);
+assert.equal(testIsLatinName('柳 暢祐'), false);
+assert.equal(testIsLatinName('柳 John'), false);
+
 assert.ok(js.includes('const storageKey = channel === "1" ? "jbs-overlay-state" : `jbs-overlay-state-${channel}`;'),
   'Per-stream storage key must remain unique and backwards compatible');
 assert.ok(js.includes('const stateChannelName = `jbs-overlay-live-${channel}`;'),
