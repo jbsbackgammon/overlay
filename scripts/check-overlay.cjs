@@ -50,6 +50,22 @@ assert.ok(js.includes('event.key === "Tab"')
   'Keyboard-only focus ring must be enabled by Tab and cleared on pointer/touch input');
 assert.ok(!/--(?:opacity-muted|shadow-primary)/.test(styles),
   'Retired long-form opacity and shadow token names must not remain');
+for (const token of ['--charcoal', '--accent', '--tournament-sub-color', '--button-top', '--button-bottom', '--guide-color']) {
+  assert.ok(!styles.includes(token + ':') && !js.includes('setProperty("' + token + '"'),
+    'Unused design token must be removed: ' + token);
+}
+assert.ok(styles.includes('color: var(--round-text-color, #cf2933);')
+  && js.includes('stage.style.setProperty("--round-text-color", isFinal')
+  && !js.includes('roundOutput.style.color ='),
+  'Tournament round color must be controlled by a shared CSS variable for both panels');
+assert.ok(!styles.includes('display: flex;\n  display: block;')
+  && !styles.includes('.event-fields, .color-row { grid-template-columns: 1fr; }')
+  && !styles.includes('.event-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }'),
+  'Conflicting legacy display and responsive column rules must be removed');
+assert.ok(styles.includes('.right-selects { grid-template-columns: repeat(5, minmax(0, 1fr));')
+  && styles.includes('.title-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }')
+  && styles.includes('.event-fields { grid-template-columns: minmax(0, 1fr) var(--width-editor-swap); }'),
+  'Effective desktop and mobile grid layouts must be preserved');
 
 assert.ok(!/--(?:opacity-disabled|opacity-inactive|opacity-editor-swatch-inactive|shadow-dialog|shadow-editor-preview)/.test(styles),
   'Retired opacity and shadow tokens must not remain');
