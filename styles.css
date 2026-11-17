@@ -1089,20 +1089,17 @@ button, input, select { font: inherit; }
 
 .swap-colors:hover { background: #e9edf3; }
 
+/* All color controls place the HEX input before the color preview. */
 .color-control {
   display: grid;
-  grid-template-columns: 38px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 38px;
   gap: 9px;
 }
 
-/* Keep player color HEX inputs on the left and color previews on the right. */
-.player-color-control {
-  grid-template-columns: minmax(0, 1fr) 38px;
-}
-
+/* Tournament panel: mode selector, HEX input, then color preview. */
 .panel-color-control {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 38px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 38px;
   gap: 9px;
 }
 

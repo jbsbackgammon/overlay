@@ -12,7 +12,7 @@
   <link rel="icon" href="https://jbsbackgammon.github.io/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=20261117-preview-fit-v16">
+  <link rel="stylesheet" href="styles.css?v=20261117-color-order-v19">
 </head>
 <body>
   <div class="app">
@@ -62,7 +62,7 @@
 
 
       <div class="color-row">
-        <div class="field"><label for="frameColorText">テーマカラー</label><div class="color-control"><input type="color" id="frameColor" data-color-for="frameColor"><input id="frameColorText" class="hex-input" data-field="frameColor" maxlength="7" spellcheck="false"></div></div>
+        <div class="field"><label for="frameColorText">テーマカラー</label><div class="color-control"><input id="frameColorText" class="hex-input" data-field="frameColor" maxlength="7" spellcheck="false"><input type="color" id="frameColor" data-color-for="frameColor"></div></div>
         <div class="field panel-color-field">
           <label for="panelMode">大会名パネルカラー</label>
           <div class="panel-color-control">
@@ -72,8 +72,8 @@
               <option value="bronze">銅グラデ</option>
               <option value="solid">単色</option>
             </select>
-            <input type="color" id="panelColor" data-color-for="panelColor">
             <input id="panelColorText" class="hex-input" data-field="panelColor" maxlength="7" spellcheck="false">
+            <input type="color" id="panelColor" data-color-for="panelColor">
           </div>
         </div>
         <div class="field">
