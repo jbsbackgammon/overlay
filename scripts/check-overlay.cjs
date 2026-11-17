@@ -33,7 +33,7 @@ assert.ok(!retiredColors.test(styles), 'Overlay CSS must use the six-color palet
 const usedColors = [...styles.matchAll(/var\(--color-(\d+)\b/g)].map((match) => Number(match[1]));
 assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
   'Overlay CSS must not reference undefined palette values');
-assert.ok(editor.includes('common/ui.css?v=30'), 'Shared CSS v30 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=31'), 'Shared CSS v31 must be loaded');
 assert.ok(editor.includes('class="open-output jbsui-button jbsui-button--primary"')
   && !/\.open-output\s*\{[^}]*font-size\s*:/s.test(styles),
   'Broadcast button must inherit the same 14px type size as all shared buttons');
