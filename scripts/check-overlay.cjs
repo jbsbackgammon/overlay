@@ -151,6 +151,18 @@ assert.ok(js.includes('gradient: "linear-gradient(') && js.includes('silver: "li
   'All three metallic choices must keep their preview gradients');
 assert.ok(editor.includes('class="jbsui-field board-color-field"') && editor.includes('<label for="boardPreset">ボードカラー</label>'),
   'Board color field label or divider anchor is missing');
+assert.ok(!editor.includes('<option value="">選択</option>\n              <option value="japan"'),
+  'Board color selector must not offer an empty placeholder');
+assert.ok(js.includes('boardPreset: "japan"') && js.includes('japan: defaultJapanBoardColors')
+  && js.includes('if (!boardPresets[target.boardPreset]) target.boardPreset = defaults.boardPreset;'),
+  'Japan must be the initial board preset, including legacy empty selections');
+assert.ok(stage.includes('first"><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span>')
+  && stage.includes('second"><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span>'),
+  'Upper guide must display 13 through 24');
+assert.ok(styles.includes('.point-guide.top .guide-goal')
+  && js.includes('"--guide-goal-background", rgba(state.topColor, 0.7)')
+  && js.includes('"--guide-background", rgba(state.bottomColor, 0.7)'),
+  'Upper points use bottom color while upper goal uses top color');
 assert.ok(read('styles.css').includes('.board-color-field::before'),
   'Missing vertical divider between panel and board colors');
 assert.ok(js.includes('"--color-swatch-background", metallicBackground || state.panelColor'),
