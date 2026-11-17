@@ -18,10 +18,9 @@ JBSのバックギャモン配信向けに、1920×1080のオーバーレイを�
 | `ads.json` | 既定の広告情報 |
 | `assets/` | 画像素材。サムネイルと広告は指定フォルダーに配置 |
 | `media.json` | ローカル確認用素材一覧。公開時はGitHub Actionsが再生成 |
-| `vendor/html-to-image.js` | PNG出力用のローカルライブラリ |
 | `scripts/generate-media.cjs` | 素材フォルダーから一覧JSONを作成 |
 | `scripts/check-overlay.cjs` | 機能・記述・互換性の静的検査 |
-| `scripts/smoke-png-browser.cjs` | 実ブラウザによる画面初期化・PNGフォールバック検査 |
+| `scripts/smoke-browser.cjs` | 実ブラウザによる画面初期化・入力操作・共通デザイン検査 |
 | `.github/workflows/pages.yml` | Node.js 24で検証し、GitHub Pagesに配信 |
 
 ## デザインの責任分担
@@ -39,15 +38,15 @@ JBSのバックギャモン配信向けに、1920×1080のオーバーレイを�
 - ブラウザ内の設定は `localStorage` に保持し、`BroadcastChannel` とストレージ変更通知で出力画面へ伝える
 - 過去の設定やJSONを読み込んでも、手動で選んだ試合名やカスタム値を勝手に初期値へ戻さない
 - 手動保存／呼び出し、JSON取込／出力、選手写真、サムネイル作成ツールへの受渡しを利用できる
-- PNGは **「PNG書出」→「PNG保存」** の2段階。まずローカルの `html-to-image` を試し、失敗した場合は `html2canvas` に切り替える
-- PNGの出力解像度とOBS画面は1920×1080で固定する。操作画面のプレビューのみ表示倍率を変更する
+- 配信盤面はOBSブラウザーソースで表示する。PNG出力機能は廃止し、ライブラリへの依存も削除した
+- OBS画面の解像度は1920×1080で固定する。操作画面のプレビューのみ表示倍率を変更する
 
 ## 修正・検証・公開
 
 GitHub Actionsはmainブランチへのpush時に検証・公開を実施します。
 
 1. `node --check overlay.js`、`node scripts/check-overlay.cjs` で基本整合性を検査
-2. `node scripts/smoke-png-browser.cjs` で、Chrome系ブラウザが利用可能な場合に実際のDOMとPNG書出を確認
+2. `node scripts/smoke-browser.cjs` で、Chrome系ブラウザが利用可能な場合に画面初期化・UI操作を確認
 3. `node scripts/generate-media.cjs _site/media.json` で画像一覧を生成
 4. `_site/` をGitHub Pagesへアップロードして公開
 
@@ -57,7 +56,7 @@ GitHub Actionsはmainブランチへのpush時に検証・公開を実施しま�
 node --check overlay.js
 node scripts/check-overlay.cjs
 node scripts/generate-media.cjs media.json
-node scripts/smoke-png-browser.cjs
+node scripts/smoke-browser.cjs
 ```
 
 ブラウザ確認時はHTTPサーバー経由で開いてください。直接 `file://` でHTMLを開くと、`stage.html` やJSONの読み込みが制限されます。
