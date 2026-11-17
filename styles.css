@@ -763,7 +763,7 @@ button, input, select { font: inherit; }
    do not shift vertically when the second column appears. */
 .event-fields > .field,
 .title-fields > .field {
-  grid-template-rows: 18px 38px;
+  grid-template-rows: var(--jbs-ui-label-height) var(--jbs-ui-input-height);
   align-content: start;
 }
 .event-fields > .field > label,
