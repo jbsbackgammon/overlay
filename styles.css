@@ -738,7 +738,9 @@ button, input, select { font: inherit; }
 .event-fields {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: minmax(var(--width-editor-player-min), 1.3fr) minmax(var(--width-editor-player-min), 1.3fr) var(--width-editor-swap) minmax(var(--width-editor-event-min), .9fr);
+  /* Reserve only the width actually needed by all four unwrapped toggles.
+     The remaining space is shared equally by the player-name fields. */
+  grid-template-columns: repeat(2, minmax(var(--width-editor-player-min), 1fr)) var(--width-editor-swap) max-content;
   gap: var(--space-16);
   align-items: end;
 }
@@ -820,6 +822,10 @@ button, input, select { font: inherit; }
   align-self: start;
   height: var(--height-input);
   margin-top: var(--space-24);
+}
+.display-toggles > .jbsui-check {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .player-swap-field {
