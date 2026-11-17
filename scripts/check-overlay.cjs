@@ -241,6 +241,8 @@ assert.ok(styles.includes('var(--guide-background) var(--guide-goal-left)')
   'Upper points use bottom color while upper goal uses top color without gaps');
 assert.ok(read('styles.css').includes('.board-color-field::before'),
   'Missing vertical divider between panel and board colors');
+assert.ok(styles.includes('.panel-color-control {') && styles.includes('align-items: end;'),
+  'Panel color inputs must bottom-align with the board selector');
 assert.ok(styles.includes('.panel-color-field { margin-right: var(--space-4); }')
   && styles.includes('margin-left: calc(var(--space-4) + var(--width-border));')
   && styles.includes('left: calc(-1 * (var(--space-12) + var(--width-border)));')
