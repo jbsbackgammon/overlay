@@ -12,8 +12,8 @@
   <link rel="icon" href="https://jbsbackgammon.github.io/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
-  <link rel="stylesheet" href="https://jbsbackgammon.github.io/common/ui.css?v=18">
-  <link rel="stylesheet" href="styles.css?v=20261117-compact-tokens-v44">
+  <link rel="stylesheet" href="https://jbsbackgammon.github.io/common/ui.css?v=19">
+  <link rel="stylesheet" href="styles.css?v=20261117-shared-ui-v45">
 </head>
 <body>
   <div class="app">
@@ -66,18 +66,18 @@
 
 
       <div class="color-row">
-        <div class="field"><label for="frameColorText">テーマカラー</label><div class="color-control"><input type="color" id="frameColor" data-color-for="frameColor"><input id="frameColorText" class="hex-input" data-field="frameColor" maxlength="7" spellcheck="false"></div></div>
+        <div class="field"><label for="frameColorText">テーマカラー</label><div class="color-control jbs-ui-color-control"><input type="color" id="frameColor" data-color-for="frameColor"><input id="frameColorText" class="hex-input jbs-ui-hex-input" data-field="frameColor" maxlength="7" spellcheck="false"></div></div>
         <div class="field panel-color-field">
           <label for="panelMode">大会パネルカラー</label>
           <div class="panel-color-control">
-            <span class="panel-color-swatch"><input type="color" id="panelColor" data-color-for="panelColor"></span>
+            <span class="panel-color-swatch jbs-ui-color-swatch"><input type="color" id="panelColor" data-color-for="panelColor"></span>
             <select id="panelMode" data-field="panelMode" aria-label="大会パネルカラーの種類">
               <option value="gradient">金グラデ</option>
               <option value="silver">銀グラデ</option>
               <option value="bronze">銅グラデ</option>
               <option value="solid">単色</option>
             </select>
-            <input id="panelColorText" class="hex-input" data-field="panelColor" maxlength="7" spellcheck="false">
+            <input id="panelColorText" class="hex-input jbs-ui-hex-input" data-field="panelColor" maxlength="7" spellcheck="false">
           </div>
         </div>
         <div class="field board-color-field">
@@ -94,8 +94,8 @@
             </select>
           </div>
         </div>
-        <div class="field"><label for="topColorText">上選手カラー</label><div class="color-control player-color-control"><input type="color" id="topColor" data-color-for="topColor"><input id="topColorText" class="hex-input" data-field="topColor" maxlength="7" spellcheck="false"></div></div>
-        <div class="field"><label for="bottomColorText">下選手カラー</label><div class="color-control player-color-control"><input type="color" id="bottomColor" data-color-for="bottomColor"><input id="bottomColorText" class="hex-input" data-field="bottomColor" maxlength="7" spellcheck="false"></div></div>
+        <div class="field"><label for="topColorText">上選手カラー</label><div class="color-control player-color-control jbs-ui-color-control"><input type="color" id="topColor" data-color-for="topColor"><input id="topColorText" class="hex-input jbs-ui-hex-input" data-field="topColor" maxlength="7" spellcheck="false"></div></div>
+        <div class="field"><label for="bottomColorText">下選手カラー</label><div class="color-control player-color-control jbs-ui-color-control"><input type="color" id="bottomColor" data-color-for="bottomColor"><input id="bottomColorText" class="hex-input jbs-ui-hex-input" data-field="bottomColor" maxlength="7" spellcheck="false"></div></div>
         <div class="swap-field"><button type="button" id="swapPlayerColors" class="swap-colors"><span>上下</span><span>入替</span></button></div>
 
       </div>
@@ -113,10 +113,10 @@
     <section class="stage-shell" id="stageMount" aria-label="配信画面プレビュー"></section>
   </div>
 
-  <dialog class="settings-dialog" id="settingsDialog" aria-labelledby="settingsDialogTitle">
-    <div class="settings-dialog-head">
+  <dialog class="settings-dialog jbs-ui-dialog" id="settingsDialog" aria-labelledby="settingsDialogTitle">
+    <div class="jbs-ui-dialog-head">
       <h2 id="settingsDialogTitle">保存した設定</h2>
-      <button type="button" id="closeSettings" class="dialog-close" aria-label="閉じる">×</button>
+      <button type="button" id="closeSettings" class="jbs-ui-dialog-close" aria-label="閉じる">×</button>
     </div>
     <div class="saved-settings" id="savedSettings"></div>
   </dialog>
