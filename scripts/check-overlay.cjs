@@ -28,7 +28,7 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=25'), 'Shared CSS v25 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=26'), 'Shared CSS v26 must be loaded');
 assert.ok(editor.includes('class="jbsui-preset-input"') || editor.includes('class="jbsui-preset-input player-input"'),
   'Preset selectors must use the shared input-group component');
 assert.ok(!styles.includes('.jbsui-preset-input select:focus'),
@@ -118,6 +118,11 @@ for (const field of ['topMember', 'bottomMember', 'titlePreset', 'roundPreset'])
     'Existing preset selector must be kept: ' + field);
 }
 assert.ok(editor.includes('class="control-panel jbsui"'), 'Missing JBS editor scope');
+assert.ok(editor.includes('id="channelSelect" class="jbsui-select"'),
+  'Stream selector must use the same common select state styles as right1–5');
+assert.ok(!/\.channel-picker select\s*\{[^}]*(?:border:|border-color:|background-color:|color:|cursor:)/s.test(styles)
+  && !styles.includes('.channel-picker select:not(:disabled):hover'),
+  'Stream selector must not override common hover or focus styles');
 for (const component of ['jbsui-color-control', 'jbsui-color-swatch', 'jbsui-hex-input',
   'jbsui-dialog', 'jbsui-dialog-head', 'jbsui-dialog-close']) {
   assert.ok(editor.includes(component), 'Missing shared UI component: ' + component);
