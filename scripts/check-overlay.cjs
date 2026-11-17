@@ -57,12 +57,12 @@ assert.ok(editor.includes('class="open-output jbsui-button jbsui-button--primary
   'Broadcast button must inherit the same 14px type size as all shared buttons');
 assert.ok(!styles.includes('select option {') && !styles.includes('select > option {'),
   'Dropdown list colors belong to common CSS, not per-tool CSS');
-assert.ok(js.includes('function padNativeSelectOptions(select)')
-  && js.includes('function restoreNativeSelectOptions(select)')
-  && js.includes('originalOptionLabels = new WeakMap()')
-  && js.includes('option.value = originalValue;')
-  && js.includes('target.closest(".jbsui")'),
-  'Opened native select lists need symmetrical spacing without altering option values');
+assert.ok(!js.includes('function padNativeSelectOptions(select)')
+  && !js.includes('selectPopupGutter'),
+  'Browser-specific option label mutation must not interfere with input layout');
+assert.ok(styles.includes('minmax(var(--width-editor-player-min), 1.3fr)')
+  && styles.includes('minmax(var(--width-editor-event-min), .9fr)'),
+  'Player name fields must have priority over the display-toggle column');
 
 assert.ok(editor.includes('class="jbsui-preset-input"') || editor.includes('class="jbsui-preset-input player-input"'),
   'Preset selectors must use the shared input-group component');
