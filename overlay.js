@@ -1,4 +1,4 @@
-/* The OBS canvas and PNG capture share one fixed output resolution. */
+/* The OBS canvas retains its fixed full-resolution dimensions. */
 const STAGE_WIDTH = 1920;
 const STAGE_HEIGHT = 1080;
 const pad2 = (value) => String(value).padStart(2, "0");
@@ -528,7 +528,6 @@ let ruleIndex = 0;
 let fitFrame;
 let lastStoredState = embeddedState ? null : localStorage.getItem(storageKey);
 const savedSettingsKey = "jbs-overlay-saved-settings";
-let pendingPngDownload = null;
 let pendingThumbnailTransfer = null;
 
 // One-time handoff to the separately opened YouTube thumbnail editor.
@@ -1276,128 +1275,6 @@ async function loadMembers() {
   }
 }
 
-// Prefer the SVG-based renderer for fidelity. If it fails (for example due
-// to unsupported assets or a null canvas blob), retry with html2canvas.
-// A failure in the preferred renderer must not prevent PNG export.
-async function captureStagePngBlob(stage) {
-  const failures = [];
-  if (window.htmlToImage?.toBlob) {
-    try {
-      const blob = await window.htmlToImage.toBlob(stage, {
-        width: STAGE_WIDTH,
-        height: STAGE_HEIGHT,
-        canvasWidth: STAGE_WIDTH,
-        canvasHeight: STAGE_HEIGHT,
-        pixelRatio: 1,
-        cacheBust: false,
-        skipFonts: true,
-        backgroundColor: "transparent",
-        style: {
-          width: `${STAGE_WIDTH}px`,
-          height: `${STAGE_HEIGHT}px`,
-          transform: "none",
-          transformOrigin: "top left"
-        }
-      });
-      if (blob?.size > 0) return blob;
-      throw new Error("html-to-image returned an empty PNG");
-    } catch (error) {
-      failures.push(error);
-      console.warn("PNG書出: html-to-image failed; trying html2canvas.", error);
-    }
-  }
-
-  if (typeof window.html2canvas === "function") {
-    try {
-      const canvas = await window.html2canvas(stage, {
-        width: STAGE_WIDTH,
-        height: STAGE_HEIGHT,
-        scale: 1,
-        backgroundColor: null,
-        useCORS: true,
-        allowTaint: false,
-        imageTimeout: 5000,
-        logging: false
-      });
-      const blob = await new Promise((resolve, reject) => {
-        canvas.toBlob((result) => result?.size > 0
-          ? resolve(result)
-          : reject(new Error("html2canvas returned an empty PNG")), "image/png");
-      });
-      return blob;
-    } catch (error) {
-      failures.push(error);
-      console.error("PNG書出: html2canvas fallback failed.", error);
-    }
-  }
-  throw new Error("All PNG renderers failed: " + failures.map((error) => error?.message || String(error)).join(" / "));
-}
-
-async function exportStageAsPng() {
-  const stage = $(".stage");
-  const button = $("#exportPng");
-  if (!stage || !button) return;
-  if (pendingPngDownload) {
-    const { filename, url } = pendingPngDownload;
-    const link = document.createElement("a");
-    link.download = filename;
-    link.href = url;
-    link.hidden = true;
-    document.body.append(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 10000);
-    pendingPngDownload = null;
-    button.textContent = "PNG書出";
-    return;
-  }
-  if (!window.htmlToImage && typeof window.html2canvas !== "function") {
-    alert("PNG書出機能を読み込めませんでした。インターネット接続を確認して、ページを再読み込みしてください。");
-    return;
-  }
-
-  const originalText = button.textContent;
-  let captureHost = null;
-  let readyToSave = false;
-  button.disabled = true;
-  button.textContent = "書出中…";
-  try {
-    await document.fonts?.ready;
-    // Render from an isolated full-resolution snapshot. Resetting the live
-    // preview's transform alone keeps its narrow overflow:hidden parent,
-    // which clips the PNG at the editor preview's width and height.
-    captureHost = document.createElement("div");
-    captureHost.style.cssText = `position:fixed;left:0;top:0;width:${STAGE_WIDTH}px;height:${STAGE_HEIGHT}px;z-index:-1;pointer-events:none;overflow:visible;`;
-    const captureStage = stage.cloneNode(true);
-    captureStage.style.transform = "none";
-    captureStage.style.transformOrigin = "top left";
-    captureHost.append(captureStage);
-    document.body.append(captureHost);
-    await Promise.all([...captureStage.querySelectorAll("img")].map((image) => image.complete
-      ? Promise.resolve()
-      : new Promise((resolve) => {
-        image.addEventListener("load", resolve, { once: true });
-        image.addEventListener("error", resolve, { once: true });
-      })));
-    const blob = await captureStagePngBlob(captureStage);
-    const now = new Date();
-    const stamp = `${now.getFullYear()}${pad2(now.getMonth() + 1)}${pad2(now.getDate())}-${pad2(now.getHours())}${pad2(now.getMinutes())}${pad2(now.getSeconds())}`;
-    const downloadUrl = URL.createObjectURL(blob);
-    pendingPngDownload = {
-      filename: `配信盤面-${stamp}.png`,
-      url: downloadUrl
-    };
-    readyToSave = true;
-  } catch (error) {
-    console.error(error);
-    alert("PNGの書き出しに失敗しました。ページを再読み込みして、もう一度お試しください。");
-  } finally {
-    captureHost?.remove();
-    button.disabled = false;
-    button.textContent = readyToSave ? "PNG保存" : originalText;
-  }
-}
-
 function syncEditorFromState() {
   $$('[data-field]').forEach((input) => {
     const key = input.dataset.field;
@@ -1626,7 +1503,6 @@ function bindEditor() {
     $("#settingsDialog")?.showModal();
   });
 
-  $("#exportPng")?.addEventListener("click", exportStageAsPng);
 
   $("#createThumbnail")?.addEventListener("click", () => {
     const token = window.crypto?.randomUUID?.().replace(/-/g, "")
