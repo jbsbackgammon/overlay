@@ -232,6 +232,11 @@ assert.ok(styles.includes('var(--guide-background) var(--guide-goal-left)')
   'Upper points use bottom color while upper goal uses top color without gaps');
 assert.ok(read('styles.css').includes('.board-color-field::before'),
   'Missing vertical divider between panel and board colors');
+assert.ok(styles.includes('.panel-color-field { margin-right: var(--space-4); }')
+  && styles.includes('margin-left: calc(var(--space-4) + var(--width-border));')
+  && styles.includes('left: calc(-1 * (var(--space-12) + var(--width-border)));')
+  && styles.includes('bottom: 0;'),
+  'Panel/board divider must match top-row 12px spacing and input control height');
 assert.ok(js.includes('"--color-swatch-background", metallicBackground || state.panelColor'),
   'Panel preview must use the common swatch background variable for solid and metallic modes');
 assert.ok(!styles.includes('--panel-swatch-background')
