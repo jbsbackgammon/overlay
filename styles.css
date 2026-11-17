@@ -1094,6 +1094,11 @@ button, input, select { font: inherit; }
   gap: 9px;
 }
 
+/* Keep player color HEX inputs on the left and color previews on the right. */
+.player-color-control {
+  grid-template-columns: minmax(0, 1fr) 38px;
+}
+
 .panel-color-control {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 38px minmax(0, 1fr);
