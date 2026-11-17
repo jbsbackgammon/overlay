@@ -28,7 +28,7 @@ assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
 assert.ok(editor.includes('大会パネルカラー'), 'Tournament panel color label is missing');
 const styles = read('styles.css');
-assert.ok(editor.includes('common/ui.css?v=20'), 'Shared CSS v19 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=21'), 'Shared CSS v21 must be loaded');
 assert.ok(!/--(?:opacity-muted|shadow-primary)/.test(styles),
   'Retired long-form opacity and shadow token names must not remain');
 
