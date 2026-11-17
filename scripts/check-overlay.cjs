@@ -34,6 +34,15 @@ const usedColors = [...styles.matchAll(/var\(--color-(\d+)\b/g)].map((match) => 
 assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
   'Overlay CSS must not reference undefined palette values');
 assert.ok(editor.includes('common/ui.css?v=31'), 'Shared CSS v31 must be loaded');
+assert.ok(editor.includes('id="saveCompleteDialog"') &&
+  editor.includes('<p role="status">保存完了</p>') &&
+  styles.includes('.save-complete-dialog {') &&
+  styles.includes('font-size: var(--font-size-20);'),
+  'Save confirmation must reuse the common modal appearance');
+assert.ok(js.includes('localStorage.setItem(savedSettingsKey, JSON.stringify(entries.slice(0, 100)));') &&
+  js.includes('dialog.showModal();') &&
+  js.includes('saveCompleteTimer = setTimeout(() => dialog.close(), 2000);'),
+  'Successful settings save must display a two-second modal confirmation');
 const settingLabelStart = js.indexOf('function settingLabel(entry) {');
 const settingLabelEnd = js.indexOf('\nfunction downloadJson()', settingLabelStart);
 assert.ok(settingLabelStart >= 0 && settingLabelEnd > settingLabelStart,
