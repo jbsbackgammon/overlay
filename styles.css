@@ -1014,6 +1014,18 @@ button, input, select { font: inherit; }
 .saved-setting:hover { background: var(--color-85); }
 .saved-settings-empty { margin: var(--space-16); color: var(--color-45); text-align: center; }
 
+/* Reuse the shared modal backdrop, presenting a two-second save confirmation. */
+.save-complete-dialog {
+  min-width: 220px;
+  padding: var(--space-24);
+  text-align: center;
+}
+.save-complete-dialog p {
+  margin: 0;
+  font-size: var(--font-size-20);
+  font-weight: var(--font-weight-action);
+}
+
 .output-page {
   width: 1920px;
   height: 1080px;
