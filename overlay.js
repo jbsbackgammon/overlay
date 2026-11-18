@@ -751,6 +751,9 @@ function render() {
   const stage = $(".stage");
   if (!stage) return;
   if (state.rules && state.sponsors2) state.sponsors2 = false;
+  // Latin-script player names already match the English display name.
+  // Keep the member master's country code, but disable editing that field.
+  updateEnglishFields();
   stage.style.setProperty("--frame-color", state.frameColor);
   stage.classList.toggle("personal-mode", state.personal);
   stage.classList.toggle("player-photo-mode", state.playerPhoto);
@@ -1108,7 +1111,11 @@ function startRotation() {
 }
 
 function updateEnglishFields() {
-  $$(".english-input").forEach((input) => { input.hidden = !state.english; });
+  $(".english-input").forEach((input) => { input.hidden = !state.english; });
+  for (const side of ["top", "bottom"]) {
+    const input = document.getElementById(`${side}NameEn`);
+    if (input) input.disabled = Boolean(state.english && isLatinName(state[`${side}Name`]));
+  }
 }
 
 function startLanguageRotation() {
