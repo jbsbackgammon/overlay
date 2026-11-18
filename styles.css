@@ -11,7 +11,6 @@
   --width-editor-event-min: 320px;
   --width-editor-swap: 80px;
   --width-editor-channel-min: 112px;
-  --width-editor-primary-min: 170px;
   --width-editor-color-budget: 357px;
   --width-editor-color-extra: 47px;
   --width-editor-color-panel-extra: 56px;
@@ -825,11 +824,6 @@ body {
   height: var(--height-input);
 }
 
-
-.open-output {
-  min-width: var(--width-editor-primary-min);
-  padding: 0 var(--space-24);
-}
 
 /* Preset selector and joined input styles live in common/ui.css. */
 
