@@ -284,6 +284,9 @@ assert.deepEqual(['1', '2', '3', 'unknown'].map(resolveChannel), ['1', '2', '3',
 assert.ok(js.includes('function isLatinName(value)') &&
   js.includes('if (isPlayerName && isLatinName(original)) return original;'),
   'Romanized player names must remain unchanged in English mode');
+assert.ok(js.includes('if (input) input.disabled = Boolean(state.english && isLatinName(state[`${side}Name`]));')
+  && js.includes('  updateEnglishFields();\n  stage.style.setProperty("--frame-color", state.frameColor);'),
+  'Latin-script players must have disabled English name fields, refreshed on every render');
 const isLatinSourceStart = js.indexOf('function isLatinName(value) {');
 const isLatinSourceEnd = js.indexOf('\nfunction isForeignMember(member)', isLatinSourceStart);
 assert.ok(isLatinSourceStart >= 0 && isLatinSourceEnd > isLatinSourceStart);
