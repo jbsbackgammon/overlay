@@ -359,18 +359,92 @@ function applyCommonEdition(name) {
   state.editionSource = name;
   return changed;
 }
+function closeSharedPresetMenus(except = null) {
+  $('.jbsui-preset-picker > .jbsui-combo-menu').forEach((menu) => {
+    if (menu === except) return;
+    menu.classList.add('hidden');
+    menu.parentElement?.querySelector('.jbsui-preset-button')?.setAttribute('aria-expanded', 'false');
+  });
+}
+
+function toggleSharedPresetMenu(button) {
+  const menu = document.getElementById(button.getAttribute('aria-controls'));
+  if (!menu) return;
+  const willOpen = menu.classList.contains('hidden');
+  closeSharedPresetMenus(willOpen ? menu : null);
+  menu.classList.toggle('hidden', !willOpen);
+  button.setAttribute('aria-expanded', String(willOpen));
+}
+
+function addSharedPresetItem(menu, label, onChoose) {
+  const item = document.createElement('button');
+  item.type = 'button';
+  item.textContent = label;
+  item.addEventListener('click', async () => {
+    await onChoose();
+    closeSharedPresetMenus();
+  });
+  menu.append(item);
+}
+
+function applyPresetSelection(key, value) {
+  state[key] = value;
+  $(`[data-field="${key}"]`).value = value;
+  if (key === "title") {
+    const shared = commonTournament(value);
+    state.titleEn = shared?.nameEn || titleEnglishPresets[value] || "";
+    $("[data-field=titleEn]").value = state.titleEn;
+    state.editionSource = value;
+    if (applyCommonEdition(value)) {
+      $("[data-field=edition]").value = state.edition;
+      $("[data-field=editionEn]").value = state.editionEn;
+    }
+    const themeColor = shared?.color || titleThemePresets[value];
+    if (themeColor) {
+      state.frameColor = themeColor;
+      $(`[data-field="frameColor"]`).forEach((input) => { input.value = themeColor; });
+      $(`[data-color-for="frameColor"]`).forEach((input) => { input.value = themeColor; });
+    }
+    state.themeSubColor = shared?.subColor || "";
+    const boardKey = titleBoardPresets[value];
+    const boardPreset = boardPresets[boardKey];
+    if (boardPreset) {
+      state.boardPreset = boardKey;
+      if (boardSelect) boardSelect.value = boardKey;
+      Object.entries(boardPreset).forEach(([colorKey, colorValue]) => {
+        state[colorKey] = colorValue;
+        $(`[data-field="${colorKey}"]`).forEach((input) => { input.value = colorValue; });
+        $(`[data-color-for="${colorKey}"]`).forEach((input) => { input.value = colorValue; });
+      });
+    }
+  }
+  if (key === "round") {
+    state.roundEn = roundEnglishPresets[value] || "";
+    $("[data-field=roundEn]").value = state.roundEn;
+  }
+  render();
+  persistState();
+}
+
+function refreshRoundOptions() {
+  const menu = document.getElementById('roundPresetMenu');
+  if (!menu) return;
+  menu.replaceChildren();
+  ['決勝','準決勝','準々決勝','３回戦','２回戦','１回戦','プレーオフ'].forEach((value) => {
+    addSharedPresetItem(menu, value, () => applyPresetSelection('round', value));
+  });
+}
 
 function refreshTournamentOptions() {
   const brand = window.JBSBrand;
-  const select = document.getElementById("titlePreset");
-  if (!brand?.getConfig?.() || !select) return;
+  const menu = document.getElementById("titlePresetMenu");
+  if (!brand?.getConfig?.() || !menu) return;
   const tournaments = brand.getTournaments();
   if (!tournaments.length) return;
-  select.replaceChildren(new Option("選択", ""));
-  tournaments.forEach((entry) => select.add(new Option(entry.name, entry.name)));
-  // Presets are action selectors. The closed control always reads "選択";
-  // the chosen tournament is displayed only in the adjacent text input.
-  select.value = "";
+  menu.replaceChildren();
+  tournaments.forEach((entry) => {
+    addSharedPresetItem(menu, entry.name, () => applyPresetSelection('title', entry.name));
+  });
 }
 
 async function loadCommonBrand() {
@@ -1213,7 +1287,7 @@ async function importJsonFile(file) {
 }
 
 async function loadMembers() {
-  const selects = $$('[data-member-for]');
+  const buttons = $$('[data-member-for]');
   try {
     const response = await fetch('https://jbsbackgammon.github.io/member/data/members.json', { cache: 'no-store' });
     if (!response.ok) throw new Error();
@@ -1241,46 +1315,40 @@ async function loadMembers() {
       });
     memberPhotoByName.clear();
     members.forEach((member) => {
-      const fallbackFilename = member.nameEn ? `${member.nameJa}_${member.nameEn}.png` : '';
+      const fallbackFilename = member.nameEn ? member.nameJa + '_' + member.nameEn + '.png' : '';
       const photoPath = member.photo.replace(/^\.\.\//, '').replace(/^\//, '');
       const photoUrl = photoPath
         ? new URL(photoPath, 'https://jbsbackgammon.github.io/member/').href
         : fallbackFilename
-          ? `https://jbsbackgammon.github.io/member/images/${encodeURIComponent(fallbackFilename)}`
+          ? 'https://jbsbackgammon.github.io/member/images/' + encodeURIComponent(fallbackFilename)
           : '';
       if (photoUrl) memberPhotoByName.set(member.nameJa, photoUrl);
     });
-    selects.forEach((select) => {
+    buttons.forEach((button) => {
+      const side = button.dataset.memberFor;
+      const menu = document.getElementById(button.getAttribute('aria-controls'));
+      if (!menu) return;
+      menu.replaceChildren();
       members.forEach((member) => {
-        const option = document.createElement('option');
-        option.value = member.nameJa;
-        option.textContent = member.nameJa;
-        option.dataset.nameEn = member.nameEn;
-        select.append(option);
-      });
-      select.addEventListener('change', () => {
-        if (!select.value) return;
-        const side = select.dataset.memberFor;
-        const option = select.selectedOptions[0];
-        state[`${side}Name`] = select.value;
-        state[`${side}NameEn`] = option.dataset.nameEn || '';
-        state[`${side}Photo`] = ""; // Follow the newly selected member's photo.
-        $(`[data-field="${side}Name"]`).value = state[`${side}Name`];
-        $(`[data-field="${side}NameEn"]`).value = state[`${side}NameEn`];
-        persistState();
-        render();
-        select.value = '';
+        addSharedPresetItem(menu, member.nameJa, () => {
+          state[side + 'Name'] = member.nameJa;
+          state[side + 'NameEn'] = member.nameEn || '';
+          state[side + 'Photo'] = '';
+          $(`[data-field="${side}Name"]`).value = state[side + 'Name'];
+          $(`[data-field="${side}NameEn"]`).value = state[side + 'NameEn'];
+          persistState();
+          render();
+        });
       });
     });
     render();
   }
   catch (_) {
-    selects.forEach((select) => {
-      select.title = '選手一覧を取得できませんでした。直接入力してください。';
+    buttons.forEach((button) => {
+      button.title = '選手一覧を取得できませんでした。直接入力してください。';
     });
   }
 }
-
 function syncEditorFromState() {
   $$('[data-field]').forEach((input) => {
     const key = input.dataset.field;
@@ -1386,52 +1454,18 @@ function bindEditor() {
     input.addEventListener("change", applyColor);
   });
 
-  $$('[data-preset-for]').forEach((select) => {
-    select.addEventListener("change", () => {
-      if (!select.value) return;
-      const key = select.dataset.presetFor;
-      state[key] = select.value;
-      $(`[data-field="${key}"]`).value = select.value;
-      if (key === "title") {
-        const shared = commonTournament(select.value);
-        state.titleEn = shared?.nameEn || titleEnglishPresets[select.value] || "";
-        $("[data-field=titleEn]").value = state.titleEn;
-        // The common master calculates the edition for the current date in JST.
-        // If it is still loading, apply the edition when loading completes.
-        state.editionSource = select.value;
-        if (applyCommonEdition(select.value)) {
-          $("[data-field=edition]").value = state.edition;
-          $("[data-field=editionEn]").value = state.editionEn;
-        }
-        const themeColor = shared?.color || titleThemePresets[select.value];
-        if (themeColor) {
-          state.frameColor = themeColor;
-          $$('[data-field="frameColor"]').forEach((input) => { input.value = themeColor; });
-          $$('[data-color-for="frameColor"]').forEach((input) => { input.value = themeColor; });
-        }
-        // Store the secondary color independently. Unlike the theme's main
-        // color it has no existing editable field / visible element in overlay.
-        state.themeSubColor = shared?.subColor || "";
-        const boardKey = titleBoardPresets[select.value];
-        const boardPreset = boardPresets[boardKey];
-        if (boardPreset) {
-          state.boardPreset = boardKey;
-          if (boardSelect) boardSelect.value = boardKey;
-          Object.entries(boardPreset).forEach(([colorKey, value]) => {
-            state[colorKey] = value;
-            $$(`[data-field="${colorKey}"]`).forEach((input) => { input.value = value; });
-            $$(`[data-color-for="${colorKey}"]`).forEach((input) => { input.value = value; });
-          });
-        }
-      }
-      if (key === "round") {
-        state.roundEn = roundEnglishPresets[select.value] || "";
-        $("[data-field=roundEn]").value = state.roundEn;
-      }
-      render();
-      persistState();
-      select.value = "";
+  refreshRoundOptions();
+  $$('.jbsui-preset-button').forEach((button) => {
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      toggleSharedPresetMenu(button);
     });
+  });
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('.jbsui-preset-picker')) closeSharedPresetMenus();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeSharedPresetMenus();
   });
 
   boardSelect?.addEventListener("change", (event) => {
