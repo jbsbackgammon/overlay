@@ -991,49 +991,6 @@ button, input, select { font: inherit; }
 
 .hex-input { letter-spacing: var(--letter-spacing-editor-hex); }
 
-.settings-dialog {
-  width: min(var(--width-editor-dialog-max), calc(100vw - var(--space-24) - var(--space-24)));
-  max-height: min(var(--height-editor-dialog-max), calc(100vh - var(--space-24) - var(--space-24)));
-}
-
-.saved-settings {
-  display: grid;
-  gap: 0;
-  max-height: var(--height-editor-saved-list-max);
-  padding: var(--space-16);
-  overflow: auto;
-}
-
-.saved-setting {
-  width: 100%;
-  padding: var(--space-12);
-  border: 0;
-  border-bottom: var(--width-border) solid var(--color-95);
-  border-radius: 0;
-  background: transparent;
-  color: var(--color-25);
-  text-align: left;
-  font-size: var(--font-size-14);
-  font-weight: var(--font-weight-action);
-  cursor: pointer;
-}
-
-.saved-setting:last-child { border-bottom: 0; }
-.saved-setting:hover { background: var(--color-85); }
-.saved-settings-empty { margin: var(--space-16); color: var(--color-45); text-align: center; }
-
-/* Reuse the shared modal backdrop, presenting a two-second save confirmation. */
-.save-complete-dialog {
-  min-width: var(--width-editor-panel-min);
-  padding: var(--space-24);
-  text-align: center;
-}
-.save-complete-dialog p {
-  margin: 0;
-  font-size: var(--font-size-20);
-  font-weight: var(--font-weight-action);
-}
-
 .output-page {
   width: 1920px;
   height: 1080px;
