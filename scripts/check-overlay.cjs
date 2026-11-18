@@ -39,7 +39,7 @@ assert.ok(!retiredColors.test(styles), 'Overlay CSS must use the six-color palet
 const usedColors = [...styles.matchAll(/var\(--color-(\d+)\b/g)].map((match) => Number(match[1]));
 assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
   'Overlay CSS must not reference undefined palette values');
-assert.ok(editor.includes('common/ui.css?v=41'), 'Shared CSS v41 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=42'), 'Shared CSS v42 must be loaded');
 assert.ok(editor.includes('id="saveCompleteDialog"') &&
   editor.includes('<p role="status">保存完了</p>') &&
   editor.includes('jbsui-save-complete-dialog') &&
@@ -58,7 +58,7 @@ assert.ok(!js.includes('function settingLabel(')
   && !js.includes('function formatSavedAt(')
   && !js.includes('配信盤面設定-'),
   'Local naming rules and timestamp-based JSON filenames must be retired');
-assert.ok(editor.includes('class="open-output jbsui-button jbsui-button--primary"')
+assert.ok(editor.includes('class="open-output jbsui-button jbsui-button--primary jbsui-button--primary-action"')
   && !/\.open-output\s*\{[^}]*font-size\s*:/s.test(styles),
   'Broadcast button must inherit the same 14px type size as all shared buttons');
 assert.ok(!styles.includes('select option {') && !styles.includes('select > option {'),
@@ -162,7 +162,8 @@ const embeddedLiterals = editingStyles.split('\n').filter(line =>
 assert.deepEqual(embeddedLiterals, [],
   'Editor CSS properties must use named tokens, not embedded pixel/color/timing values');
 assert.ok(styles.includes('--width-editor-swap: 80px;')
-  && styles.includes('--width-editor-color-budget: 357px;'),
+  && styles.includes('--width-editor-color-budget: 357px;')
+  && !styles.includes('--width-editor-primary-min'),
   'Tool-specific layout constants must be centralized outside editor declarations');
 assert.ok(!styles.includes('--duration-short') && !styles.includes('--width-focus-outline'),
   'Retired interaction tokens must not remain');
