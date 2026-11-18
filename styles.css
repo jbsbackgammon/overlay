@@ -727,12 +727,7 @@ button, input, select { font: inherit; }
 }
 
 .control-panel {
-  display: grid;
   grid-template-columns: minmax(var(--width-editor-panel-min), 1fr) minmax(var(--width-editor-panel-wide-min), 2fr);
-  gap: var(--space-8) var(--space-16);
-  padding: var(--space-16) var(--space-24);
-  border-top: var(--width-border) solid var(--color-95);
-  background: var(--color-100);
 }
 
 .event-fields {
@@ -790,10 +785,6 @@ button, input, select { font: inherit; }
 
 .top-actions {
   grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-8) var(--space-12);
 }
 
 .channel-picker {
