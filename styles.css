@@ -824,8 +824,8 @@ body {
 .title-fields > .jbsui-field:has(> .english-input:not([hidden])) > label {
   grid-column: 1 / -1;
 }
-.event-fields > .jbsui-field > .jbsui-preset-input,
-.title-fields > .jbsui-field > .jbsui-preset-input,
+.event-fields > .jbsui-field > :is(.jbsui-preset-input, .jbsui-preset-picker),
+.title-fields > .jbsui-field > :is(.jbsui-preset-input, .jbsui-preset-picker),
 .event-fields > .jbsui-field > .english-input,
 .title-fields > .jbsui-field > .english-input {
   min-width: 0;
@@ -836,8 +836,8 @@ body {
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 }
 /* Prevent the Japanese selector and input from overflowing their half. */
-.event-fields > .jbsui-field .jbsui-preset-input > input,
-.title-fields > .jbsui-field .jbsui-preset-input > input {
+.event-fields > .jbsui-field :is(.jbsui-preset-input, .jbsui-preset-picker) > input,
+.title-fields > .jbsui-field :is(.jbsui-preset-input, .jbsui-preset-picker) > input {
   min-width: 0;
 }
 
