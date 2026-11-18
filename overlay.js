@@ -360,7 +360,7 @@ function applyCommonEdition(name) {
   return changed;
 }
 function closeSharedPresetMenus(except = null) {
-  $('.jbsui-preset-picker > .jbsui-combo-menu').forEach((menu) => {
+  document.querySelectorAll('.jbsui-preset-picker > .jbsui-combo-menu').forEach((menu) => {
     if (menu === except) return;
     menu.classList.add('hidden');
     menu.parentElement?.querySelector('.jbsui-preset-button')?.setAttribute('aria-expanded', 'false');
