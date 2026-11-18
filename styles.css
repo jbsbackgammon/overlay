@@ -34,7 +34,6 @@ body {
   color: var(--color-25, hsl(215 25% 25%));
 }
 
-button, input, select { font: inherit; }
 
 .app {
   min-height: 100vh;
