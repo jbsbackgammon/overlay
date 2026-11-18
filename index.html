@@ -12,13 +12,13 @@
   <link rel="icon" href="https://jbsbackgammon.github.io/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
-  <link rel="stylesheet" href="https://jbsbackgammon.github.io/common/ui.css?v=31">
+  <link rel="stylesheet" href="https://jbsbackgammon.github.io/common/ui.css?v=39">
   <link rel="stylesheet" href="styles.css?v=20261118-nowrap-toggles-v62">
 </head>
 <body>
   <div class="app">
     <aside class="control-panel jbsui">
-      <div class="top-actions">
+      <div class="top-actions jbsui-actions">
         <label class="channel-picker" for="channelSelect">
           <select id="channelSelect" class="jbsui-select" aria-label="編集する配信">
             <option value="1">配信1</option>
@@ -111,14 +111,14 @@
     <section class="stage-shell" id="stageMount" aria-label="配信画面プレビュー"></section>
   </div>
 
-  <dialog class="settings-dialog jbsui-dialog" id="settingsDialog" aria-labelledby="settingsDialogTitle">
+  <dialog class="settings-dialog jbsui-dialog jbsui-settings-dialog" id="settingsDialog" aria-labelledby="settingsDialogTitle">
     <div class="jbsui-dialog-head">
       <h2 id="settingsDialogTitle">保存した設定</h2>
       <button type="button" id="closeSettings" class="jbsui-dialog-close" aria-label="閉じる">×</button>
     </div>
-    <div class="saved-settings" id="savedSettings"></div>
+    <div class="saved-settings jbsui-saved-settings" id="savedSettings"></div>
   </dialog>
-  <dialog class="save-complete-dialog jbsui-dialog" id="saveCompleteDialog" aria-label="保存完了">
+  <dialog class="save-complete-dialog jbsui-dialog jbsui-save-complete-dialog" id="saveCompleteDialog" aria-label="保存完了">
     <p role="status">保存完了</p>
   </dialog>
 
