@@ -37,12 +37,12 @@ assert.ok(!retiredColors.test(styles), 'Overlay CSS must use the six-color palet
 const usedColors = [...styles.matchAll(/var\(--color-(\d+)\b/g)].map((match) => Number(match[1]));
 assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
   'Overlay CSS must not reference undefined palette values');
-assert.ok(editor.includes('common/ui.css?v=31'), 'Shared CSS v31 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=40'), 'Shared CSS v40 must be loaded');
 assert.ok(editor.includes('id="saveCompleteDialog"') &&
   editor.includes('<p role="status">保存完了</p>') &&
-  styles.includes('.save-complete-dialog {') &&
-  styles.includes('font-size: var(--font-size-20);'),
-  'Save confirmation must reuse the common modal appearance');
+  editor.includes('jbsui-save-complete-dialog') &&
+  !styles.includes('.save-complete-dialog {'),
+  'Save confirmation must use the shared common modal appearance');
 assert.ok(js.includes('localStorage.setItem(savedSettingsKey, JSON.stringify(entries.slice(0, 100)));') &&
   js.includes('dialog.showModal();') &&
   js.includes('saveCompleteTimer = setTimeout(() => dialog.close(), 2000);'),
@@ -184,10 +184,10 @@ for (const retired of ["--border-width","--button-height","--dialog-shadow","--d
 
 assert.ok(styles.includes('font-family: var(--font-family, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, sans-serif);'),
   'Editor must reference the shared font-family and preserve the output-page fallback order');
-assert.ok(styles.includes('border-radius: var(--radius);'), 'Editor radius token missing');
+assert.ok(editor.includes('jbsui-panel') && editor.includes('jbsui-player-photo-picker'),
+  'Shared panel radius and 36px player-photo sizing must come from common UI');
 assert.ok(!styles.includes('--jbsui-'), 'Retired prefixed style token remains');
-assert.ok(styles.includes('height: var(--height-input);')
-  && styles.includes('width: var(--size-swatch);'), 'Shared 36px sizes missing');
+assert.ok(styles.includes('height: var(--height-input);'), 'Tool-specific editor alignment must use the shared input height');
 assert.ok(styles.includes('background: var(--color-95, hsl(215 25% 95%));')
   && styles.includes('color: var(--color-25, hsl(215 25% 25%));'), 'Base colors missing');
 assert.ok(!js.includes('setProperty("--button-theme"'), 'Unused theme override remains');
@@ -197,14 +197,16 @@ for (const field of ['topMember', 'bottomMember', 'titlePreset', 'roundPreset'])
   assert.ok(editor.includes('id="' + field + '"'),
     'Existing preset selector must be kept: ' + field);
 }
-assert.ok(editor.includes('class="control-panel jbsui"'), 'Missing JBS editor scope');
+assert.ok(editor.includes('class="control-panel jbsui jbsui-panel"'), 'Missing shared JBS editor panel scope');
 assert.ok(editor.includes('id="channelSelect" class="jbsui-select"'),
   'Stream selector must use the same common select state styles as right1–5');
 assert.ok(!/\.channel-picker select\s*\{[^}]*(?:border:|border-color:|background-color:|color:|cursor:)/s.test(styles)
   && !styles.includes('.channel-picker select:not(:disabled):hover'),
   'Stream selector must not override common hover or focus styles');
 for (const component of ['jbsui-color-control', 'jbsui-color-swatch', 'jbsui-hex-input',
-  'jbsui-dialog', 'jbsui-dialog-head', 'jbsui-dialog-close']) {
+  'jbsui-dialog', 'jbsui-dialog-head', 'jbsui-dialog-close',
+  'jbsui-settings-dialog', 'jbsui-saved-settings', 'jbsui-save-complete-dialog',
+  'jbsui-player-entry-row', 'jbsui-player-photo-picker', 'jbsui-player-photo-preview']) {
   assert.ok(editor.includes(component), 'Missing shared UI component: ' + component);
 }
 for (const retired of ['.color-control {', '.jbsui-field input[type="color"] {',
