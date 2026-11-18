@@ -71,8 +71,8 @@ assert.ok(styles.includes('grid-template-columns: repeat(2, minmax(var(--width-e
   && styles.includes('white-space: nowrap;'),
   'Player input widths must adapt to the exact single-line width of display toggles');
 
-assert.ok(editor.includes('class="jbsui-preset-input"') || editor.includes('class="jbsui-preset-input player-input"'),
-  'Preset selectors must use the shared input-group component');
+assert.ok(editor.includes('jbsui-preset-picker') && editor.includes('jbsui-preset-button'),
+  'Preset selectors must use the shared fixed-label picker component');
 assert.ok(!styles.includes('.jbsui-preset-input select:focus'),
   'The four-sided focus style belongs only in common UI CSS');
 assert.ok(js.includes('event.key === "Tab"')
