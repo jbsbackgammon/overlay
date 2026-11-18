@@ -39,7 +39,7 @@ assert.ok(!retiredColors.test(styles), 'Overlay CSS must use the six-color palet
 const usedColors = [...styles.matchAll(/var\(--color-(\d+)\b/g)].map((match) => Number(match[1]));
 assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
   'Overlay CSS must not reference undefined palette values');
-assert.ok(editor.includes('common/ui.css?v=50'), 'Shared CSS v49 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=51'), 'Shared CSS v51 must be loaded');
 assert.ok(editor.includes('https://jbsbackgammon.github.io/common/ui.js?v=1')
   && !editor.includes('id="saveCompleteDialog"')
   && !editor.includes('jbsui-save-complete-dialog'),
