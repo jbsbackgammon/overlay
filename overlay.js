@@ -1111,7 +1111,7 @@ function startRotation() {
 }
 
 function updateEnglishFields() {
-  $(".english-input").forEach((input) => { input.hidden = !state.english; });
+  document.querySelectorAll(".english-input").forEach((input) => { input.hidden = !state.english; });
   for (const side of ["top", "bottom"]) {
     const input = document.getElementById(`${side}NameEn`);
     if (input) input.disabled = Boolean(state.english && isLatinName(state[`${side}Name`]));
