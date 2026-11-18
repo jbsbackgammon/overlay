@@ -26,7 +26,9 @@ assert.ok(js.includes('modes.right3 === "rules34"'), 'Missing rules for right3 a
 assert.ok(js.includes('modes.right4 === "rules45"'), 'Missing rules for right4 and right5');
 assert.ok(editor.includes('common/brand.js'), 'Missing shared brand library');
 const editorRowClasses = ['top-actions', 'right-selects', 'title-fields', 'event-fields', 'color-row'];
-const editorRowOffsets = editorRowClasses.map(name => editor.indexOf('<div class="' + name + '">'));
+const editorRowOffsets = editorRowClasses.map(name =>
+  editor.search(new RegExp('<div class="[^"]*\\b' + name + '\\b[^"]*">'))
+);
 assert.ok(editorRowOffsets.every((offset, index) => offset >= 0 && (index === 0 || offset > editorRowOffsets[index - 1])),
   'Editor rows must be ordered: actions, right slots, tournament, players, colors');
 assert.ok(!editor.includes('大会名パネル'), 'Use 大会パネル consistently in editor labels');
