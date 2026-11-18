@@ -20,7 +20,6 @@
   --width-editor-preview-max: 1200px;
   --width-editor-preview: 92%;
   --alpha-editor-photo-overlay: 72%;
-  --letter-spacing-editor-hex: .035em;
 }
 
 * { box-sizing: border-box; }
@@ -748,22 +747,6 @@ body {
   grid-template-rows: var(--height-label) var(--height-input);
   align-content: start;
 }
-.event-fields > .jbsui-field > label,
-.title-fields > .jbsui-field > label {
-  line-height: var(--height-label);
-}
-.event-fields > .jbsui-field > .english-input,
-.title-fields > .jbsui-field > .english-input,
-.title-fields > .jbsui-field > input:not(.english-input),
-.title-fields > .jbsui-field > .jbsui-preset-input {
-  height: var(--height-input);
-  min-height: 0;
-}
-.title-fields > .jbsui-field > .jbsui-preset-input > input,
-.title-fields > .jbsui-field > .jbsui-preset-input > select {
-  height: var(--height-input);
-}
-
 .title-fields,
 .right-selects {
   grid-column: 1 / -1;
@@ -893,8 +876,6 @@ body {
 
 /* Board selector retains its normal font weight; common UI owns its
    background, border, hover and keyboard focus styles. */
-[data-board-preset] { font-weight: var(--font-weight-normal); }
-
 .swap-field {
   display: flex;
   align-items: flex-end;
@@ -929,8 +910,6 @@ body {
 .panel-color-field.is-gradient .panel-color-swatch > input[type="color"] {
   opacity: 0;
 }
-
-.hex-input { letter-spacing: var(--letter-spacing-editor-hex); }
 
 .output-page {
   width: 1920px;
