@@ -834,50 +834,7 @@ button, input, select { font: inherit; }
 
 /* Preset selector and joined input styles live in common/ui.css. */
 
-/* Each player's square photo stays in the same row as the selector and name. */
-.player-entry-row {
-  display: grid;
-  grid-template-columns: var(--size-swatch) minmax(0, 1fr);
-  align-items: center;
-  gap: var(--space-8);
-  min-width: 0;
-  height: var(--height-input);
-}
-.player-entry-row .jbsui-preset-input { min-width: 0; height: var(--height-input); }
-.player-entry-row .jbsui-preset-input select,
-.player-entry-row .jbsui-preset-input input { height: var(--height-input); min-width: 0; }
-.player-photo-picker {
-  appearance: none;
-  position: relative;
-  display: block;
-  width: var(--size-swatch);
-  height: var(--size-swatch);
-  padding: 0;
-  overflow: hidden;
-  border: var(--width-border) solid var(--color-85);
-  border-radius: var(--radius);
-  background: var(--color-95);
-  cursor: pointer;
-}
-.player-photo-picker:hover { border-color: var(--color-60); }
-.player-photo-picker::after {
-  content: "変更";
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: color-mix(in srgb, var(--color-25) var(--alpha-editor-photo-overlay), transparent);
-  color: var(--color-100);
-  font-size: var(--font-size-12);
-  font-weight: var(--font-weight-action);
-  opacity: 0;
-  pointer-events: none;
-}
-.player-photo-picker:hover::after,
-.player-photo-picker:focus-visible::after { opacity: 1; }
-.player-photo-preview { display: block; width: 100%; height: 100%; object-fit: cover; }
-
+/* Player row and photo controls use common/ui.css. */
 .english-input[hidden] { display: none; }
 
 /* v4: Show Japanese and English inputs side-by-side, not on separate rows.
