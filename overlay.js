@@ -1377,7 +1377,7 @@ function renderSavedSettings() {
   container.replaceChildren();
   if (!entries.length) {
     const empty = document.createElement("p");
-    empty.className = "saved-settings-empty jbsui-saved-settings-empty";
+    empty.className = "jbsui-saved-settings-empty";
     empty.textContent = "保存された設定はありません。";
     container.append(empty);
     return;
@@ -1385,7 +1385,7 @@ function renderSavedSettings() {
   entries.forEach((entry) => {
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "saved-setting jbsui-saved-setting";
+    button.className = "jbsui-saved-setting";
     button.textContent = JBSNaming.formatSavedLabel({ savedAt: entry.savedAt, ...entry.state });
     button.addEventListener("click", () => {
       state = normalizeLegacyMediaModes({ ...defaults, ...entry.state });
