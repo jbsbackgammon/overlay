@@ -366,10 +366,11 @@ function refreshTournamentOptions() {
   if (!brand?.getConfig?.() || !select) return;
   const tournaments = brand.getTournaments();
   if (!tournaments.length) return;
-  const previous = select.value;
   select.replaceChildren(new Option("選択", ""));
   tournaments.forEach((entry) => select.add(new Option(entry.name, entry.name)));
-  if ([...select.options].some((option) => option.value === previous)) select.value = previous;
+  // Presets are action selectors. The closed control always reads "選択";
+  // the chosen tournament is displayed only in the adjacent text input.
+  select.value = "";
 }
 
 async function loadCommonBrand() {
