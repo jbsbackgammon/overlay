@@ -39,7 +39,7 @@ assert.ok(!retiredColors.test(styles), 'Overlay CSS must use the six-color palet
 const usedColors = [...styles.matchAll(/var\(--color-(\d+)\b/g)].map((match) => Number(match[1]));
 assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
   'Overlay CSS must not reference undefined palette values');
-assert.ok(editor.includes('common/ui.css?v=43'), 'Shared CSS v43 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=46'), 'Shared CSS v46 must be loaded');
 assert.ok(editor.includes('id="saveCompleteDialog"') &&
   editor.includes('<p role="status">保存完了</p>') &&
   editor.includes('jbsui-save-complete-dialog') &&
@@ -112,8 +112,8 @@ assert.ok((styles.match(/box-shadow: var\(--shadow\);/g) || []).length === 1,
 
 assert.ok(/\.channel-picker\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/s.test(styles),
   'Stream selector must use weight 400 from common CSS');
-assert.ok(/\[data-board-preset\]\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/s.test(styles),
-  'Board color select must use weight 400 from common CSS');
+assert.ok(!/\[data-board-preset\]\s*\{[^}]*font-weight\s*:/s.test(styles),
+  'Board color select typography must come from common CSS');
 assert.ok(!styles.includes('background: var(--color-100) !important;')
   && !styles.includes('color: var(--color-25) !important;'),
   'Board preset must inherit the shared background and text colors');
@@ -227,8 +227,9 @@ for (const duplicate of ['.settings-action {', '.action-separator {', '.sponsor-
 
 assert.ok(styles.includes('grid-template-rows: var(--height-label) var(--height-input);'),
   'Editor fields must align their label and control rows in bilingual mode');
-assert.ok(styles.includes('.title-fields > .jbsui-field > .jbsui-preset-input > select'),
-  'Preset selects need the same height as Japanese and English inputs');
+assert.ok(!styles.includes('.title-fields > .jbsui-field > .jbsui-preset-input > select')
+  && !styles.includes('.title-fields > .jbsui-field > label {'),
+  'Shared field heights and label line-height must come from common CSS');
 assert.ok(js.includes('brand.getEdition(name)'), 'Official editions must come from JBS common');
 assert.ok(editor.includes('class="panel-color-swatch jbsui-color-swatch"'), 'Panel color preview must use the shared swatch');
 assert.ok(js.includes('gradient: "linear-gradient(') && js.includes('silver: "linear-gradient(')
