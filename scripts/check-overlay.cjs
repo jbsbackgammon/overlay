@@ -39,7 +39,7 @@ assert.ok(!retiredColors.test(styles), 'Overlay CSS must use the six-color palet
 const usedColors = [...styles.matchAll(/var\(--color-(\d+)\b/g)].map((match) => Number(match[1]));
 assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
   'Overlay CSS must not reference undefined palette values');
-assert.ok(editor.includes('common/ui.css?v=42'), 'Shared CSS v42 must be loaded');
+assert.ok(editor.includes('common/ui.css?v=43'), 'Shared CSS v43 must be loaded');
 assert.ok(editor.includes('id="saveCompleteDialog"') &&
   editor.includes('<p role="status">保存完了</p>') &&
   editor.includes('jbsui-save-complete-dialog') &&
