@@ -39,16 +39,16 @@ assert.ok(!retiredColors.test(styles), 'Overlay CSS must use the six-color palet
 const usedColors = [...styles.matchAll(/var\(--color-(\d+)\b/g)].map((match) => Number(match[1]));
 assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
   'Overlay CSS must not reference undefined palette values');
-assert.ok(editor.includes('common/ui.css?v=49'), 'Shared CSS v49 must be loaded');
-assert.ok(editor.includes('id="saveCompleteDialog"') &&
-  editor.includes('<p role="status">保存完了</p>') &&
-  editor.includes('jbsui-save-complete-dialog') &&
-  !styles.includes('.save-complete-dialog {'),
-  'Save confirmation must use the shared common modal appearance');
-assert.ok(js.includes('localStorage.setItem(savedSettingsKey, JSON.stringify(entries.slice(0, 100)));') &&
-  js.includes('dialog.showModal();') &&
-  js.includes('saveCompleteTimer = setTimeout(() => dialog.close(), 2000);'),
-  'Successful settings save must display a two-second modal confirmation');
+assert.ok(editor.includes('common/ui.css?v=50'), 'Shared CSS v49 must be loaded');
+assert.ok(editor.includes('https://jbsbackgammon.github.io/common/ui.js?v=1')
+  && !editor.includes('id="saveCompleteDialog"')
+  && !editor.includes('jbsui-save-complete-dialog'),
+  'Save confirmation must use the common button-only helper, without any modal');
+assert.ok(js.includes('localStorage.setItem(savedSettingsKey, JSON.stringify(entries.slice(0, 100)));')
+  && js.includes('JBSUI.showButtonFeedback(event.currentTarget);')
+  && !js.includes('saveCompleteTimer')
+  && !js.includes('saveCompleteDialog'),
+  'Successful settings saves must trigger shared button-only feedback');
 assert.ok(editor.includes('https://jbsbackgammon.github.io/common/naming.js?v=1'),
   'Overlay must load the shared JBS naming library');
 assert.ok(js.includes('JBSNaming.formatSavedLabel({ savedAt: entry.savedAt, ...entry.state })')
@@ -208,7 +208,7 @@ assert.ok(!/\.channel-picker select\s*\{[^}]*(?:border:|border-color:|background
   'Stream selector must not override common hover or focus styles');
 for (const component of ['jbsui-color-control', 'jbsui-color-swatch', 'jbsui-hex-input',
   'jbsui-dialog', 'jbsui-dialog-head', 'jbsui-dialog-close',
-  'jbsui-settings-dialog', 'jbsui-saved-settings', 'jbsui-save-complete-dialog',
+  'jbsui-settings-dialog', 'jbsui-saved-settings',
   'jbsui-player-entry-row', 'jbsui-player-photo-picker', 'jbsui-player-photo-preview']) {
   assert.ok(editor.includes(component), 'Missing shared UI component: ' + component);
 }
