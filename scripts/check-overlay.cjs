@@ -313,14 +313,22 @@ assert.ok(js.includes('const storageKey = channel === "1" ? "jbs-overlay-state" 
 assert.ok(js.includes('const stateChannelName = `jbs-overlay-live-${channel}`;'),
   'Each stream needs a separate live BroadcastChannel');
 assert.ok(js.includes('if (channel !== "1") outputUrl.searchParams.set("channel", channel);')
-  && js.includes('outputUrl.searchParams.set("s", encodeOutputState(state));')
+  && js.includes('outputUrl.searchParams.set("z", await JBSOutputSnapshot.encode(snapshot, defaults));')
+  && js.includes('outputUrl.searchParams.set("s", encodeOutputState(snapshot));')
   && !js.includes('outputUrl.searchParams.set("state",')
   && !js.includes('outputUrl.searchParams.set("v",'),
-  'Output page must use compact snapshots and omit redundant parameters');
-assert.ok(js.includes('query.get("s") || query.get("state")'),
-  'Existing self-contained output links must remain readable');
-assert.ok(js.includes('JSON.stringify(item) !== JSON.stringify(defaults[key])'),
-  'Short links must only include changed state values');
+  'New OBS links must prefer compressed snapshots and retain a safe fallback');
+assert.ok(js.includes('window.__jbsCompressedSnapshot')
+  && js.includes('query.get("s") || query.get("state")')
+  && output.includes("JBSOutputSnapshot.decode(packed)"),
+  'Compressed output and older self-contained URLs must both load');
+assert.ok(editor.includes('snapshot.js?v=1')
+  && output.includes('snapshot.js?v=1')
+  && output.includes('window.__jbsCompressedSnapshot = await JBSOutputSnapshot.decode(packed);'),
+  'Both pages must load the local compression codec and decode before startup');
+assert.ok(js.includes('JSON.stringify(item) !== JSON.stringify(defaults[key])')
+  && read('snapshot.js').includes('JSON.stringify(state[key]) === JSON.stringify(defaults[key])'),
+  'Both compact URL formats must include only changed values');
 assert.ok(js.includes('jbs-overlay-output-${channel}'),
   'Output tabs must remain separate for each stream');
 assert.ok(!editor.includes('id="exportPng"')
