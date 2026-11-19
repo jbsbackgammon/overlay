@@ -359,34 +359,6 @@ function applyCommonEdition(name) {
   state.editionSource = name;
   return changed;
 }
-function closeSharedPresetMenus(except = null) {
-  document.querySelectorAll('.jbsui-preset-picker > .jbsui-combo-menu').forEach((menu) => {
-    if (menu === except) return;
-    menu.classList.add('hidden');
-    menu.parentElement?.querySelector('.jbsui-preset-button')?.setAttribute('aria-expanded', 'false');
-  });
-}
-
-function toggleSharedPresetMenu(button) {
-  const menu = document.getElementById(button.getAttribute('aria-controls'));
-  if (!menu) return;
-  const willOpen = menu.classList.contains('hidden');
-  closeSharedPresetMenus(willOpen ? menu : null);
-  menu.classList.toggle('hidden', !willOpen);
-  button.setAttribute('aria-expanded', String(willOpen));
-}
-
-function addSharedPresetItem(menu, label, onChoose) {
-  const item = document.createElement('button');
-  item.type = 'button';
-  item.textContent = label;
-  item.addEventListener('click', () => {
-    onChoose();
-    closeSharedPresetMenus();
-  });
-  menu.append(item);
-}
-
 function applyPresetSelection(key, value) {
   state[key] = value;
   $(`[data-field="${key}"]`).value = value;
@@ -427,22 +399,25 @@ function applyPresetSelection(key, value) {
   persistState();
 }
 
+// Use the same native select component as thumbnail. The label always returns to 選択.
 function refreshRoundOptions() {
-  const menu = document.getElementById('roundPresetMenu');
-  if (!menu) return;
-  menu.replaceChildren();
+  const select = document.getElementById('roundPreset');
+  if (!select) return;
+  select.replaceChildren(new Option('選択', ''));
   ['決勝', '準決勝', '準々決勝', '３回戦', '２回戦', '１回戦', 'プレーオフ']
-    .forEach(value => addSharedPresetItem(menu, value, () => applyPresetSelection('round', value)));
+    .forEach(value => select.add(new Option(value, value)));
+  select.value = '';
 }
 
 function refreshTournamentOptions() {
+  const select = document.getElementById('titlePreset');
+  if (!select) return;
   const brand = window.JBSBrand;
-  const menu = document.getElementById('titlePresetMenu');
-  if (!menu) return;
   const names = brand?.getConfig?.() ? brand.getTournaments().map(entry => entry.name) : [];
   const available = names.length ? names : Object.keys(titleThemePresets);
-  menu.replaceChildren();
-  available.forEach(name => addSharedPresetItem(menu, name, () => applyPresetSelection('title', name)));
+  select.replaceChildren(new Option('選択', ''));
+  available.forEach(name => select.add(new Option(name, name)));
+  select.value = '';
 }
 
 async function loadCommonBrand() {
@@ -1290,7 +1265,7 @@ async function importJsonFile(file) {
 }
 
 async function loadMembers() {
-  const buttons = document.querySelectorAll('[data-member-for]');
+  const selects = document.querySelectorAll('[data-member-for]');
   try {
     const response = await fetch('https://jbsbackgammon.github.io/member/data/members.json', { cache: 'no-store' });
     if (!response.ok) throw new Error();
@@ -1327,28 +1302,32 @@ async function loadMembers() {
           : '';
       if (photoUrl) memberPhotoByName.set(member.nameJa, photoUrl);
     });
-    buttons.forEach((button) => {
-      const side = button.dataset.memberFor;
-      const menu = document.getElementById(button.getAttribute('aria-controls'));
-      if (!menu) return;
-      menu.replaceChildren();
+    selects.forEach((select) => {
+      select.replaceChildren(new Option('選択', ''));
       members.forEach((member) => {
-        addSharedPresetItem(menu, member.nameJa, () => {
-          state[side + 'Name'] = member.nameJa;
-          state[side + 'NameEn'] = member.nameEn || '';
-          state[side + 'Photo'] = '';
-          document.getElementById(side + 'Name').value = state[side + 'Name'];
-          document.getElementById(side + 'NameEn').value = state[side + 'NameEn'];
-          persistState();
-          render();
-        });
+        const option = new Option(member.nameJa, member.nameJa);
+        option.dataset.nameEn = member.nameEn;
+        select.add(option);
+      });
+      select.addEventListener('change', () => {
+        if (!select.value) return;
+        const side = select.dataset.memberFor;
+        const selectedOption = select.selectedOptions[0];
+        state[side + 'Name'] = select.value;
+        state[side + 'NameEn'] = selectedOption?.dataset.nameEn || '';
+        state[side + 'Photo'] = '';
+        document.getElementById(side + 'Name').value = state[side + 'Name'];
+        document.getElementById(side + 'NameEn').value = state[side + 'NameEn'];
+        select.value = '';
+        persistState();
+        render();
       });
     });
     render();
   }
   catch (_) {
-    buttons.forEach((button) => {
-      button.title = '選手一覧を取得できませんでした。直接入力してください。';
+    selects.forEach((select) => {
+      select.title = '選手一覧を取得できませんでした。直接入力してください。';
     });
   }
 }
@@ -1459,17 +1438,13 @@ function bindEditor() {
 
   refreshRoundOptions();
   refreshTournamentOptions();
-  $$('.jbsui-preset-button').forEach((button) => {
-    button.addEventListener('click', (event) => {
-      event.stopPropagation();
-      toggleSharedPresetMenu(button);
+  $$('[data-preset-for]').forEach(select => {
+    select.addEventListener('change', () => {
+      const value = select.value;
+      if (!value) return;
+      applyPresetSelection(select.dataset.presetFor, value);
+      select.value = ''; // Thumbnail's fixed action label behavior.
     });
-  });
-  document.addEventListener('click', (event) => {
-    if (!event.target.closest('.jbsui-preset-picker')) closeSharedPresetMenus();
-  });
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closeSharedPresetMenus();
   });
 
   boardSelect?.addEventListener("change", (event) => {
