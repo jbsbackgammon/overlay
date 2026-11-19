@@ -402,19 +402,20 @@ function applyPresetSelection(key, value) {
     const themeColor = shared?.color || titleThemePresets[value];
     if (themeColor) {
       state.frameColor = themeColor;
-      $(`[data-field="frameColor"]`).forEach((input) => { input.value = themeColor; });
-      $(`[data-color-for="frameColor"]`).forEach((input) => { input.value = themeColor; });
+      $$(`[data-field="frameColor"]`).forEach((input) => { input.value = themeColor; });
+      $$(`[data-color-for="frameColor"]`).forEach((input) => { input.value = themeColor; });
     }
     state.themeSubColor = shared?.subColor || "";
     const boardKey = titleBoardPresets[value];
     const boardPreset = boardPresets[boardKey];
     if (boardPreset) {
       state.boardPreset = boardKey;
+      const boardSelect = $("[data-board-preset]");
       if (boardSelect) boardSelect.value = boardKey;
       Object.entries(boardPreset).forEach(([colorKey, colorValue]) => {
         state[colorKey] = colorValue;
-        $(`[data-field="${colorKey}"]`).forEach((input) => { input.value = colorValue; });
-        $(`[data-color-for="${colorKey}"]`).forEach((input) => { input.value = colorValue; });
+        $$(`[data-field="${colorKey}"]`).forEach((input) => { input.value = colorValue; });
+        $$(`[data-color-for="${colorKey}"]`).forEach((input) => { input.value = colorValue; });
       });
     }
   }
@@ -1462,7 +1463,7 @@ function bindEditor() {
 
   refreshRoundOptions();
   refreshTournamentOptions();
-  $('.jbsui-preset-button').forEach((button) => {
+  $$('.jbsui-preset-button').forEach((button) => {
     button.addEventListener('click', (event) => {
       event.stopPropagation();
       toggleSharedPresetMenu(button);
