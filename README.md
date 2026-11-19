@@ -6,7 +6,7 @@
 
 ## 1. 配信を選ぶ
 
-画面上部の「配信1〜3」から編集したい配信を選びます。配信ごとに別の内容を設定できます。
+画面上部の「作業1〜3」から編集したい配信を選びます。作業ごとに別の内容を設定できます。
 
 左側の「配信本番」を押すと、選択中の配信盤面を別ウィンドウで開きます。操作画面の下部には、現在の盤面のプレビューが表示されます。
 
@@ -26,7 +26,7 @@
 
 ## 3. OBSで配信する
 
-1. 操作画面で配信1〜3と表示内容を設定します。
+1. 操作画面で作業1〜3と表示内容を設定します。
 2. 「配信本番」を押し、開いたページのURLをコピーします。
 3. OBSで「ブラウザ」ソースを追加し、そのURLを入力します。
 4. ブラウザソースの幅を **1920**、高さを **1080** に設定します。
@@ -38,9 +38,9 @@
 
 | 配信 | URL |
 | --- | --- |
-| 配信1 | https://jbsbackgammon.github.io/overlay/output.html |
-| 配信2 | https://jbsbackgammon.github.io/overlay/output.html?channel=2 |
-| 配信3 | https://jbsbackgammon.github.io/overlay/output.html?channel=3 |
+| 作業1 | https://jbsbackgammon.github.io/overlay/output.html |
+| 作業2 | https://jbsbackgammon.github.io/overlay/output.html?channel=2 |
+| 作業3 | https://jbsbackgammon.github.io/overlay/output.html?channel=3 |
 
 **OBSには「配信本番」から開いたURLを使用してください。** 上の基本URLだけを直接開いた場合、ブラウザ内に設定が保存されていなければ初期表示になります。
 
