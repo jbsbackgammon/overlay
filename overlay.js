@@ -1290,7 +1290,7 @@ async function importJsonFile(file) {
 }
 
 async function loadMembers() {
-  const buttons = $('[data-member-for]');
+  const buttons = document.querySelectorAll('[data-member-for]');
   try {
     const response = await fetch('https://jbsbackgammon.github.io/member/data/members.json', { cache: 'no-store' });
     if (!response.ok) throw new Error();
