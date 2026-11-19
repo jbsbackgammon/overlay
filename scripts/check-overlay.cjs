@@ -275,7 +275,7 @@ assert.ok(js.includes('state.edition === defaults.edition'), 'Initial placeholde
 // Channels 1–3 must each have their own persisted state, live-sync
 // channel and live-output window, while preserving channel 1's legacy key.
 for (const channel of ['1', '2', '3']) {
-  assert.ok(editor.includes('<option value="' + channel + '">配信' + channel + '</option>'),
+  assert.ok(editor.includes('<option value="' + channel + '">作業' + channel + '</option>'),
     'Missing stream option: ' + channel);
 }
 const firstActionRow = editor.slice(editor.indexOf('<div class="top-actions'),
