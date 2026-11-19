@@ -359,34 +359,6 @@ function applyCommonEdition(name) {
   state.editionSource = name;
   return changed;
 }
-function closeSharedPresetMenus(except = null) {
-  document.querySelectorAll('.jbsui-preset-picker > .jbsui-combo-menu').forEach((menu) => {
-    if (menu === except) return;
-    menu.classList.add('hidden');
-    menu.parentElement?.querySelector('.jbsui-preset-button')?.setAttribute('aria-expanded', 'false');
-  });
-}
-
-function toggleSharedPresetMenu(button) {
-  const menu = document.getElementById(button.getAttribute('aria-controls'));
-  if (!menu) return;
-  const willOpen = menu.classList.contains('hidden');
-  closeSharedPresetMenus(willOpen ? menu : null);
-  menu.classList.toggle('hidden', !willOpen);
-  button.setAttribute('aria-expanded', String(willOpen));
-}
-
-function addSharedPresetItem(menu, label, onChoose) {
-  const item = document.createElement('button');
-  item.type = 'button';
-  item.textContent = label;
-  item.addEventListener('click', async () => {
-    await onChoose();
-    closeSharedPresetMenus();
-  });
-  menu.append(item);
-}
-
 function applyPresetSelection(key, value) {
   state[key] = value;
   $(`[data-field="${key}"]`).value = value;
@@ -428,26 +400,26 @@ function applyPresetSelection(key, value) {
 }
 
 function refreshRoundOptions() {
-  const menu = document.getElementById('roundPresetMenu');
-  if (!menu) return;
-  menu.replaceChildren();
-  ['決勝','準決勝','準々決勝','３回戦','２回戦','１回戦','プレーオフ'].forEach((value) => {
-    addSharedPresetItem(menu, value, () => applyPresetSelection('round', value));
+  const select = document.getElementById('roundPreset');
+  if (!select) return;
+  select.replaceChildren(new Option('選択', ''));
+  ['決勝', '準決勝', '準々決勝', '３回戦', '２回戦', '１回戦', 'プレーオフ'].forEach((value) => {
+    select.add(new Option(value, value));
   });
+  select.value = '';
 }
 
 function refreshTournamentOptions() {
   const brand = window.JBSBrand;
-  const menu = document.getElementById("titlePresetMenu");
-  if (!menu) return;
-  // The common master replaces the local fallback once it has loaded.
-  // Keep the menu usable when it is slow or temporarily unavailable.
+  const select = document.getElementById('titlePreset');
+  if (!select) return;
+  // Use common as the source of truth, keeping fallbacks during load failures.
   const names = brand?.getConfig?.() ? brand.getTournaments().map(entry => entry.name) : [];
   const available = names.length ? names : Object.keys(titleThemePresets);
-  menu.replaceChildren();
-  available.forEach((name) => {
-    addSharedPresetItem(menu, name, () => applyPresetSelection('title', name));
-  });
+  select.replaceChildren(new Option('選択', ''));
+  available.forEach((name) => select.add(new Option(name, name)));
+  // The selected title belongs in the adjacent field, not on this action select.
+  select.value = '';
 }
 
 async function loadCommonBrand() {
@@ -1295,7 +1267,7 @@ async function importJsonFile(file) {
 }
 
 async function loadMembers() {
-  const buttons = $$('[data-member-for]');
+  const selects = $('[data-member-for]');
   try {
     const response = await fetch('https://jbsbackgammon.github.io/member/data/members.json', { cache: 'no-store' });
     if (!response.ok) throw new Error();
@@ -1332,28 +1304,32 @@ async function loadMembers() {
           : '';
       if (photoUrl) memberPhotoByName.set(member.nameJa, photoUrl);
     });
-    buttons.forEach((button) => {
-      const side = button.dataset.memberFor;
-      const menu = document.getElementById(button.getAttribute('aria-controls'));
-      if (!menu) return;
-      menu.replaceChildren();
+    selects.forEach((select) => {
+      select.replaceChildren(new Option('選択', ''));
       members.forEach((member) => {
-        addSharedPresetItem(menu, member.nameJa, () => {
-          state[side + 'Name'] = member.nameJa;
-          state[side + 'NameEn'] = member.nameEn || '';
-          state[side + 'Photo'] = '';
-          $(`[data-field="${side}Name"]`).value = state[side + 'Name'];
-          $(`[data-field="${side}NameEn"]`).value = state[side + 'NameEn'];
-          persistState();
-          render();
-        });
+        const option = new Option(member.nameJa, member.nameJa);
+        option.dataset.nameEn = member.nameEn;
+        select.add(option);
       });
+      select.addEventListener('change', () => {
+        if (!select.value) return;
+        const side = select.dataset.memberFor;
+        state[side + 'Name'] = select.value;
+        state[side + 'NameEn'] = select.selectedOptions[0]?.dataset.nameEn || '';
+        state[side + 'Photo'] = ''; // Follow the selected member's photo.
+        $("[data-field=\"" + side + "Name\"]").value = state[side + 'Name'];
+        $("[data-field=\"" + side + "NameEn\"]").value = state[side + 'NameEn'];
+        select.value = ''; // Keep the compact "選択" label after choosing.
+        persistState();
+        render();
+      });
+      select.value = '';
     });
     render();
   }
   catch (_) {
-    buttons.forEach((button) => {
-      button.title = '選手一覧を取得できませんでした。直接入力してください。';
+    selects.forEach((select) => {
+      select.title = '選手一覧を取得できませんでした。直接入力してください。';
     });
   }
 }
@@ -1464,17 +1440,14 @@ function bindEditor() {
 
   refreshRoundOptions();
   refreshTournamentOptions();
-  $$('.jbsui-preset-button').forEach((button) => {
-    button.addEventListener('click', (event) => {
-      event.stopPropagation();
-      toggleSharedPresetMenu(button);
+  $$('[data-preset-for]').forEach((select) => {
+    select.addEventListener('change', () => {
+      const value = select.value;
+      if (!value) return;
+      applyPresetSelection(select.dataset.presetFor, value);
+      // Restore the fixed action label and allow choosing the same item again.
+      select.value = '';
     });
-  });
-  document.addEventListener('click', (event) => {
-    if (!event.target.closest('.jbsui-preset-picker')) closeSharedPresetMenus();
-  });
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closeSharedPresetMenus();
   });
 
   boardSelect?.addEventListener("change", (event) => {
