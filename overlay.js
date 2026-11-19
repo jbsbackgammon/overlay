@@ -568,7 +568,10 @@ const stateChannelName = `jbs-overlay-live-${channel}`;
 const stateChannel = typeof BroadcastChannel === "function" ? new BroadcastChannel(stateChannelName) : null;
 
 function encodeOutputState(value) {
-  const bytes = new TextEncoder().encode(JSON.stringify(value));
+  // Encode only non-default state values to keep portable OBS links short.
+  const changed = Object.fromEntries(Object.entries(value).filter(([key, item]) =>
+    Object.hasOwn(defaults, key) && JSON.stringify(item) !== JSON.stringify(defaults[key])));
+  const bytes = new TextEncoder().encode(JSON.stringify(changed));
   let binary = "";
   bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
@@ -587,7 +590,8 @@ function decodeOutputState(value) {
   }
 }
 
-const embeddedState = decodeOutputState(query.get("state"));
+// "state" remains supported for existing links; "s" is a compact snapshot.
+const embeddedState = decodeOutputState(query.get("s") || query.get("state"));
 const fromQuery = Object.fromEntries([...query.entries()].filter(([key]) => Object.hasOwn(defaults, key)));
 if ("sponsors" in fromQuery) fromQuery.sponsors = fromQuery.sponsors !== "false";
 if ("sponsors2" in fromQuery) fromQuery.sponsors2 = fromQuery.sponsors2 !== "false";
@@ -1515,12 +1519,13 @@ function bindEditor() {
 
   $("#openOutput")?.addEventListener("click", () => {
     const outputUrl = new URL("output.html", location.href);
-    outputUrl.searchParams.set("channel", channel);
-    outputUrl.searchParams.set("v", "20261005-obsfit1");
-    // Image data in a URL can exceed reverse-proxy and browser limits.
-    // For uploads, the output tab retrieves the already-persisted state instead.
+    // Channel 1 is the default; channel 2 and 3 keep their own URLs.
+    if (channel !== "1") outputUrl.searchParams.set("channel", channel);
+    // Embed only changed values so OBS in another browser still receives a
+    // complete initial state (the remaining values use the shared defaults).
+    // Uploaded photos continue to use local storage as before.
     if (!state.topPhoto && !state.bottomPhoto) {
-      outputUrl.searchParams.set("state", encodeOutputState(state));
+      outputUrl.searchParams.set("s", encodeOutputState(state));
     }
     window.open(outputUrl.href, `jbs-overlay-output-${channel}`);
   });
