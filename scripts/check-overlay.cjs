@@ -278,6 +278,11 @@ for (const channel of ['1', '2', '3']) {
   assert.ok(editor.includes('<option value="' + channel + '">配信' + channel + '</option>'),
     'Missing stream option: ' + channel);
 }
+const firstActionRow = editor.slice(editor.indexOf('<div class="top-actions'),
+  editor.indexOf('</div>', editor.indexOf('<div class="top-actions')));
+assert.ok(firstActionRow.indexOf('id="openOutput"') >= 0
+  && firstActionRow.indexOf('id="openOutput"') < firstActionRow.indexOf('id="channelSelect"'),
+  'Broadcast button must precede the stream selector');
 const channelExpression = js.match(/^const channel = (.+);$/m)?.[1];
 assert.ok(channelExpression, 'Missing stream selector logic');
 const resolveChannel = value => {
@@ -307,8 +312,15 @@ assert.ok(js.includes('const storageKey = channel === "1" ? "jbs-overlay-state" 
   'Per-stream storage key must remain unique and backwards compatible');
 assert.ok(js.includes('const stateChannelName = `jbs-overlay-live-${channel}`;'),
   'Each stream needs a separate live BroadcastChannel');
-assert.ok(js.includes('outputUrl.searchParams.set("channel", channel);'),
-  'Output page must use the selected stream');
+assert.ok(js.includes('if (channel !== "1") outputUrl.searchParams.set("channel", channel);')
+  && js.includes('outputUrl.searchParams.set("s", encodeOutputState(state));')
+  && !js.includes('outputUrl.searchParams.set("state",')
+  && !js.includes('outputUrl.searchParams.set("v",'),
+  'Output page must use compact snapshots and omit redundant parameters');
+assert.ok(js.includes('query.get("s") || query.get("state")'),
+  'Existing self-contained output links must remain readable');
+assert.ok(js.includes('JSON.stringify(item) !== JSON.stringify(defaults[key])'),
+  'Short links must only include changed state values');
 assert.ok(js.includes('jbs-overlay-output-${channel}'),
   'Output tabs must remain separate for each stream');
 assert.ok(!editor.includes('id="exportPng"')
