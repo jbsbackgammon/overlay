@@ -594,7 +594,8 @@ function decodeOutputState(value) {
 }
 
 // "state" remains supported for existing links; "s" is a compact snapshot.
-const embeddedState = decodeOutputState(query.get("s") || query.get("state"));
+const embeddedState = window.__jbsCompressedSnapshot
+  ?? decodeOutputState(query.get("s") || query.get("state"));
 const fromQuery = Object.fromEntries([...query.entries()].filter(([key]) => Object.hasOwn(defaults, key)));
 if ("sponsors" in fromQuery) fromQuery.sponsors = fromQuery.sponsors !== "false";
 if ("sponsors2" in fromQuery) fromQuery.sponsors2 = fromQuery.sponsors2 !== "false";
@@ -1521,17 +1522,29 @@ function bindEditor() {
     });
   }
 
-  $("#openOutput")?.addEventListener("click", () => {
-    const outputUrl = new URL("output.html", location.href);
-    // Channel 1 is the default; channel 2 and 3 keep their own URLs.
-    if (channel !== "1") outputUrl.searchParams.set("channel", channel);
-    // Embed only changed values so OBS in another browser still receives a
-    // complete initial state (the remaining values use the shared defaults).
-    // Uploaded photos continue to use local storage as before.
-    if (!state.topPhoto && !state.bottomPhoto) {
-      outputUrl.searchParams.set("s", encodeOutputState(state));
+  $("#openOutput")?.addEventListener("click", async () => {
+    // Open synchronously while the click gesture is active. Compression is
+    // asynchronous; opening after awaiting would trigger popup blockers.
+    const target = `jbs-overlay-output-${channel}`;
+    const popup = window.open("about:blank", target);
+    if (!popup) {
+      alert("配信本番を開けませんでした。ブラウザのポップアップを許可してください。");
+      return;
     }
-    window.open(outputUrl.href, `jbs-overlay-output-${channel}`);
+    const outputUrl = new URL("output.html", location.href);
+    if (channel !== "1") outputUrl.searchParams.set("channel", channel);
+    const snapshot = { ...state };
+    if (!snapshot.topPhoto && !snapshot.bottomPhoto) {
+      try {
+        if (!window.JBSOutputSnapshot?.supported()) throw new Error("Compression unsupported");
+        outputUrl.searchParams.set("z", await JBSOutputSnapshot.encode(snapshot, defaults));
+      } catch (error) {
+        // Older browsers can still use the previous, uncompressed format.
+        console.warn("圧縮URLを生成できないため従来形式で出力します。", error);
+        outputUrl.searchParams.set("s", encodeOutputState(snapshot));
+      }
+    }
+    if (!popup.closed) popup.location.replace(outputUrl.href);
   });
 
   $("#saveSettings")?.addEventListener("click", (event) => {
