@@ -438,12 +438,14 @@ function refreshRoundOptions() {
 function refreshTournamentOptions() {
   const brand = window.JBSBrand;
   const menu = document.getElementById("titlePresetMenu");
-  if (!brand?.getConfig?.() || !menu) return;
-  const tournaments = brand.getTournaments();
-  if (!tournaments.length) return;
+  if (!menu) return;
+  // The common master replaces the local fallback once it has loaded.
+  // Keep the menu usable when it is slow or temporarily unavailable.
+  const names = brand?.getConfig?.() ? brand.getTournaments().map(entry => entry.name) : [];
+  const available = names.length ? names : Object.keys(titleThemePresets);
   menu.replaceChildren();
-  tournaments.forEach((entry) => {
-    addSharedPresetItem(menu, entry.name, () => applyPresetSelection('title', entry.name));
+  available.forEach((name) => {
+    addSharedPresetItem(menu, name, () => applyPresetSelection('title', name));
   });
 }
 
@@ -1459,7 +1461,8 @@ function bindEditor() {
   });
 
   refreshRoundOptions();
-  $$('.jbsui-preset-button').forEach((button) => {
+  refreshTournamentOptions();
+  $('.jbsui-preset-button').forEach((button) => {
     button.addEventListener('click', (event) => {
       event.stopPropagation();
       toggleSharedPresetMenu(button);
