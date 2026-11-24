@@ -38,7 +38,7 @@
         if (!response.ok) throw new Error('Stage template unavailable');
         document.getElementById('stageMount').innerHTML = await response.text();
         const script = document.createElement('script');
-        script.src = 'overlay.js?v=20261119-thumbnail-native-v62';
+        script.src = 'overlay.js?v=20261124-preset-reset-v63';
         document.body.appendChild(script);
       } catch (error) {
         console.error('配信盤面を読み込めませんでした。', error);
