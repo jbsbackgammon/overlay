@@ -303,11 +303,14 @@ assert.ok(js.includes('function isLatinName(value)') &&
 assert.ok(js.includes('if (input) input.disabled = Boolean(state.english && isLatinName(state[`${side}Name`]));')
   && js.includes('  updateEnglishFields();\n  stage.style.setProperty("--frame-color", state.frameColor);'),
   'Latin-script players must have disabled English name fields, refreshed on every render');
+assert.ok(editor.includes('common/members.js') && output.includes('common/members.js'), 'Both overlay pages must load the shared member library');
+assert.ok(js.includes('await JBSMembers.load()') && js.includes('JBSMembers.photoUrl(member, { fallback: true })'), 'Member lookup and photo resolution must use common');
+assert.ok(!js.includes('ROMAJI_TO_HIRAGANA'), 'Do not duplicate shared member sorting');
 const isLatinSourceStart = js.indexOf('function isLatinName(value) {');
-const isLatinSourceEnd = js.indexOf('\nfunction isForeignMember(member)', isLatinSourceStart);
+const isLatinSourceEnd = js.indexOf('\nconst boardPresets', isLatinSourceStart);
 assert.ok(isLatinSourceStart >= 0 && isLatinSourceEnd > isLatinSourceStart);
-const testIsLatinName = Function(js.slice(isLatinSourceStart, isLatinSourceEnd) +
-  '\nreturn isLatinName;')();
+const testIsLatinName = Function('window', js.slice(isLatinSourceStart, isLatinSourceEnd) +
+  '\nreturn isLatinName;')({});
 assert.equal(testIsLatinName('John Smith'), true);
 assert.equal(testIsLatinName('François Dupont'), true);
 assert.equal(testIsLatinName('柳 暢祐'), false);
