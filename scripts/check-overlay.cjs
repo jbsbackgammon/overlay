@@ -39,7 +39,7 @@ assert.ok(!retiredColors.test(styles), 'Overlay CSS must use the six-color palet
 const usedColors = [...styles.matchAll(/var\(--color-(\d+)\b/g)].map((match) => Number(match[1]));
 assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
   'Overlay CSS must not reference undefined palette values');
-assert.ok(editor.includes('common/ui.css?v=53'), 'Shared CSS v53 must be loaded');
+assert.ok(/https:\/\/jbsbackgammon\.github\.io\/common\/ui\.css\?v=\d+"/.test(editor), 'Versioned common UI CSS must be loaded');
 assert.ok(editor.includes('https://jbsbackgammon.github.io/common/ui.js?v=1')
   && !editor.includes('id="saveCompleteDialog"')
   && !editor.includes('jbsui-save-complete-dialog'),
@@ -113,8 +113,8 @@ assert.ok(!styles.includes('.title-fields.jbsui-inactive label')
 assert.ok((styles.match(/box-shadow: var\(--shadow\);/g) || []).length === 1,
   'Editor preview uses the shared shadow; dialog uses common UI shadow');
 
-assert.ok(/\.channel-picker\s*\{[^}]*font-weight:\s*var\(--font-weight-normal\)/s.test(styles),
-  'Stream selector must use weight 400 from common CSS');
+assert.ok(!styles.includes('.channel-picker') && !styles.includes('--width-editor-channel-min'),
+  'Workspace selector must inherit common CSS without retired local styling');
 assert.ok(!/\[data-board-preset\]\s*\{[^}]*font-weight\s*:/s.test(styles),
   'Board color select typography must come from common CSS');
 assert.ok(!styles.includes('background: var(--color-100) !important;')
@@ -204,8 +204,8 @@ for (const field of ['topMember', 'bottomMember', 'titlePreset', 'roundPreset'])
     'Existing preset selector must be kept: ' + field);
 }
 assert.ok(editor.includes('class="control-panel jbsui jbsui-panel"'), 'Missing shared JBS editor panel scope');
-assert.ok(editor.includes('id="channelSelect" class="jbsui-select"'),
-  'Stream selector must use the same common select state styles as right1–5');
+assert.ok(editor.includes('id="channelSelect" class="jbsui-select jbsui-action-select"'),
+  'Workspace selector must use the same common action select as thumbnail');
 assert.ok(!/\.channel-picker select\s*\{[^}]*(?:border:|border-color:|background-color:|color:|cursor:)/s.test(styles)
   && !styles.includes('.channel-picker select:not(:disabled):hover'),
   'Stream selector must not override common hover or focus styles');
