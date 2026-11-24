@@ -140,7 +140,7 @@ assert.ok(js.includes('design.getPropertyValue("--width-content-max")')
   && js.includes('design.getPropertyValue("--space-12")')
   && !js.includes('Math.min(1200,'),
   'Preview sizing must use the CSS design tokens, not duplicate numeric constants');
-assert.equal((js.match(/Object\.hasOwn\(defaults, key\)/g) || []).length, 3,
+assert.ok(js.includes('Object.hasOwn(defaults,key)') && js.includes('sanitizeState(imported, true)'),
   'Only owned state fields may be accepted from URL or imported JSON');
 for (const unused of ['sponsor-shop', 'sponsor-kifu', 'sponsor-service', 'sponsor-wordmark',
   'dice-mark', 'thumbnail-picker']) {

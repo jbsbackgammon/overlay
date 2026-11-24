@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const js = fs.readFileSync('overlay.js','utf8');
-const a = js.indexOf('const defaults = {'), b = js.indexOf('// Metallic panel presets.');
+const a = js.indexOf('const defaultJapanBoardColors'), b = js.indexOf('// Metallic panel presets.');
 assert.ok(a >= 0 && b > a);
 const api = Function(js.slice(a,b) + '\nreturn {sanitizeState, validMediaPath, safePhoto};')();
 assert.equal(api.sanitizeState({round:'決勝',guideStart12:'500'},true).guideStart12,500);

@@ -205,8 +205,7 @@ function validateMediaEntries(list, folder) {
   if (!Array.isArray(list)) return [];
   const prefix = `assets/${folder}/`;
   return list.filter(entry => entry && typeof entry.path === "string"
-      && entry.path.startsWith(prefix) && !entry.path.includes("..")
-      && /\.(?:png|jpe?g|webp|gif)$/i.test(entry.path))
+      && validMediaPath(entry.path, folder))
     .map(entry => ({ path: entry.path, name: entry.path.slice(prefix.length) }));
 }
 
@@ -1161,9 +1160,7 @@ function buildSponsorCards() {
 
 async function loadSponsorImages() {
   try {
-    const response = await fetch(`ads.json?v=${Date.now()}`, { cache: "no-store" });
-    if (!response.ok) return;
-    const ads = await response.json();
+    const ads = await fetchJson(`ads.json?v=${Date.now()}`);
     if (!Array.isArray(ads)) return;
     mediaLibrary.ads = validateMediaEntries(
       ads.filter(ad => typeof ad?.image === "string").map(ad => ({ path: ad.image })), "ads");
