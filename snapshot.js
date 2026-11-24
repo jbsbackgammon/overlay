@@ -73,9 +73,20 @@
     if (!supported()) throw new Error("Native inflate codec is unavailable");
     const bytes = fromBase64Url(value);
     const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate"));
-    const inflated = new Uint8Array(await new Response(stream).arrayBuffer());
-    if (inflated.length > 1048576) throw new Error("Compact snapshot is too large");
-    return fromCompactArray(JSON.parse(new TextDecoder().decode(inflated)));
+    const reader = stream.getReader();
+    const decoder = new TextDecoder();
+    let size = 0, json = "";
+    try {
+      while (true) {
+        const { done, value: chunk } = await reader.read();
+        if (done) break;
+        size += chunk.byteLength;
+        if (size > 1048576) throw new Error("Compact snapshot is too large");
+        json += decoder.decode(chunk, { stream: true });
+      }
+      json += decoder.decode();
+      return fromCompactArray(JSON.parse(json));
+    } finally { await reader.cancel().catch(() => {}); }
   }
 
   global.JBSOutputSnapshot = Object.freeze({

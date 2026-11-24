@@ -48,6 +48,9 @@ jobs:
           node scripts/check-overlay.cjs
           python3 -m json.tool ads.json > /dev/null
 
+      - name: Validate input and storage failure handling
+        run: node scripts/check-reliability.cjs
+
       - name: Browser UI smoke test
         run: node scripts/smoke-browser.cjs
 

@@ -52,6 +52,67 @@ const defaults = {
   interval: 60000
 };
 
+// Keep only known fields; validate imported/URL/restored state before rendering.
+const guideBounds = { guideVerticalGap:[0,400], guideStart12:[0,1920], guideStart6:[0,1920], guideGoalStart:[0,1920], guidePointGap:[20,160], interval:[1000,3600000] };
+function validMediaPath(path, folder) {
+  if (typeof path !== 'string' || !path.startsWith('assets/' + folder + '/') || !/\.(?:png|jpe?g|webp|gif)$/i.test(path)) return false;
+  try { return !/[\x00-\x1f\\?#]/.test(decodeURIComponent(path)) && !decodeURIComponent(path).includes('..'); } catch { return false; }
+}
+function safePhoto(value) {
+  return value === '' || (typeof value === 'string' && value.length <= 1500000 &&
+    (/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/i.test(value) ||
+     /^https:\/\/jbsbackgammon\.github\.io\/member\/images\/[^?#]+(?:\?v=\d+)?$/i.test(value)));
+}
+function sanitizeState(value, strict = false) {
+  const clean = {};
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    if (strict) throw new Error('Invalid settings');
+    return clean;
+  }
+  for (const [key, item] of Object.entries(value)) {
+    if (!Object.hasOwn(defaults,key)) continue;
+    const expected = defaults[key];
+    let v = item;
+    let valid = typeof v === typeof expected;
+    if (Object.hasOwn(guideBounds,key)) {
+      const [min,max] = guideBounds[key];
+      v = typeof item === 'number' || (typeof item === 'string' && item.trim()) ? Number(item) : NaN;
+      valid = Number.isFinite(v) && v >= min && v <= max;
+    } else if (key.endsWith('Color')) {
+      valid = typeof v === 'string' && (/^#[0-9a-f]{6}$/i.test(v) || (key === 'themeSubColor' && v === ''));
+    } else if (key === 'topPhoto' || key === 'bottomPhoto') {
+      valid = safePhoto(v);
+    } else if (/^right[1-5]Mode$/.test(key)) {
+      valid = typeof v === 'string' && (['none','reference','title','thumbnail','sponsors','sponsors2','sponsors2bottom','rules','rules34','rules45'].includes(v)
+        || (v.startsWith('thumbnail:') && validMediaPath(v.slice(10),'thumbnail'))
+        || (v.startsWith('sponsor:') && validMediaPath(v.slice(8),'ads')));
+    } else if (key === 'panelMode') {
+      valid = ['gradient','silver','bronze','solid'].includes(v);
+    } else if (typeof expected === 'string') {
+      valid = typeof v === 'string' && v.length <= 4096;
+    }
+    if (valid) clean[key] = v;
+    else if (strict) throw new Error('Invalid field: ' + key);
+  }
+  if (strict && !Object.keys(clean).length) throw new Error('No valid settings');
+  return clean;
+}
+function readLocal(key) {
+  try { return localStorage.getItem(key); }
+  catch (error) { console.warn('Browser storage unavailable', error); return null; }
+}
+async function fetchJson(url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10000);
+  try {
+    const response = await fetch(url, { cache: 'no-store', signal: controller.signal });
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    return await response.json();
+  } finally { clearTimeout(timer); }
+}
+const photoEpoch = { top: 0, bottom: 0 };
+function invalidatePhotos() { photoEpoch.top++; photoEpoch.bottom++; }
+
 // Metallic panel presets. Keep "gradient" as the gold value for saved-setting compatibility.
 const PANEL_GRADIENTS = Object.freeze({
   gradient: "linear-gradient(118deg, var(--gold-soft), var(--gold))",
@@ -74,10 +135,12 @@ function mediaMode(mode, kind) {
 
 function fixedMediaPath(mode, kind) {
   const prefix = IMAGE_MODE_PREFIX[kind];
-  return typeof mode === "string" && mode.startsWith(prefix) ? mode.slice(prefix.length) : "";
+  const path = typeof mode === "string" && mode.startsWith(prefix) ? mode.slice(prefix.length) : "";
+  return validMediaPath(path, kind === "thumbnail" ? "thumbnail" : "ads") ? path : "";
 }
 
 function normalizeLegacyMediaModes(target) {
+  target = { ...defaults, ...sanitizeState(target) };
   // Legacy right4 was one 330px area. Preserve the occupied 160px rows.
   if (target.right4Mode === "rules") target.right4Mode = "rules45";
   if (target.right4Mode === "sponsors2") {
@@ -96,7 +159,7 @@ function normalizeLegacyMediaModes(target) {
       const url = new URL(old, document.baseURI);
       const decoded = decodeURI(url.pathname);
       const segment = decoded.indexOf("assets/thumbnail/");
-      if (segment >= 0) target[`${slot}Mode`] = `thumbnail:${decoded.slice(segment)}`;
+      if (segment >= 0 && validMediaPath(decoded.slice(segment), 'thumbnail')) target[`${slot}Mode`] = `thumbnail:${decoded.slice(segment)}`;
     } catch (_) { /* unsupported (e.g. a temporary blob URL): use slideshow */ }
   }
   // The former empty preset is no longer offered. Keep any customized
@@ -149,9 +212,7 @@ function validateMediaEntries(list, folder) {
 
 async function loadMediaLibrary() {
   try {
-    const response = await fetch(`media.json?v=${Date.now()}`, { cache: "no-store" });
-    if (!response.ok) throw new Error(`media.json: ${response.status}`);
-    const data = await response.json();
+    const data = await fetchJson(`media.json?v=${Date.now()}`);
     mediaLibrary.thumbnails = validateMediaEntries(data.thumbnails, "thumbnail");
     mediaLibrary.ads = validateMediaEntries(data.ads, "ads")
       .filter(entry => entry.name.toLowerCase() !== "jbs-logo.png");
@@ -505,7 +566,7 @@ function encodeOutputState(value) {
 }
 
 function decodeOutputState(value) {
-  if (!value) return null;
+  if (!value || value.length > 4000000) return null;
   try {
     const padded = value.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(value.length / 4) * 4, "=");
     const binary = atob(padded);
@@ -539,7 +600,8 @@ let ruleTimer;
 let languageMode = "ja";
 let ruleIndex = 0;
 let fitFrame;
-let lastStoredState = embeddedState ? null : localStorage.getItem(storageKey);
+let lastStoredState = embeddedState ? null : readLocal(storageKey);
+let storageWarning = false;
 const savedSettingsKey = "jbs-overlay-saved-settings";
 let pendingThumbnailTransfer = null;
 
@@ -561,13 +623,25 @@ const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
 function persistState() {
   const serialized = JSON.stringify(state);
-  lastStoredState = serialized;
-  localStorage.setItem(storageKey, serialized);
-  stateChannel?.postMessage({ type: "state", state });
+  try {
+    localStorage.setItem(storageKey, serialized);
+    lastStoredState = serialized;
+    storageWarning = false;
+  } catch (error) {
+    console.warn('作業内容を保存できませんでした。JSON出力で保存してください。', error);
+    if (!storageWarning && !document.body.classList.contains('output-page')) {
+      storageWarning = true;
+      alert('作業内容を自動保存できません。JSON出力で控えを保存してください。配信表示は継続します。');
+    }
+  }
+  // A quota or private-mode failure must not stop the live output.
+  try { stateChannel?.postMessage({ type: "state", state }); }
+  catch (error) { console.warn('配信への同期に失敗しました。', error); }
 }
 
 function applyExternalState(nextState) {
   if (!nextState || typeof nextState !== "object" || Array.isArray(nextState)) return;
+  invalidatePhotos();
   state = normalizeLegacyMediaModes({ ...defaults, ...nextState });
   if (!state.right1Mode) state.right1Mode = "title";
   syncEditorFromState();
@@ -731,13 +805,15 @@ function bindPlayerPhotoUploads() {
       picker.value = "";
       if (!file) return;
       const key = `${side}Photo`;
-      const before = state[key];
+      const request = ++photoEpoch[side];
       try {
-        state[key] = await encodePlayerPhoto(file);
+        const photo = await encodePlayerPhoto(file);
+        if (request !== photoEpoch[side]) return;
+        state[key] = photo;
         persistState();
         render();
       } catch (error) {
-        state[key] = before;
+        if (request !== photoEpoch[side]) return;
         render();
         alert(`選手写真を設定できませんでした。${error?.message || "別の画像をお試しください。"}`);
       }
@@ -1194,7 +1270,10 @@ function startRuleRotation() {
 }
 
 function readSavedSettings() {
-  try { return JSON.parse(localStorage.getItem(savedSettingsKey)) || []; }
+  try {
+    const entries = JSON.parse(localStorage.getItem(savedSettingsKey));
+    return Array.isArray(entries) ? entries.filter(entry => entry && typeof entry.state === 'object' && entry.state && !Array.isArray(entry.state)) : [];
+  }
   catch (_) { return []; }
 }
 
@@ -1212,10 +1291,12 @@ function downloadJson() {
 async function importJsonFile(file) {
   if (!file) return;
   try {
+    if (file.size > 4000000) throw new Error('Settings file too large');
     const parsed = JSON.parse(await file.text());
     const imported = parsed?.state && typeof parsed.state === "object" ? parsed.state : parsed;
     if (!imported || typeof imported !== "object" || Array.isArray(imported)) throw new Error();
-    const allowed = Object.fromEntries(Object.entries(imported).filter(([key]) => Object.hasOwn(defaults, key)));
+    const allowed = sanitizeState(imported, true);
+    invalidatePhotos();
     state = normalizeLegacyMediaModes({ ...defaults, ...allowed });
     persistState();
     syncEditorFromState();
@@ -1244,6 +1325,7 @@ async function loadMembers() {
       });
       JBSUI.bindPresetSelect(select, (value, selectedOption) => {
         const side = select.dataset.memberFor;
+        photoEpoch[side]++;
         state[side + 'Name'] = value;
         state[side + 'NameEn'] = selectedOption?.dataset.nameEn || '';
         state[side + 'Photo'] = '';
@@ -1301,6 +1383,7 @@ function renderSavedSettings() {
     button.className = "jbsui-saved-setting";
     button.textContent = JBSNaming.formatSavedLabel({ savedAt: entry.savedAt, ...entry.state });
     button.addEventListener("click", () => {
+      invalidatePhotos();
       state = normalizeLegacyMediaModes({ ...defaults, ...entry.state });
       persistState();
       syncEditorFromState();
@@ -1322,6 +1405,7 @@ function bindEditor() {
       const value = input.type === "checkbox" ? input.checked : input.value;
       if (input.classList.contains("hex-input") && !/^#[0-9a-fA-F]{6}$/.test(value)) return;
       const priorEnglish = (key === "title" || key === "round") ? roundEnglishFor(state.title, state.round) : "";
+      if (key === "topName" || key === "bottomName") photoEpoch[key === "topName" ? "top" : "bottom"]++;
       state[key] = value;
       if (key === "title") refreshRoundOptions();
       if (key === "title" || key === "round") updateRoundEnglish(priorEnglish);
@@ -1405,6 +1489,7 @@ function bindEditor() {
   });
 
   $("#swapPlayerNames")?.addEventListener("click", () => {
+    invalidatePhotos();
     [state.topName, state.bottomName] = [state.bottomName, state.topName];
     [state.topNameEn, state.bottomNameEn] = [state.bottomNameEn, state.topNameEn];
     [state.topPhoto, state.bottomPhoto] = [state.bottomPhoto, state.topPhoto];
@@ -1588,7 +1673,7 @@ loadMediaLibrary();
 startLanguageRotation();
 startRuleRotation();
 setInterval(() => {
-  const serialized = localStorage.getItem(storageKey);
+  const serialized = readLocal(storageKey);
   if (!serialized || serialized === lastStoredState) return;
   lastStoredState = serialized;
   try { applyExternalState(JSON.parse(serialized)); }
