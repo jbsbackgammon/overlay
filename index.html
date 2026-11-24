@@ -13,20 +13,18 @@
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
   <link rel="stylesheet" href="https://jbsbackgammon.github.io/common/ui.css?v=60">
-  <link rel="stylesheet" href="styles.css?v=20261118-nowrap-toggles-v62">
+  <link rel="stylesheet" href="styles.css?v=20261124-common-action-select-v63">
 </head>
 <body>
   <div class="app">
     <aside class="control-panel jbsui jbsui-panel">
       <div class="top-actions jbsui-actions">
         <button class="open-output jbsui-button jbsui-button--primary jbsui-button--primary-action" id="openOutput">配信本番</button>
-        <label class="channel-picker" for="channelSelect">
-          <select id="channelSelect" class="jbsui-select" aria-label="編集する配信">
-            <option value="1">作業1</option>
-            <option value="2">作業2</option>
-            <option value="3">作業3</option>
-          </select>
-        </label>
+        <select id="channelSelect" class="jbsui-select jbsui-action-select" aria-label="編集する配信">
+          <option value="1">作業1</option>
+          <option value="2">作業2</option>
+          <option value="3">作業3</option>
+        </select>
         <span class="action-separator jbsui-divider" aria-hidden="true"></span>
         <button class="settings-action jbsui-button" id="loadSettings" type="button">設定呼出</button>
         <button class="settings-action jbsui-button" id="importJson" type="button">JSON取込</button>
