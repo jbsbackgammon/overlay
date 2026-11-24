@@ -1309,16 +1309,13 @@ async function loadMembers() {
         option.dataset.nameEn = member.nameEn;
         select.add(option);
       });
-      select.addEventListener('change', () => {
-        if (!select.value) return;
+      JBSUI.bindPresetSelect(select, (value, selectedOption) => {
         const side = select.dataset.memberFor;
-        const selectedOption = select.selectedOptions[0];
-        state[side + 'Name'] = select.value;
+        state[side + 'Name'] = value;
         state[side + 'NameEn'] = selectedOption?.dataset.nameEn || '';
         state[side + 'Photo'] = '';
         document.getElementById(side + 'Name').value = state[side + 'Name'];
         document.getElementById(side + 'NameEn').value = state[side + 'NameEn'];
-        select.value = '';
         persistState();
         render();
       });
@@ -1438,12 +1435,9 @@ function bindEditor() {
 
   refreshRoundOptions();
   refreshTournamentOptions();
-  $$('[data-preset-for]').forEach(select => {
-    select.addEventListener('change', () => {
-      const value = select.value;
-      if (!value) return;
+  $('[data-preset-for]').forEach(select => {
+    JBSUI.bindPresetSelect(select, value => {
       applyPresetSelection(select.dataset.presetFor, value);
-      select.value = ''; // Thumbnail's fixed action label behavior.
     });
   });
 
