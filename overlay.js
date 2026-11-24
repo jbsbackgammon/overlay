@@ -102,6 +102,7 @@ function normalizeLegacyMediaModes(target) {
   // The former empty preset is no longer offered. Keep any customized
   // player colors when restoring older saved settings.
   if (!boardPresets[target.boardPreset]) target.boardPreset = defaults.boardPreset;
+  if (typeof target.round === 'string') target.round = splitDisplayRound(target.round).fullName;
   return target;
 }
 
@@ -404,13 +405,24 @@ function applyPresetSelection(key, value) {
 // Round names and translations use the shared tournament master.
 function getRoundOptions(title) {
   const brand = window.JBSBrand;
-  if (brand?.getConfig?.() && brand.getMatchRounds) return brand.getMatchRounds(title);
+  if (brand?.getConfig?.() && brand.getMatchRounds) {
+    return brand.getMatchRounds(title).map(round => ({ ...round, name: splitDisplayRound(round.name).fullName }));
+  }
   // No bracket-size assumptions while common is unavailable.
   return Object.entries(roundEnglishPresets).map(([name, nameEn]) => ({ name, nameEn }));
 }
 
+function splitDisplayRound(value) {
+  if (window.JBSBrand?.splitMatchRound) return window.JBSBrand.splitMatchRound(value);
+  const text = String(value || '').trim();
+  const match = text.match(/^リーグ(?:ステージ)?\s*([1-8１-８]回戦)$/);
+  if (!match) return { prefix: '', name: text, fullName: text };
+  const name = match[1].replace(/[1-8]/g, digit => String.fromCharCode(0xff10 + Number(digit)));
+  return { prefix: 'リーグステージ', name, fullName: 'リーグステージ' + name };
+}
+
 function roundEnglishFor(title, round) {
-  const key = String(round || '').trim().normalize('NFKC');
+  const key = splitDisplayRound(round).fullName.normalize('NFKC');
   return getRoundOptions(title).find(option => option.name.normalize('NFKC') === key)?.nameEn || "";
 }
 
@@ -892,7 +904,15 @@ function render() {
     : state.game;
   const roundOutput = $("[data-output=round]");
   const shownRound = shown("round");
-  roundOutput.textContent = shownRound;
+  const displayRound = splitDisplayRound(shownRound);
+  roundOutput.replaceChildren();
+  if (displayRound.prefix) {
+    const prefix = document.createElement('span');
+    prefix.className = 'round-prefix';
+    prefix.textContent = displayRound.prefix;
+    roundOutput.append(prefix);
+  }
+  roundOutput.append(document.createTextNode(displayRound.name));
   const isFinal = state.round.trim() === "決勝" || shownRound.trim().toUpperCase() === "FINAL";
   // One stage-level color drives both the original and mirrored right2 panel.
   stage.style.setProperty("--round-text-color", isFinal

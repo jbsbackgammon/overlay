@@ -406,7 +406,7 @@ const roundState = { title: '盤聖戦', round: '１回戦', roundEn: '' };
 const roundFixtures = {
   '盤聖戦': [{ name: '決勝', nameEn: 'FINAL' }, { name: '１回戦', nameEn: 'ROUND OF 64' }],
   '賽王戦': [{ name: '決勝', nameEn: 'FINAL' }, { name: '１回戦', nameEn: 'ROUND OF 32' }],
-  '日本選手権': [{ name: '決勝', nameEn: 'FINAL' }, { name: '１回戦', nameEn: 'ROUND OF 16' }, { name: 'リーグ８回戦', nameEn: 'ROUND 8' }]
+  '日本選手権': [{ name: '決勝', nameEn: 'FINAL' }, { name: '１回戦', nameEn: 'ROUND OF 16' }, { name: 'リーグステージ８回戦', nameEn: 'ROUND 8' }]
 };
 const roundApi = Function('window', 'document', 'Option', 'state', 'roundEnglishPresets',
   roundSource + '\nreturn { refreshRoundOptions, roundEnglishFor, updateRoundEnglish };')(
@@ -425,8 +425,8 @@ roundState.title = '日本選手権';
 roundApi.refreshRoundOptions();
 roundApi.updateRoundEnglish('ROUND OF 32');
 assert.equal(roundState.roundEn, 'ROUND OF 16');
-assert.deepEqual(roundSelect.options.map(o => o.value), ['', '決勝', '１回戦', 'リーグ８回戦']);
-roundState.round = 'リーグ８回戦';
+assert.deepEqual(roundSelect.options.map(o => o.value), ['', '決勝', '１回戦', 'リーグステージ８回戦']);
+roundState.round = 'リーグステージ８回戦';
 roundApi.updateRoundEnglish('ROUND OF 16');
 assert.equal(roundInput.value, 'ROUND 8');
 roundState.roundEn = 'CUSTOM ROUND';
@@ -434,5 +434,8 @@ roundApi.updateRoundEnglish('ROUND 8');
 assert.equal(roundState.roundEn, 'CUSTOM ROUND');
 assert.equal(roundSelect.value, '');
 assert.equal(roundApi.roundEnglishFor('盤聖戦', '1回戦'), 'ROUND OF 64');
+assert.equal(roundApi.roundEnglishFor('日本選手権', 'リーグ８回戦'), 'ROUND 8');
+assert.ok(styles.includes('.title-round .round-prefix {\n  font-size: .5em;'));
+assert.ok(js.includes("prefix.className = 'round-prefix';"));
 
 console.log('Overlay static and state-management checks passed.');

@@ -378,6 +378,12 @@ body {
    Match the specificity of the general title-card text positioning rule. */
 .title-card .title-round > span { top: calc(50% - 3px); }
 
+/* League Stage is supplementary text, half the size of the round number. */
+.title-round .round-prefix {
+  font-size: .5em;
+  margin-inline-end: .2em;
+}
+
 .stage[data-right1-mode="reference"] > .title-card {
   display: grid;
   background: #e5e7eb;
