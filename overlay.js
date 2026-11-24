@@ -1435,7 +1435,7 @@ function bindEditor() {
 
   refreshRoundOptions();
   refreshTournamentOptions();
-  $('[data-preset-for]').forEach(select => {
+  $$('[data-preset-for]').forEach(select => {
     JBSUI.bindPresetSelect(select, value => {
       applyPresetSelection(select.dataset.presetFor, value);
     });
