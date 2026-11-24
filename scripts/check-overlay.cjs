@@ -40,7 +40,7 @@ const usedColors = [...styles.matchAll(/var\(--color-(\d+)\b/g)].map((match) => 
 assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
   'Overlay CSS must not reference undefined palette values');
 assert.ok(/https:\/\/jbsbackgammon\.github\.io\/common\/ui\.css\?v=\d+"/.test(editor), 'Versioned common UI CSS must be loaded');
-assert.ok(editor.includes('https://jbsbackgammon.github.io/common/ui.js?v=1')
+assert.ok(editor.includes('https://jbsbackgammon.github.io/common/ui.js?v=2')
   && !editor.includes('id="saveCompleteDialog"')
   && !editor.includes('jbsui-save-complete-dialog'),
   'Save confirmation must use the common button-only helper, without any modal');
