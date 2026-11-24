@@ -360,6 +360,7 @@ function applyCommonEdition(name) {
   return changed;
 }
 function applyPresetSelection(key, value) {
+  const priorEnglish = roundEnglishFor(state.title, state.round);
   state[key] = value;
   $(`[data-field="${key}"]`).value = value;
   if (key === "title") {
@@ -378,6 +379,8 @@ function applyPresetSelection(key, value) {
       $$(`[data-color-for="frameColor"]`).forEach((input) => { input.value = themeColor; });
     }
     state.themeSubColor = shared?.subColor || "";
+    refreshRoundOptions();
+    updateRoundEnglish(priorEnglish);
     const boardKey = titleBoardPresets[value];
     const boardPreset = boardPresets[boardKey];
     if (boardPreset) {
@@ -392,20 +395,38 @@ function applyPresetSelection(key, value) {
     }
   }
   if (key === "round") {
-    state.roundEn = roundEnglishPresets[value] || "";
-    $("[data-field=roundEn]").value = state.roundEn;
+    updateRoundEnglish(priorEnglish, true);
   }
   render();
   persistState();
 }
 
-// Use the same native select component as thumbnail. The label always returns to 選択.
+// Round names and translations use the shared tournament master.
+function getRoundOptions(title) {
+  const brand = window.JBSBrand;
+  if (brand?.getConfig?.() && brand.getMatchRounds) return brand.getMatchRounds(title);
+  // No bracket-size assumptions while common is unavailable.
+  return Object.entries(roundEnglishPresets).map(([name, nameEn]) => ({ name, nameEn }));
+}
+
+function roundEnglishFor(title, round) {
+  const key = String(round || '').trim().normalize('NFKC');
+  return getRoundOptions(title).find(option => option.name.normalize('NFKC') === key)?.nameEn || "";
+}
+
+function updateRoundEnglish(priorEnglish, force = false) {
+  if (!force && state.roundEn && state.roundEn !== priorEnglish) return;
+  state.roundEn = roundEnglishFor(state.title, state.round);
+  const input = document.getElementById('roundEn');
+  if (input) input.value = state.roundEn;
+}
+
+// Keep the native action selector at 選択; the adjacent text field holds the value.
 function refreshRoundOptions() {
   const select = document.getElementById('roundPreset');
   if (!select) return;
   select.replaceChildren(new Option('選択', ''));
-  ['決勝', '準決勝', '準々決勝', '３回戦', '２回戦', '１回戦', 'プレーオフ']
-    .forEach(value => select.add(new Option(value, value)));
+  getRoundOptions(state.title).forEach(round => select.add(new Option(round.name, round.name)));
   select.value = '';
 }
 
@@ -425,6 +446,7 @@ async function loadCommonBrand() {
   try {
     await window.JBSBrand.load();
     refreshTournamentOptions();
+    refreshRoundOptions();
     // Auto-fill the initial placeholder and keep previously linked editions
     // current when the common master changes (including annual JST rollovers).
     // Do not overwrite custom editions restored from settings or JSON.
@@ -443,11 +465,7 @@ async function loadCommonBrand() {
 const roundEnglishPresets = {
   "決勝": "FINAL",
   "準決勝": "SEMIFINAL",
-  "準々決勝": "QUARTERFINAL",
-  "プレーオフ": "PLAY OFF",
-  "３回戦": "Round of 16",
-  "２回戦": "Round of 32",
-  "１回戦": "Round of 64"
+  "準々決勝": "QUARTERFINAL"
 };
 
 const ruleSlides = [
@@ -1341,6 +1359,7 @@ function syncEditorFromState() {
   });
   const boardSelect = $("[data-board-preset]");
   if (boardSelect) boardSelect.value = state.boardPreset || "";
+  refreshRoundOptions();
   updateEnglishFields();
   updateMediaOptions();
   startLanguageRotation();
@@ -1387,7 +1406,10 @@ function bindEditor() {
     input.addEventListener("input", () => {
       const value = input.type === "checkbox" ? input.checked : input.value;
       if (input.classList.contains("hex-input") && !/^#[0-9a-fA-F]{6}$/.test(value)) return;
+      const priorEnglish = (key === "title" || key === "round") ? roundEnglishFor(state.title, state.round) : "";
       state[key] = value;
+      if (key === "title") refreshRoundOptions();
+      if (key === "title" || key === "round") updateRoundEnglish(priorEnglish);
       if (key === "edition" || (key === "title" && value !== state.editionSource)) {
         state.editionSource = "";
       }
