@@ -10,7 +10,6 @@
   --width-editor-player-min: 150px;
   --width-editor-event-min: 320px;
   --width-editor-swap: 80px;
-  --width-editor-channel-min: 112px;
   --width-editor-color-budget: 357px;
   --width-editor-color-extra: 47px;
   --width-editor-color-panel-extra: 56px;
@@ -766,23 +765,6 @@ body {
 
 .top-actions {
   grid-column: 1 / -1;
-}
-
-.channel-picker {
-  display: flex;
-  align-items: center;
-  gap: var(--space-12);
-  color: var(--color-45);
-  font-size: var(--font-size-14);
-  font-weight: var(--font-weight-normal);
-  white-space: nowrap;
-}
-
-/* Only the stream switcher's width/padding are tool-specific.
-   The common jbsui-select handles border, focus, hover and disabled states. */
-.channel-picker select {
-  min-width: var(--width-editor-channel-min);
-  padding: 0 var(--space-24) 0 var(--space-16);
 }
 
 .display-toggles {
