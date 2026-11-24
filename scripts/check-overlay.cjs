@@ -39,7 +39,7 @@ assert.ok(!retiredColors.test(styles), 'Overlay CSS must use the six-color palet
 const usedColors = [...styles.matchAll(/var\(--color-(\d+)\b/g)].map((match) => Number(match[1]));
 assert.ok(usedColors.every((level) => [25,45,60,85,95,100].includes(level)),
   'Overlay CSS must not reference undefined palette values');
-assert.ok(/https:\/\/jbsbackgammon\.github\.io\/common\/ui\.css\?v=\d+"/.test(editor), 'Versioned common UI CSS must be loaded');
+assert.ok(/https:\/\/jbsbackgammon\.github\.io\/common\/ui\.css(?:\?[^"']*)?["']/.test(editor), 'Shared UI stylesheet must reference common/ui.css');
 assert.ok(editor.includes('https://jbsbackgammon.github.io/common/ui.js?v=2')
   && !editor.includes('id="saveCompleteDialog"')
   && !editor.includes('jbsui-save-complete-dialog'),
@@ -327,8 +327,8 @@ assert.ok(js.includes('window.__jbsCompressedSnapshot')
   && js.includes('query.get("s") || query.get("state")')
   && output.includes("JBSOutputSnapshot.decode(packed)"),
   'Compressed output and older self-contained URLs must both load');
-assert.ok(editor.includes('snapshot.js?v=1')
-  && output.includes('snapshot.js?v=1')
+assert.ok(editor.includes('snapshot.js')
+  && output.includes('snapshot.js')
   && output.includes('window.__jbsCompressedSnapshot = await JBSOutputSnapshot.decode(packed);'),
   'Both pages must load the local compression codec and decode before startup');
 assert.ok(js.includes('JSON.stringify(item) !== JSON.stringify(defaults[key])')
@@ -388,12 +388,12 @@ assert.equal(migrateSavedState({ round: '' }, false).state.round,
 assert.equal(migrateSavedState({ round: '（未選択）' }, true).state.round,
   '決勝', 'Legacy placeholder must migrate even when initial migration completed');
 
-const version = editor.match(/overlay\.js\?v=([^"']+)/)?.[1];
-assert.ok(version && output.includes('overlay.js?v=' + version), 'Editor/output script version mismatch');
-const cssVersion = editor.match(/styles\.css\?v=([^"']+)/)?.[1];
-assert.ok(cssVersion && output.includes('styles.css?v=' + cssVersion),
-  'Editor and OBS output must load the same CSS version');
-const stageVersion = editor.match(/stage\.html\?v=([^"']+)/)?.[1];
-assert.ok(stageVersion && output.includes('stage.html?v=' + stageVersion),
-  'Editor and OBS output must load the same stage markup version');
+// Check the actual asset paths, not a hand-maintained cache version.
+// The publication step derives identical cache keys for both entry pages.
+for (const asset of ['styles.css', 'overlay.js', 'stage.html', 'snapshot.js']) {
+  const pattern = new RegExp('["\\x27](?:\\./)?' + asset.replace('.', '\\.') + '(?:\\?[^"\\x27]*)?["\\x27]');
+  assert.ok(pattern.test(editor) && pattern.test(output),
+    'Editor and OBS output must both reference ' + asset);
+  assert.ok(fs.existsSync(asset), 'Required asset missing: ' + asset);
+}
 console.log('Overlay static and state-management checks passed.');

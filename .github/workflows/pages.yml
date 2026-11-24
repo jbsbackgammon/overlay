@@ -44,6 +44,7 @@ jobs:
           node --check snapshot.js
           node --check scripts/generate-media.cjs
           node --check scripts/smoke-browser.cjs
+          node --check scripts/stamp-assets.cjs
           node scripts/check-overlay.cjs
           python3 -m json.tool ads.json > /dev/null
 
@@ -56,6 +57,7 @@ jobs:
           cp index.html output.html stage.html overlay.js snapshot.js styles.css ads.json _site/
           cp -a assets _site/
           node scripts/generate-media.cjs _site/media.json
+          node scripts/stamp-assets.cjs _site
 
       - name: Configure Pages
         uses: actions/configure-pages@v6
