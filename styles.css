@@ -8,17 +8,11 @@
   --width-editor-panel-min: 220px;
   --width-editor-panel-wide-min: 420px;
   --width-editor-player-min: 150px;
-  --width-editor-event-min: 320px;
   --width-editor-swap: 80px;
   --width-editor-color-budget: 357px;
   --width-editor-color-extra: 47px;
   --width-editor-color-panel-extra: 56px;
-  --width-editor-dialog-max: 920px;
-  --height-editor-dialog-max: 680px;
-  --height-editor-saved-list-max: 570px;
-  --width-editor-preview-max: 1200px;
   --width-editor-preview: 92%;
-  --alpha-editor-photo-overlay: 72%;
 }
 
 * { box-sizing: border-box; }
@@ -51,7 +45,7 @@ body {
 
 .stage-wrap {
   width: var(--width-editor-preview);
-  max-width: var(--width-editor-preview-max);
+  max-width: var(--width-content-max);
   aspect-ratio: 16 / 9;
   box-shadow: var(--shadow);
   overflow: hidden;
@@ -736,16 +730,6 @@ body {
   align-items: end;
 }
 
-.event-fields > .jbsui-field { min-width: 0; }
-
-/* The English toggle adds a second input column. Keep every label and
-   input row at the same fixed height so Japanese and English controls
-   do not shift vertically when the second column appears. */
-.event-fields > .jbsui-field,
-.title-fields > .jbsui-field {
-  grid-template-rows: var(--height-label) var(--height-input);
-  align-content: start;
-}
 .title-fields,
 .right-selects {
   grid-column: 1 / -1;
@@ -792,36 +776,7 @@ body {
 
 /* Preset selector and joined input styles live in common/ui.css. */
 
-/* Player row and photo controls use common/ui.css. */
-.english-input[hidden] { display: none; }
-
-/* v4: Show Japanese and English inputs side-by-side, not on separate rows.
-   Only the five fields that have an English input receive the two columns. */
-.event-fields > .jbsui-field:has(> .english-input:not([hidden])),
-.title-fields > .jbsui-field:has(> .english-input:not([hidden])) {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--space-8);
-}
-.event-fields > .jbsui-field:has(> .english-input:not([hidden])) > label,
-.title-fields > .jbsui-field:has(> .english-input:not([hidden])) > label {
-  grid-column: 1 / -1;
-}
-.event-fields > .jbsui-field > :is(.jbsui-preset-input, .jbsui-preset-picker),
-.title-fields > .jbsui-field > :is(.jbsui-preset-input, .jbsui-preset-picker),
-.event-fields > .jbsui-field > .english-input,
-.title-fields > .jbsui-field > .english-input {
-  min-width: 0;
-}
-/* In bilingual mode the Japanese column also contains the selector and photo.
-   Allocate enough room for the actual name without adding a second row. */
-.event-fields > .jbsui-field:has(> .english-input:not([hidden])) {
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-}
-/* Prevent the Japanese selector and input from overflowing their half. */
-.event-fields > .jbsui-field :is(.jbsui-preset-input, .jbsui-preset-picker) > input,
-.title-fields > .jbsui-field :is(.jbsui-preset-input, .jbsui-preset-picker) > input {
-  min-width: 0;
-}
+/* Bilingual field rows and hidden English inputs use common/ui.css. */
 
 .color-row {
   grid-column: 1 / -1;

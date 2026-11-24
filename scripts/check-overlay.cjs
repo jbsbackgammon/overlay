@@ -135,7 +135,7 @@ assert.ok(!js.includes('savedState.round === "準決勝"'),
   'Valid saved semifinals must not be replaced with the default final');
 assert.ok(js.includes('const STAGE_WIDTH = 1920;') && js.includes('const STAGE_HEIGHT = 1080;'),
   'OBS canvas and editor preview must share one resolution');
-assert.ok(js.includes('design.getPropertyValue("--width-editor-preview-max")')
+assert.ok(js.includes('design.getPropertyValue("--width-content-max")')
   && js.includes('design.getPropertyValue("--width-editor-preview")')
   && js.includes('design.getPropertyValue("--space-12")')
   && !js.includes('Math.min(1200,'),
@@ -228,8 +228,10 @@ for (const duplicate of ['.settings-action {', '.action-separator {', '.sponsor-
   assert.ok(!styles.includes(duplicate), 'Duplicated local style: ' + duplicate);
 }
 
-assert.ok(styles.includes('grid-template-rows: var(--height-label) var(--height-input);'),
-  'Editor fields must align their label and control rows in bilingual mode');
+assert.ok(['edition', 'title', 'round'].every(id => editor.includes('class="jbsui-field jbsui-bilingual-field"><label for="' + id + '"'))
+  && ['topName', 'bottomName'].every(id => editor.includes('class="jbsui-field jbsui-player-field"><label for="' + id + '"'))
+  && !styles.includes('grid-template-rows: var(--height-label) var(--height-input);'),
+  'Editor bilingual field geometry must come from the shared CSS');
 assert.ok(!styles.includes('.title-fields > .jbsui-field > .jbsui-preset-input > select')
   && !styles.includes('.title-fields > .jbsui-field > label {'),
   'Shared field heights and label line-height must come from common CSS');

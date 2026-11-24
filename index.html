@@ -12,8 +12,8 @@
   <link rel="icon" href="https://jbsbackgammon.github.io/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="https://jbsbackgammon.github.io/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://jbsbackgammon.github.io/apple-touch-icon.png">
-  <link rel="stylesheet" href="https://jbsbackgammon.github.io/common/ui.css?v=60">
-  <link rel="stylesheet" href="styles.css?v=20261124-common-action-select-v63">
+  <link rel="stylesheet" href="https://jbsbackgammon.github.io/common/ui.css?v=61">
+  <link rel="stylesheet" href="styles.css?v=20261124-shared-bilingual-v64">
 </head>
 <body>
   <div class="app">
@@ -44,15 +44,15 @@
       </div>
 
       <div class="title-fields">
-        <div class="jbsui-field"><label for="edition">回次等</label><input id="edition" data-field="edition"><input class="english-input jbsui-player-english-input" id="editionEn" data-field="editionEn" aria-label="回次等（英語）" placeholder="English" hidden></div>
-        <div class="jbsui-field"><label for="title">大会名</label><div class="jbsui-preset-input"><select id="titlePreset" data-preset-for="title" aria-label="大会名のプリセット"><option value="">選択</option></select><input id="title" data-field="title"></div><input class="english-input jbsui-player-english-input" id="titleEn" data-field="titleEn" aria-label="大会名（英語）" placeholder="English" hidden></div>
-        <div class="jbsui-field"><label for="round">試合名</label><div class="jbsui-preset-input"><select id="roundPreset" data-preset-for="round" aria-label="試合名のプリセット"><option value="">選択</option></select><input id="round" data-field="round"></div><input class="english-input jbsui-player-english-input" id="roundEn" data-field="roundEn" aria-label="試合名（英語）" placeholder="English" hidden></div>
+        <div class="jbsui-field jbsui-bilingual-field"><label for="edition">回次等</label><input id="edition" data-field="edition"><input class="english-input jbsui-player-english-input" id="editionEn" data-field="editionEn" aria-label="回次等（英語）" placeholder="English" hidden></div>
+        <div class="jbsui-field jbsui-bilingual-field"><label for="title">大会名</label><div class="jbsui-preset-input"><select id="titlePreset" data-preset-for="title" aria-label="大会名のプリセット"><option value="">選択</option></select><input id="title" data-field="title"></div><input class="english-input jbsui-player-english-input" id="titleEn" data-field="titleEn" aria-label="大会名（英語）" placeholder="English" hidden></div>
+        <div class="jbsui-field jbsui-bilingual-field"><label for="round">試合名</label><div class="jbsui-preset-input"><select id="roundPreset" data-preset-for="round" aria-label="試合名のプリセット"><option value="">選択</option></select><input id="round" data-field="round"></div><input class="english-input jbsui-player-english-input" id="roundEn" data-field="roundEn" aria-label="試合名（英語）" placeholder="English" hidden></div>
       </div>
 
 
       <div class="event-fields">
-        <div class="jbsui-field"><label for="topName">上選手</label><div class="player-entry-row jbsui-player-entry-row"><button type="button" class="player-photo-picker jbsui-player-photo-picker" data-photo-for="top" aria-label="上選手の写真をアップロード" title="クリックして写真をアップロード"><img class="player-photo-preview jbsui-player-photo-preview" src="assets/dummy.png" alt=""></button><div class="jbsui-preset-input player-input"><select id="topMember" data-member-for="top" aria-label="上選手名の選択"><option value="">選択</option></select><input id="topName" data-field="topName"></div><input type="file" data-photo-file="top" accept="image/*" hidden aria-label="上選手の写真ファイル"></div><input class="english-input jbsui-player-english-input" id="topNameEn" data-field="topNameEn" aria-label="上選手名（英語）" placeholder="English" hidden></div>
-        <div class="jbsui-field"><label for="bottomName">下選手</label><div class="player-entry-row jbsui-player-entry-row"><button type="button" class="player-photo-picker jbsui-player-photo-picker" data-photo-for="bottom" aria-label="下選手の写真をアップロード" title="クリックして写真をアップロード"><img class="player-photo-preview jbsui-player-photo-preview" src="assets/dummy.png" alt=""></button><div class="jbsui-preset-input player-input"><select id="bottomMember" data-member-for="bottom" aria-label="下選手名の選択"><option value="">選択</option></select><input id="bottomName" data-field="bottomName"></div><input type="file" data-photo-file="bottom" accept="image/*" hidden aria-label="下選手の写真ファイル"></div><input class="english-input jbsui-player-english-input" id="bottomNameEn" data-field="bottomNameEn" aria-label="下選手名（英語）" placeholder="English" hidden></div>
+        <div class="jbsui-field jbsui-player-field"><label for="topName">上選手</label><div class="player-entry-row jbsui-player-entry-row"><button type="button" class="player-photo-picker jbsui-player-photo-picker" data-photo-for="top" aria-label="上選手の写真をアップロード" title="クリックして写真をアップロード"><img class="player-photo-preview jbsui-player-photo-preview" src="assets/dummy.png" alt=""></button><div class="jbsui-preset-input player-input"><select id="topMember" data-member-for="top" aria-label="上選手名の選択"><option value="">選択</option></select><input id="topName" data-field="topName"></div><input type="file" data-photo-file="top" accept="image/*" hidden aria-label="上選手の写真ファイル"></div><input class="english-input jbsui-player-english-input" id="topNameEn" data-field="topNameEn" aria-label="上選手名（英語）" placeholder="English" hidden></div>
+        <div class="jbsui-field jbsui-player-field"><label for="bottomName">下選手</label><div class="player-entry-row jbsui-player-entry-row"><button type="button" class="player-photo-picker jbsui-player-photo-picker" data-photo-for="bottom" aria-label="下選手の写真をアップロード" title="クリックして写真をアップロード"><img class="player-photo-preview jbsui-player-photo-preview" src="assets/dummy.png" alt=""></button><div class="jbsui-preset-input player-input"><select id="bottomMember" data-member-for="bottom" aria-label="下選手名の選択"><option value="">選択</option></select><input id="bottomName" data-field="bottomName"></div><input type="file" data-photo-file="bottom" accept="image/*" hidden aria-label="下選手の写真ファイル"></div><input class="english-input jbsui-player-english-input" id="bottomNameEn" data-field="bottomNameEn" aria-label="下選手名（英語）" placeholder="English" hidden></div>
         <div class="player-swap-field"><button type="button" id="swapPlayerNames" class="swap-colors player-name-swap jbsui-button">上下入替</button></div>
         <div class="display-toggles">
           <label class="sponsor-toggle jbsui-check" for="personal"><input type="checkbox" id="personal" data-field="personal"><span>選手映像</span></label>
@@ -126,7 +126,7 @@
     fetch('stage.html?v=20261117-upper-13-24-v16').then(r => r.text()).then(html => {
       document.getElementById('stageMount').innerHTML = html;
       const script = document.createElement('script');
-      script.src = 'overlay.js?v=20261124-preset-reset-v63';
+      script.src = 'overlay.js?v=20261124-shared-bilingual-v64';
       document.body.appendChild(script);
     });
   </script>

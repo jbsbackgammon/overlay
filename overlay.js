@@ -648,7 +648,7 @@ function fitStage() {
   // The preview limit, width ratio, and safety margin come from the CSS
   // design tokens instead of repeating their values in JavaScript.
   const design = getComputedStyle(document.documentElement);
-  const previewMaxWidth = parseFloat(design.getPropertyValue("--width-editor-preview-max"));
+  const previewMaxWidth = parseFloat(design.getPropertyValue("--width-content-max"));
   const previewRatio = parseFloat(design.getPropertyValue("--width-editor-preview")) / 100;
   const viewportGap = parseFloat(design.getPropertyValue("--space-12"));
   const maxWidth = Math.min(previewMaxWidth,
