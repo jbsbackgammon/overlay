@@ -376,7 +376,7 @@ body {
 
 /* Optical centering within the 74px area below the game band.
    Match the specificity of the general title-card text positioning rule. */
-.title-card .title-round > span { top: calc(50% - 6px); }
+.title-card .title-round > span { top: calc(50% - 3px); }
 
 .stage[data-right1-mode="reference"] > .title-card {
   display: grid;
