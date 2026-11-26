@@ -194,7 +194,7 @@ assert.ok(editor.includes('jbsui-panel') && editor.includes('jbsui-player-photo-
   'Shared panel radius and 36px player-photo sizing must come from common UI');
 assert.ok(!styles.includes('--jbsui-'), 'Retired prefixed style token remains');
 assert.ok(styles.includes('height: var(--height-input);'), 'Tool-specific editor alignment must use the shared input height');
-assert.ok(styles.includes('background: var(--color-95, hsl(215 25% 95%));')
+assert.ok(styles.includes('background: var(--color-100, hsl(215 25% 100%));')
   && styles.includes('color: var(--color-25, hsl(215 25% 25%));'), 'Base colors missing');
 assert.ok(!js.includes('setProperty("--button-theme"'), 'Unused theme override remains');
 assert.ok(!styles.includes('\n.jbsui-preset-input {') && !styles.includes('\n.jbsui-preset-input select {'),
@@ -442,3 +442,6 @@ assert.ok(styles.includes('.title-round .round-prefix {\n  font-size: .5em;'));
 assert.ok(js.includes("prefix.className = 'round-prefix';"));
 
 console.log('Overlay static and state-management checks passed.');
+
+assert.match(styles, /\.stage-shell\s*\{[^}]*background:\s*var\(--color-95\)/, 'Editor preview retains gray');
+assert.match(styles, /\.output-page\s*\{[^}]*background:\s*transparent/, 'OBS output remains transparent');
