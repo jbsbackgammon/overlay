@@ -191,9 +191,10 @@ body {
 
 .guide-goal {
   left: var(--guide-goal-left, 810px);
-  top: -2px;
+  top: 50%;
+  transform: translateY(-50%);
   width: var(--guide-goal-width);
-  height: calc(100% + 4px);
+  height: 1em;
   background: var(--guide-goal-background, #383838);
   color: var(--guide-goal-ink, #ffffff);
   display: grid;
