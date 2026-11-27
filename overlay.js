@@ -1418,7 +1418,7 @@ function bindEditor() {
         const preset = initialGuideDefaults(state.personal);
         Object.assign(state, preset);
         for (const [field, number] of Object.entries(preset)) {
-          $(`[data-field="${field}"]`).forEach(input => { input.value = number; });
+          $$(`[data-field="${field}"]`).forEach(input => { input.value = number; });
         }
       }
       if (key === "panelColor") {
