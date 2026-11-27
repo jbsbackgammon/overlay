@@ -251,7 +251,8 @@ assert.ok(stage.includes('first"><span>13</span><span>14</span><span>15</span><s
   && stage.includes('second"><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span>'),
   'Upper guide must display 13 through 24');
 assert.ok(styles.includes('background: var(--guide-goal-background, #383838)')
-  && styles.includes('-webkit-text-stroke: 3px #000000')
+  && styles.includes('-webkit-text-stroke: 4px #000000')
+  && styles.includes('text-shadow: 0 1px 2px rgba(0, 0, 0, .85)')
   && styles.includes('paint-order: stroke fill')
   && !styles.includes('var(--guide-background')
   && js.includes('topGuide.style.setProperty("--guide-goal-background", state.topColor)')
