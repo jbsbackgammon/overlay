@@ -52,6 +52,7 @@ body {
 }
 
 .stage {
+  --guide-goal-width: 118px;
   position: relative;
   width: 1920px;
   height: 1080px;
@@ -190,7 +191,7 @@ body {
 .guide-goal {
   left: var(--guide-goal-left, 810px);
   top: -2px;
-  width: 128px;
+  width: var(--guide-goal-width);
   height: calc(100% + 4px);
   background: var(--guide-goal-background, #383838);
   color: var(--guide-goal-ink, #ffffff);
