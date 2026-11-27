@@ -33,6 +33,7 @@ const defaults = {
   personal: false,
   playerPhoto: false,
   guide: false,
+  // Keep the historical snapshot defaults stable for existing compact OBS URLs.
   guideVerticalGap: 0,
   guideStart12: 500,
   guideStart6: 910,
@@ -139,8 +140,16 @@ function fixedMediaPath(mode, kind) {
   return validMediaPath(path, kind === "thumbnail" ? "thumbnail" : "ads") ? path : "";
 }
 
+// Editor defaults depend on whether the full-size player video is selected.
+function initialGuideDefaults(personal) {
+  return personal
+    ? { guideStart12: 487, guideStart6: 930, guideGoalStart: 1300, guidePointGap: 68, guideVerticalGap: 0 }
+    : { guideStart12: 425, guideStart6: 880, guideGoalStart: 1262, guidePointGap: 70, guideVerticalGap: 0 };
+}
+
 function normalizeLegacyMediaModes(target) {
-  target = { ...defaults, ...sanitizeState(target) };
+  const clean = sanitizeState(target);
+  target = { ...defaults, ...initialGuideDefaults(clean.personal), ...clean };
   // Legacy right4 was one 330px area. Preserve the occupied 160px rows.
   if (target.right4Mode === "rules") target.right4Mode = "rules45";
   if (target.right4Mode === "sponsors2") {
@@ -590,7 +599,8 @@ if ("video" in fromQuery) fromQuery.video = fromQuery.video !== "false";
 if ("rules" in fromQuery) fromQuery.rules = fromQuery.rules !== "false";
 if ("interval" in fromQuery) fromQuery.interval = Number(fromQuery.interval) || defaults.interval;
 
-let state = normalizeLegacyMediaModes({ ...defaults, ...(embeddedState || {}), ...fromQuery });
+// Old compact snapshots omit fields equal to the historical defaults.
+let state = normalizeLegacyMediaModes({ ...(embeddedState ? defaults : {}), ...(embeddedState || {}), ...fromQuery });
 if (!state.right1Mode) state.right1Mode = "title";
 let sponsorIndex = 0;
 let sponsorTimer;
@@ -641,7 +651,7 @@ function persistState() {
 function applyExternalState(nextState) {
   if (!nextState || typeof nextState !== "object" || Array.isArray(nextState)) return;
   invalidatePhotos();
-  state = normalizeLegacyMediaModes({ ...defaults, ...nextState });
+  state = normalizeLegacyMediaModes(nextState);
   if (!state.right1Mode) state.right1Mode = "title";
   syncEditorFromState();
 }
@@ -1283,7 +1293,7 @@ async function importJsonFile(file) {
     if (!imported || typeof imported !== "object" || Array.isArray(imported)) throw new Error();
     const allowed = sanitizeState(imported, true);
     invalidatePhotos();
-    state = normalizeLegacyMediaModes({ ...defaults, ...allowed });
+    state = normalizeLegacyMediaModes(allowed);
     persistState();
     syncEditorFromState();
   }
@@ -1370,7 +1380,7 @@ function renderSavedSettings() {
     button.textContent = JBSNaming.formatSavedLabel({ savedAt: entry.savedAt, ...entry.state });
     button.addEventListener("click", () => {
       invalidatePhotos();
-      state = normalizeLegacyMediaModes({ ...defaults, ...entry.state });
+      state = normalizeLegacyMediaModes(entry.state);
       persistState();
       syncEditorFromState();
       $("#settingsDialog").close();
@@ -1393,6 +1403,7 @@ function bindEditor() {
       if (input.classList.contains("hex-input") && !/^#[0-9a-fA-F]{6}$/.test(value)) return;
       const priorEnglish = (key === "title" || key === "round") ? roundEnglishFor(state.title, state.round) : "";
       if (key === "topName" || key === "bottomName") photoEpoch[key === "topName" ? "top" : "bottom"]++;
+      const previousPersonal = state.personal;
       state[key] = value;
       if (key === "title") refreshRoundOptions();
       if (key === "title" || key === "round") updateRoundEnglish(priorEnglish);
@@ -1403,6 +1414,13 @@ function bindEditor() {
       if (key === "sponsors2" && value) state.rules = false;
       if (key === "personal" && value) state.playerPhoto = false;
       if (key === "playerPhoto" && value) state.personal = false;
+      if ((key === "personal" || key === "playerPhoto") && state.personal !== previousPersonal) {
+        const preset = initialGuideDefaults(state.personal);
+        Object.assign(state, preset);
+        for (const [field, number] of Object.entries(preset)) {
+          $(`[data-field="${field}"]`).forEach(input => { input.value = number; });
+        }
+      }
       if (key === "panelColor") {
         state.panelMode = "solid";
         const mode = $("[data-field=panelMode]");
@@ -1613,20 +1631,19 @@ function loadSharedState() {
       if (savedState?.round === "（未選択）") savedState.round = defaults.round;
       if (savedState?.topName === "（未入力）") savedState.topName = "";
       if (savedState?.bottomName === "（未入力）") savedState.bottomName = "";
+      // Migrate only an untouched historical default tuple in local editor storage.
       const usesOldGuideDefaults = savedState
         && Number(savedState.guideVerticalGap ?? 0) === 0
-        && Number(savedState.guideStart12 ?? 492) === 492
-        && Number(savedState.guideStart6 ?? 907) === 907
-        && Number(savedState.guideGoalStart ?? 1270) === 1270
-        && Number(savedState.guidePointGap ?? 63) === 63;
-      if (usesOldGuideDefaults) {
-        savedState.guideVerticalGap = defaults.guideVerticalGap;
-        savedState.guideStart12 = defaults.guideStart12;
-        savedState.guideStart6 = defaults.guideStart6;
-        savedState.guideGoalStart = defaults.guideGoalStart;
-        savedState.guidePointGap = defaults.guidePointGap;
-      }
-      state = normalizeLegacyMediaModes({ ...state, ...savedState });
+        && ((Number(savedState.guideStart12) === 492
+          && Number(savedState.guideStart6) === 907
+          && Number(savedState.guideGoalStart) === 1270
+          && Number(savedState.guidePointGap) === 63)
+        || (Number(savedState.guideStart12) === 500
+          && Number(savedState.guideStart6) === 910
+          && Number(savedState.guideGoalStart) === 1255
+          && Number(savedState.guidePointGap) === 62));
+      if (usesOldGuideDefaults) Object.assign(savedState, initialGuideDefaults(savedState.personal === true));
+      state = normalizeLegacyMediaModes(savedState || state);
       if (!state.right1Mode) state.right1Mode = "title";
       if (usesOldGuideDefaults || usesOldTextDefaults || migrateOldEmptyRound) persistState();
       if (state.panelColor?.toUpperCase() === "#CFB064") {

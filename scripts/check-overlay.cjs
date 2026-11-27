@@ -366,6 +366,7 @@ const migrationEnd = js.indexOf('\n// The shared UI focus ring', migrationStart)
 assert.ok(migrationStart >= 0 && migrationEnd > migrationStart,
   'Stored-state migration must remain directly testable');
 const migrationSource = js.slice(migrationStart, migrationEnd);
+const guidePresetSource = js.slice(js.indexOf('function initialGuideDefaults('), js.indexOf('function normalizeLegacyMediaModes('));
 const migrateSavedState = Function('saved', 'migrationDone', `
   const embeddedState = null;
   const fromQuery = {};
@@ -381,9 +382,9 @@ const migrateSavedState = Function('saved', 'migrationDone', `
     getItem(key) { return this.data.get(key) ?? null; },
     setItem(key, value) { this.data.set(key, value); }
   };
-  const normalizeLegacyMediaModes = (value) => value;
+  const normalizeLegacyMediaModes = (value) => ({ ...defaults, ...value });
   const persistState = () => { saves += 1; };
-  ` + migrationSource + `
+  ` + guidePresetSource + migrationSource + `
   loadSharedState();
   return { state, saves };
 `);
@@ -393,6 +394,14 @@ assert.equal(migrateSavedState({ round: '' }, false).state.round,
   '決勝', 'Legacy blank round must migrate to final');
 assert.equal(migrateSavedState({ round: '（未選択）' }, true).state.round,
   '決勝', 'Legacy placeholder must migrate even when initial migration completed');
+
+const guidePresets = Function(guidePresetSource + 'return initialGuideDefaults;')();
+assert.deepEqual(Object.values(guidePresets(true)), [487,930,1300,68,0]);
+assert.deepEqual(Object.values(guidePresets(false)), [425,880,1262,70,0]);
+const oldGuide = {guideStart12:500,guideStart6:910,guideGoalStart:1255,guidePointGap:62,guideVerticalGap:0};
+assert.equal(migrateSavedState({...oldGuide,personal:true}, true).state.guideStart12, 487);
+assert.equal(migrateSavedState({...oldGuide,personal:false}, true).state.guideStart12, 425);
+assert.equal(migrateSavedState({...oldGuide,guideStart12:501}, true).state.guideStart12, 501);
 
 // Check the actual asset paths, not a hand-maintained cache version.
 // The publication step derives identical cache keys for both entry pages.
