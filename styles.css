@@ -52,8 +52,9 @@ body {
 }
 
 .stage {
-  --guide-goal-width: 115px;
+  --guide-goal-width: 105px;
   position: relative;
+  isolation: isolate;
   width: 1920px;
   height: 1080px;
   transform-origin: top left;
@@ -145,7 +146,7 @@ body {
   border: 2px solid transparent;
   background: transparent;
   overflow: visible;
-  z-index: 4;
+  /* Let goals and numbers participate separately in the stage stacking order. */
 }
 
 .point-guide.top { top: calc(86px + var(--guide-vertical-gap, 0px)); }
@@ -162,6 +163,7 @@ body {
 }
 
 .guide-half {
+  z-index: 4;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   align-items: center;
@@ -190,6 +192,8 @@ body {
 }
 
 .guide-goal {
+  /* Behind the camera window's frame shadow, but inside the isolated stage. */
+  z-index: -1;
   left: var(--guide-goal-left, 810px);
   top: 50%;
   transform: translateY(-50%);
