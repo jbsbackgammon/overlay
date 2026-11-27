@@ -250,11 +250,13 @@ assert.ok(js.includes('boardPreset: "japan"') && js.includes('japan: defaultJapa
 assert.ok(stage.includes('first"><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span>')
   && stage.includes('second"><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span>'),
   'Upper guide must display 13 through 24');
-assert.ok(styles.includes('var(--guide-background) var(--guide-goal-left)')
-  && styles.includes('var(--guide-goal-background) var(--guide-goal-left)')
-  && js.includes('"--guide-goal-background", rgba(state.topColor, 0.7)')
-  && js.includes('"--guide-background", rgba(state.bottomColor, 0.7)'),
-  'Upper points use bottom color while upper goal uses top color without gaps');
+assert.ok(styles.includes('background: var(--guide-goal-background, #383838)')
+  && styles.includes('-webkit-text-stroke: 3px #000000')
+  && styles.includes('paint-order: stroke fill')
+  && !styles.includes('var(--guide-background')
+  && js.includes('topGuide.style.setProperty("--guide-goal-background", state.topColor)')
+  && js.includes('bottomGuide.style.setProperty("--guide-goal-background", state.bottomColor)'),
+  'Point numbers must be outlined white on transparent backgrounds; only goals use opaque player colors');
 assert.ok(read('styles.css').includes('.board-color-field::before'),
   'Missing vertical divider between panel and board colors');
 assert.ok(styles.includes('.panel-color-control {') && styles.includes('align-items: end;'),

@@ -719,11 +719,6 @@ function contrastText(hex) {
   return luminance(r, g, b) > 0.26 ? "#000000" : "#FFFFFF";
 }
 
-function rgba(hex, alpha) {
-  const { r, g, b } = hexToRgb(hex);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
 function ordinal(number) {
   const remainder100 = number % 100;
   if (remainder100 >= 11 && remainder100 <= 13) return `${number}th`;
@@ -922,18 +917,11 @@ function render() {
   $(".player-dot.bottom").style.setProperty("--player-color", state.bottomColor);
   const topGuide = $(".point-guide.top");
   const bottomGuide = $(".point-guide.bottom");
-  // Upper points 13–24 belong to the bottom player; only the goal
-  // is colored for the top player. Lower guide colors remain unchanged.
-  const topGuideInk = contrastText(state.bottomColor);
-  topGuide.style.setProperty("--guide-ink", topGuideInk);
-  topGuide.style.setProperty("--guide-background", rgba(state.bottomColor, 0.7));
-  topGuide.style.setProperty("--guide-border", rgba(topGuideInk, 0.34));
+  // Only goal labels carry the corresponding player's opaque color.
   topGuide.style.setProperty("--guide-goal-ink", contrastText(state.topColor));
-  topGuide.style.setProperty("--guide-goal-background", rgba(state.topColor, 0.7));
-  const bottomGuideInk = contrastText(state.bottomColor);
-  bottomGuide.style.setProperty("--guide-ink", bottomGuideInk);
-  bottomGuide.style.setProperty("--guide-background", rgba(state.bottomColor, 0.7));
-  bottomGuide.style.setProperty("--guide-border", rgba(bottomGuideInk, 0.34));
+  topGuide.style.setProperty("--guide-goal-background", state.topColor);
+  bottomGuide.style.setProperty("--guide-goal-ink", contrastText(state.bottomColor));
+  bottomGuide.style.setProperty("--guide-goal-background", state.bottomColor);
   $$(".point-guide").forEach((guide) => { guide.hidden = !state.guide; });
   const guideFields = $(".guide-fields");
   if (guideFields) guideFields.hidden = !state.guide;

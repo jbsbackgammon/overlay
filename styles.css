@@ -140,13 +140,11 @@ body {
   width: var(--guide-width, 894px);
   height: 34px;
   display: block;
-  color: var(--guide-ink, #ffffff);
-  border: 2px solid var(--guide-border, rgba(255, 255, 255, .34));
-  border-radius: 0;
-  background: var(--guide-background, rgba(56, 56, 56, .7));
-  overflow: hidden;
+  /* Keep the original 2px inset so existing saved guide positions do not shift. */
+  border: 2px solid transparent;
+  background: transparent;
+  overflow: visible;
   z-index: 4;
-  filter: drop-shadow(0 3px 7px rgba(0,0,0,.32));
 }
 
 .point-guide.top { top: calc(90px + var(--guide-vertical-gap, 0px)); }
@@ -171,6 +169,12 @@ body {
   line-height: 1;
   font-weight: 900;
   font-variant-numeric: tabular-nums;
+  color: #ffffff;
+}
+
+.guide-half > span {
+  -webkit-text-stroke: 3px #000000;
+  paint-order: stroke fill;
 }
 
 .guide-half.first {
@@ -185,7 +189,11 @@ body {
 
 .guide-goal {
   left: var(--guide-goal-left, 810px);
+  top: -2px;
   width: 128px;
+  height: calc(100% + 4px);
+  background: var(--guide-goal-background, #383838);
+  color: var(--guide-goal-ink, #ffffff);
   display: grid;
   place-items: center;
   font-size: 28px;
@@ -197,17 +205,6 @@ body {
   display: inline-block;
   white-space: nowrap;
 }
-
-/* The upper strip changes from bottom-player color to top-player color
-   exactly at the goal boundary, preserving the tint between point groups. */
-.point-guide.top {
-  background: linear-gradient(
-    to right,
-    var(--guide-background) var(--guide-goal-left),
-    var(--guide-goal-background) var(--guide-goal-left)
-  );
-}
-.point-guide.top .guide-goal { color: var(--guide-goal-ink); }
 
 .stage.personal-mode .player-dot { left: 350px; }
 .stage.personal-mode .player-name {
