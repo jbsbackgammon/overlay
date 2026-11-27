@@ -52,7 +52,7 @@ body {
 }
 
 .stage {
-  --guide-goal-width: 118px;
+  --guide-goal-width: 115px;
   position: relative;
   width: 1920px;
   height: 1080px;
