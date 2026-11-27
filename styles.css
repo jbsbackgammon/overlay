@@ -148,7 +148,7 @@ body {
   z-index: 4;
 }
 
-.point-guide.top { top: calc(88px + var(--guide-vertical-gap, 0px)); }
+.point-guide.top { top: calc(86px + var(--guide-vertical-gap, 0px)); }
 .point-guide.bottom { top: calc(958px - var(--guide-vertical-gap, 0px)); }
 .point-guide[hidden] { display: none; }
 
