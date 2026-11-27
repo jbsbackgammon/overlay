@@ -53,7 +53,7 @@ const defaults = {
 };
 
 // Keep only known fields; validate imported/URL/restored state before rendering.
-const guideBounds = { guideVerticalGap:[0,400], guideStart12:[0,1920], guideStart6:[0,1920], guideGoalStart:[0,1920], guidePointGap:[20,160], interval:[1000,3600000] };
+const guideBounds = { guideVerticalGap:[-20,400], guideStart12:[0,1920], guideStart6:[0,1920], guideGoalStart:[0,1920], guidePointGap:[20,160], interval:[1000,3600000] };
 function validMediaPath(path, folder) {
   if (typeof path !== 'string' || !path.startsWith('assets/' + folder + '/') || !/\.(?:png|jpe?g|webp|gif)$/i.test(path)) return false;
   try { return !/[\x00-\x1f\\?#]/.test(decodeURIComponent(path)) && !decodeURIComponent(path).includes('..'); } catch { return false; }
@@ -839,7 +839,8 @@ function render() {
   stage.dataset.right4Mode = modes.right4;
   stage.dataset.right5Mode = modes.right5;
   stage.dataset.rulesLocation = modes.right3 === "rules34" ? "34" : modes.right4 === "rules45" ? "45" : "";
-  const guideVerticalGap = Math.max(0, Number(state.guideVerticalGap) || 0);
+  const [minGuideGap, maxGuideGap] = guideBounds.guideVerticalGap;
+  const guideVerticalGap = Math.min(maxGuideGap, Math.max(minGuideGap, Number(state.guideVerticalGap) || 0));
   const guideStart12 = Number(state.guideStart12) || 0;
   const guideStart6 = Number(state.guideStart6) || 0;
   const guideGoalStart = Number(state.guideGoalStart) || 0;
@@ -1387,7 +1388,8 @@ function bindEditor() {
     input.value = state[key];
     if (input.type === "checkbox") input.checked = Boolean(state[key]);
     input.addEventListener("input", () => {
-      const value = input.type === "checkbox" ? input.checked : input.value;
+      if (key === "guideVerticalGap" && (input.value === "" || !input.validity.valid)) return;
+      const value = input.type === "checkbox" ? input.checked : key === "guideVerticalGap" ? input.valueAsNumber : input.value;
       if (input.classList.contains("hex-input") && !/^#[0-9a-fA-F]{6}$/.test(value)) return;
       const priorEnglish = (key === "title" || key === "round") ? roundEnglishFor(state.title, state.round) : "";
       if (key === "topName" || key === "bottomName") photoEpoch[key === "topName" ? "top" : "bottom"]++;
